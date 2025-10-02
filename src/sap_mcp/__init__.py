@@ -11,12 +11,13 @@ __email__ = "sap-mcp@company.com"
 __license__ = "MIT"
 
 from .config.settings import AppConfig
-from .sap.client import SAPClient
+
+# from .sap.client import SAPClient  # TODO: Create SAP client module
 from .protocol.server import MCPServer
 
 __all__ = [
     "AppConfig",
-    "SAPClient", 
+    # "SAPClient",  # TODO: Uncomment when SAP client is implemented
     "MCPServer",
     "__version__",
 ]

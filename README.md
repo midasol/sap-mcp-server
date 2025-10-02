@@ -18,13 +18,15 @@ The MCP server provides the following tools for SAP integration:
 ### Authentication
 - `sap_authenticate`: Establish authenticated sessions with SAP Gateway
 
-### Data Operations  
-- `sap_query`: Execute OData queries to retrieve SAP data
-- `sap_create_order`: Create sales orders in SAP
-- `sap_get_metadata`: Retrieve service metadata and schemas
+### Data Operations
+- `sap_query`: Execute OData queries to retrieve SAP data (with filtering, selection, pagination)
 
 ### Discovery
 - `sap_list_services`: Discover available OData services
+
+### Planned Tools
+- `sap_create_order`: Create sales orders in SAP
+- `sap_get_metadata`: Retrieve service metadata and schemas
 
 ## 📋 Prerequisites
 
@@ -68,12 +70,20 @@ SAP_PASSWORD=your-password
 
 ### 3. Run the Server
 
+#### As MCP Stdio Server (for MCP clients like Claude Desktop)
+
+```bash
+python -m sap_mcp.stdio_server
+```
+
+#### As HTTP Server (for REST API access)
+
 ```bash
 # Development mode
 python -m sap_mcp.server
 
 # Or with uvicorn directly
-uvicorn sap_mcp.server:app --host 0.0.0.0 --port 8000 --reload
+uvicorn sap_mcp.protocol.server:get_app --factory --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### 4. Test the Connection
@@ -145,31 +155,44 @@ sudo systemctl start sap-mcp
 
 ## 📚 Usage Examples
 
-### Python Client
+### MCP Client (stdio)
 
 ```python
-from mcp import Client
 import asyncio
+from mcp.client.stdio import stdio_client
+from mcp.client.session import ClientSession
+from mcp import StdioServerParameters
 
 async def main():
-    async with Client(\"http://localhost:8000\") as client:
-        # Authenticate with SAP
-        auth_result = await client.call_tool(\"sap_authenticate\", {
-            \"host\": \"sap.company.com\",
-            \"username\": \"user\",
-            \"password\": \"pass\"
-        })
-        
-        # Query SAP data
-        result = await client.call_tool(\"sap_query\", {
-            \"service\": \"Z_SALES_ORDER_GENAI_SRV\",
-            \"entity_set\": \"zsd004Set\",
-            \"filter\": \"Auart eq 'OR'\"
-        })
-        
-        print(result)
+    # Configure stdio server connection
+    server_params = StdioServerParameters(
+        command="python",
+        args=["-m", "sap_mcp.stdio_server"]
+    )
 
-asyncio.run(main())
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            # Initialize the session
+            await session.initialize()
+
+            # Authenticate with SAP
+            auth_result = await session.call_tool("sap_authenticate", {
+                "host": "sap.company.com",
+                "username": "user",
+                "password": "pass"
+            })
+            print(f"Auth result: {auth_result}")
+
+            # Query SAP data
+            result = await session.call_tool("sap_query", {
+                "service": "Z_SALES_ORDER_GENAI_SRV",
+                "entity_set": "zsd004Set",
+                "filter": "Auart eq 'OR'"
+            })
+            print(f"Query result: {result}")
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 
 ### cURL Examples
