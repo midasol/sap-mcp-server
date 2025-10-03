@@ -40,7 +40,7 @@ The MCP server provides the following tools for SAP integration:
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/company/sap-mcp.git
+git clone https://github.com/midasol/SAP-MCP-GCP
 cd sap-mcp
 
 # Create virtual environment
