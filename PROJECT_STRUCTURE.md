@@ -12,11 +12,20 @@ sap-mcp/
 │   │       ├── sap/         # SAP Gateway client
 │   │       ├── protocol/    # MCP protocol implementation
 │   │       ├── config/      # Configuration management
+│   │       │   ├── settings.py      # Server settings
+│   │       │   ├── schemas.py       # YAML configuration Pydantic models
+│   │       │   └── services_loader.py  # YAML configuration loader
 │   │       ├── sse_server.py   # SSE server (production)
 │   │       └── stdio_server.py # Stdio server (development)
+│   ├── config/              # YAML configuration files
+│   │   ├── services.yaml         # Default service configuration
+│   │   └── services.yaml.example # Extended configuration examples
 │   ├── pyproject.toml       # Server dependencies
 │   ├── .env.example         # Server environment template
 │   ├── DEPLOYMENT.md        # Deployment guide
+│   ├── CONFIGURATION_GUIDE.md   # YAML configuration reference
+│   ├── REFACTORING_SUMMARY.md   # Refactoring documentation
+│   ├── ARCHITECTURE.md      # Architecture documentation
 │   └── README.md            # Server documentation
 │
 ├── sap-mcp-client/          # Client package (used by applications)
@@ -27,7 +36,8 @@ sap-mcp/
 │   ├── .env.example         # Client environment template
 │   └── README.md            # Client documentation
 │
-└── PROJECT_STRUCTURE.md     # This file
+├── PROJECT_STRUCTURE.md     # This file
+└── README.md                # Main project documentation
 
 ```
 
@@ -207,6 +217,53 @@ pip install sap-mcp-client
 
 ## Configuration
 
+### YAML Service Configuration
+
+The server uses a YAML-based configuration system to define SAP services and entities, making it completely generic and service-agnostic.
+
+**Configuration Files**:
+- `config/services.yaml`: Default service configuration
+- `config/services.yaml.example`: Extended examples with multiple services
+
+**Key Components**:
+
+#### 1. Configuration Schemas (`src/sap_mcp/config/schemas.py`)
+Pydantic models for type-safe YAML validation:
+- `EntityConfig`: Entity set definitions with key fields and navigation
+- `ServiceConfig`: Service metadata with OData version and entities
+- `GatewayConfig`: Gateway URL patterns and metadata endpoints
+- `ServicesYAMLConfig`: Complete configuration structure
+
+#### 2. Configuration Loader (`src/sap_mcp/config/services_loader.py`)
+YAML loading system with:
+- Singleton pattern for efficient caching
+- Path security validation (prevents directory traversal)
+- Automatic fallback to default configuration
+- Runtime reload capability
+
+#### 3. Configuration Priority
+1. **Custom Path**: `MCP_SERVICES_CONFIG_PATH` environment variable
+2. **Default Location**: `config/services.yaml` (relative to package)
+3. **Fallback**: Hardcoded default configuration
+
+**Example YAML Configuration**:
+```yaml
+gateway:
+  base_url_pattern: "https://{host}:{port}/sap/opu/odata"
+
+services:
+  - id: Z_SALES_ORDER_SRV
+    name: "Sales Order Service"
+    path: "/SAP/Z_SALES_ORDER_SRV"
+    version: v2
+    entities:
+      - name: SalesOrderSet
+        key_field: Vbeln
+        default_select: [Vbeln, Erdat, Netwr]
+```
+
+See [CONFIGURATION_GUIDE.md](./sap-mcp-server/CONFIGURATION_GUIDE.md) for complete documentation.
+
 ### Server Environment Variables
 
 ```bash
@@ -221,6 +278,9 @@ SAP_PASSWORD=******
 MCP_HOST=0.0.0.0
 MCP_PORT=8000
 MCP_LOG_LEVEL=INFO
+
+# Optional: Custom YAML configuration path
+MCP_SERVICES_CONFIG_PATH=/path/to/custom/services.yaml
 ```
 
 ### Client Environment Variables

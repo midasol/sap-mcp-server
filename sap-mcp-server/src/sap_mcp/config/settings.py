@@ -1,7 +1,8 @@
 """Configuration settings for SAP MCP Server"""
 
 import os
-from typing import Dict, List, Optional
+from pathlib import Path
+from typing import Optional
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
@@ -47,6 +48,9 @@ class MCPServerConfig(BaseSettings):
     max_workers: int = Field(1, description="Maximum worker threads")
     debug: bool = Field(False, description="Enable debug mode")
     reload: bool = Field(False, description="Enable auto-reload")
+    services_config_path: Optional[str] = Field(
+        None, description="Path to services YAML configuration file"
+    )
 
     model_config = {"env_prefix": "MCP_"}
 
@@ -79,23 +83,6 @@ class SecurityConfig(BaseSettings):
         return v
 
 
-class SAPServiceConfig(BaseSettings):
-    """SAP service-specific configuration"""
-
-    name: str
-    path: str
-    version: str = "v2"
-    entities: List[str] = []
-    custom_headers: Dict[str, str] = {}
-
-    @field_validator("version")
-    @classmethod
-    def validate_version(cls, v: str) -> str:
-        if v not in ["v2", "v4"]:
-            raise ValueError("OData version must be v2 or v4")
-        return v
-
-
 class AppConfig(BaseSettings):
     """Main application configuration"""
 
@@ -103,9 +90,6 @@ class AppConfig(BaseSettings):
     sap: SAPConnectionConfig
     server: MCPServerConfig
     security: SecurityConfig
-
-    # Optional configurations
-    services: Dict[str, SAPServiceConfig] = {}
 
     model_config = {
         "env_file": ".env",
@@ -134,23 +118,6 @@ class AppConfig(BaseSettings):
             security=SecurityConfig(),  # type: ignore[call-arg]
         )
 
-    @classmethod
-    def load_default_services(cls) -> Dict[str, SAPServiceConfig]:
-        """Load default SAP service configurations"""
-        return {
-            "Z_SALES_ORDER_GENAI_SRV": SAPServiceConfig(
-                name="Z_SALES_ORDER_GENAI_SRV",
-                path="/sap/opu/odata/SAP/Z_SALES_ORDER_GENAI_SRV",
-                version="v2",
-                entities=["zsd004Set"],
-                custom_headers={},
-            )
-        }
-
-    def get_service_config(self, service_name: str) -> Optional[SAPServiceConfig]:
-        """Get configuration for a specific service"""
-        return self.services.get(service_name)
-
     def validate_required_env_vars(self) -> None:
         """Validate that all required environment variables are set"""
         required_vars = ["SAP_HOST", "SAP_USERNAME", "SAP_PASSWORD"]
@@ -173,7 +140,6 @@ def get_config(require_sap: bool = False) -> AppConfig:
     global config
     if config is None:
         config = AppConfig.load_from_env(require_sap=require_sap)
-        config.services = AppConfig.load_default_services()
         if require_sap:
             config.validate_required_env_vars()
     return config
@@ -184,3 +150,18 @@ def reload_config() -> AppConfig:
     global config
     config = None
     return get_config()
+
+
+def get_services_config_path() -> Optional[Path]:
+    """Get the path to services configuration file from environment or config"""
+    # Check environment variable first
+    env_path = os.getenv("MCP_SERVICES_CONFIG_PATH")
+    if env_path:
+        return Path(env_path)
+
+    # Check server config
+    cfg = get_config(require_sap=False)
+    if cfg.server.services_config_path:
+        return Path(cfg.server.services_config_path)
+
+    return None

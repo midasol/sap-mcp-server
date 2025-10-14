@@ -153,7 +153,8 @@ graph TB
     subgraph "Configuration Layer"
         C1["🌍 Environment Variables<br/>(.env.server)"]
         C2["⚙️ SAPConnectionConfig<br/>(Pydantic)"]
-        C3["🔧 Service Definitions"]
+        C3["📋 YAML Service Config<br/>(services.yaml)"]
+        C4["🔧 Service Loader<br/>(services_loader.py)"]
     end
 
     A1 --> B1
@@ -384,6 +385,75 @@ graph LR
     style D2 fill:#95E1D3,stroke:#38B2AC,color:#000
     style D3 fill:#95E1D3,stroke:#38B2AC,color:#000
 ```
+
+### YAML Service Configuration
+
+The server uses a YAML-based configuration system to define SAP services and entities, making it generic and service-agnostic.
+
+**Configuration Flow**:
+
+```mermaid
+graph LR
+    subgraph "Configuration Files"
+        A1["config/services.yaml<br/>(Service Definitions)"]
+        A2["MCP_SERVICES_CONFIG_PATH<br/>(Environment Variable)"]
+    end
+
+    subgraph "Loading & Validation"
+        B1["services_loader.py<br/>(YAML Parser)"]
+        B2["schemas.py<br/>(Pydantic Models)"]
+        B3["ServicesYAMLConfig<br/>(Validated Config)"]
+    end
+
+    subgraph "Runtime Usage"
+        C1["SAPClient<br/>(URL Building)"]
+        C2["SAP Tools<br/>(Service Validation)"]
+        C3["sap_list_services<br/>(Service Discovery)"]
+    end
+
+    A1 --> B1
+    A2 -.-> B1
+    B1 --> B2
+    B2 --> B3
+
+    B3 --> C1
+    B3 --> C2
+    B3 --> C3
+
+    style A1 fill:#FF6B6B,stroke:#C92A2A,color:#FFF
+    style A2 fill:#FF6B6B,stroke:#C92A2A,color:#FFF
+    style B1 fill:#4ECDC4,stroke:#0A9396,color:#000
+    style B2 fill:#4ECDC4,stroke:#0A9396,color:#000
+    style B3 fill:#4ECDC4,stroke:#0A9396,color:#000
+    style C1 fill:#95E1D3,stroke:#38B2AC,color:#000
+    style C2 fill:#95E1D3,stroke:#38B2AC,color:#000
+    style C3 fill:#95E1D3,stroke:#38B2AC,color:#000
+```
+
+**Key Features**:
+- **Generic Design**: No hardcoded services or entities in code
+- **Pydantic Validation**: Type-safe configuration with automatic validation
+- **Service Discovery**: `sap_list_services` tool returns actual configured services
+- **Flexible URL Patterns**: Support for different SAP Gateway URL structures
+- **Runtime Validation**: Tools validate service/entity existence with helpful error messages
+
+**Example Configuration** (`config/services.yaml`):
+```yaml
+gateway:
+  base_url_pattern: "https://{host}:{port}/sap/opu/odata"
+
+services:
+  - id: Z_SALES_ORDER_SRV
+    name: "Sales Order Service"
+    path: "/SAP/Z_SALES_ORDER_SRV"
+    version: v2
+    entities:
+      - name: SalesOrderSet
+        key_field: Vbeln
+        description: "Sales orders"
+```
+
+See [CONFIGURATION_GUIDE.md](./CONFIGURATION_GUIDE.md) for complete YAML configuration documentation.
 
 ## Security Architecture
 

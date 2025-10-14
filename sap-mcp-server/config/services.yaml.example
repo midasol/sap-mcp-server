@@ -1,0 +1,199 @@
+# SAP Gateway Services Configuration - Extended Examples
+# Copy this file to services.yaml and customize for your SAP environment
+
+# Gateway URL configuration
+gateway:
+  # Base URL pattern for OData services
+  # Standard SAP Gateway pattern: https://{host}:{port}/sap/opu/odata
+  # For different SAP systems, adjust the pattern accordingly
+  base_url_pattern: "https://{host}:{port}/sap/opu/odata"
+
+  # Metadata endpoint suffix (standard OData)
+  metadata_suffix: "/$metadata"
+
+  # Service catalog path for listing available services
+  service_catalog_path: "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
+
+# SAP OData Services
+# Each service defines:
+# - id: Unique identifier used in MCP tool calls
+# - name: Human-readable service name
+# - path: Service path relative to base_url_pattern
+# - version: OData version (v2 or v4)
+# - entities: List of entity sets available in this service
+# - custom_headers: Optional HTTP headers for this service
+services:
+  # Example 1: Sales Order Service
+  - id: Z_SALES_ORDER_GENAI_SRV
+    name: "Sales Order GenAI Service"
+    path: "/SAP/Z_SALES_ORDER_GENAI_SRV"
+    version: v2
+    description: "Sales order management service for GenAI integration"
+    entities:
+      - name: zsd004Set
+        key_field: Vbeln
+        description: "Sales orders entity set"
+        navigations:
+          - ToItems
+          - ToPartner
+        default_select:
+          - Vbeln        # Sales Order Number
+          - Erdat        # Creation Date
+          - Ernam        # Created By
+          - Netwr        # Net Value
+          - Waerk        # Currency
+          - Vkorg        # Sales Organization
+          - Vtweg        # Distribution Channel
+    custom_headers: {}
+
+  # Example 2: Customer Master Data Service
+  - id: Z_CUSTOMER_SRV
+    name: "Customer Master Data Service"
+    path: "/SAP/Z_CUSTOMER_SRV"
+    version: v2
+    description: "Customer master data service"
+    entities:
+      - name: CustomerSet
+        key_field: Kunnr
+        description: "Customer master records"
+        navigations:
+          - ToSalesAreas
+          - ToAddresses
+        default_select:
+          - Kunnr        # Customer Number
+          - Name1        # Name
+          - Land1        # Country
+          - Regio        # Region
+          - Pstlz        # Postal Code
+          - Ort01        # City
+      - name: CustomerAddressSet
+        key_field: AddrNum
+        description: "Customer addresses"
+        default_select:
+          - AddrNum
+          - Street
+          - City
+          - Country
+    custom_headers:
+      sap-client: "100"
+
+  # Example 3: Material Master Service
+  - id: Z_MATERIAL_SRV
+    name: "Material Master Service"
+    path: "/SAP/Z_MATERIAL_SRV"
+    version: v2
+    description: "Material master data service"
+    entities:
+      - name: MaterialSet
+        key_field: Matnr
+        description: "Material master records"
+        navigations:
+          - ToPlantData
+          - ToValuation
+        default_select:
+          - Matnr        # Material Number
+          - Maktx        # Material Description
+          - Mtart        # Material Type
+          - Mbrsh        # Industry Sector
+          - Meins        # Base Unit of Measure
+      - name: MaterialPlantSet
+        key_field: Matnr
+        description: "Material plant data"
+        default_select:
+          - Matnr
+          - Werks        # Plant
+          - Ekgrp        # Purchasing Group
+    custom_headers: {}
+
+  # Example 4: Purchase Order Service
+  - id: Z_PURCHASE_ORDER_SRV
+    name: "Purchase Order Service"
+    path: "/SAP/Z_PURCHASE_ORDER_SRV"
+    version: v2
+    description: "Purchase order service"
+    entities:
+      - name: PurchaseOrderSet
+        key_field: Ebeln
+        description: "Purchase order headers"
+        navigations:
+          - ToItems
+          - ToVendor
+        default_select:
+          - Ebeln        # PO Number
+          - Bukrs        # Company Code
+          - Bstyp        # Document Category
+          - Bsart        # Document Type
+          - Bedat        # PO Date
+          - Lifnr        # Vendor
+      - name: POItemSet
+        key_field: Ebelp
+        description: "Purchase order items"
+        default_select:
+          - Ebeln
+          - Ebelp        # Item Number
+          - Matnr        # Material
+          - Menge        # Quantity
+          - Meins        # Unit
+          - Netpr        # Net Price
+    custom_headers: {}
+
+  # Example 5: Inventory Service
+  - id: Z_INVENTORY_SRV
+    name: "Inventory Management Service"
+    path: "/SAP/Z_INVENTORY_SRV"
+    version: v2
+    description: "Stock and inventory management"
+    entities:
+      - name: StockSet
+        key_field: Matnr
+        description: "Material stock levels"
+        default_select:
+          - Matnr        # Material
+          - Werks        # Plant
+          - Lgort        # Storage Location
+          - Labst        # Stock Quantity
+          - Meins        # Unit
+    custom_headers: {}
+
+  # Example 6: Finance Service (OData v4 example)
+  - id: Z_FINANCE_SRV
+    name: "Finance Service"
+    path: "/SAP/Z_FINANCE_SRV"
+    version: v4
+    description: "Financial accounting service (OData v4)"
+    entities:
+      - name: GLAccountSet
+        key_field: Hkont
+        description: "G/L Account master data"
+        default_select:
+          - Hkont        # G/L Account Number
+          - Txt20        # G/L Account Short Text
+          - Waers        # Currency
+    custom_headers:
+      Prefer: "odata.maxpagesize=500"
+
+# Configuration Tips:
+#
+# 1. Service Discovery:
+#    - Use transaction SE80 or /IWFND/MAINT_SERVICE to find service names
+#    - Service path format is usually /SAP/<SERVICE_NAME> or /<NAMESPACE>/<SERVICE_NAME>
+#
+# 2. Entity Sets:
+#    - View service metadata at: {base_url}{service_path}/$metadata
+#    - Find EntitySet names and their key fields in the metadata XML
+#
+# 3. Key Fields:
+#    - Single key: Just specify the field name (e.g., "Vbeln")
+#    - Composite key: For now, specify primary key field (enhancement needed for multi-key)
+#
+# 4. Navigations:
+#    - List navigation properties for documentation
+#    - Future enhancement: Use for automatic expansion
+#
+# 5. Custom Headers:
+#    - Add service-specific headers like sap-client, language, etc.
+#    - These are merged with authentication headers
+#
+# 6. Default Select:
+#    - Specify commonly used fields to optimize queries
+#    - Reduces payload size and improves performance

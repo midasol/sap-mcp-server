@@ -8,7 +8,9 @@ from typing import Any, Dict, List, Optional, Union, cast
 import aiohttp
 import xmltodict
 
-from ..config.settings import SAPConnectionConfig
+from ..config.schemas import GatewayConfig
+from ..config.services_loader import get_services_config
+from ..config.settings import SAPConnectionConfig, get_services_config_path
 from .auth import SAPAuthenticator
 from .exceptions import (
     SAPAuthenticationError,
@@ -24,15 +26,28 @@ logger = logging.getLogger(__name__)
 class SAPClient:
     """SAP Gateway OData client with authentication and session management"""
 
-    def __init__(self, config: SAPConnectionConfig):
+    def __init__(
+        self,
+        config: SAPConnectionConfig,
+        gateway_config: Optional[GatewayConfig] = None,
+    ):
         self.config = config
         self.authenticator = SAPAuthenticator(config)
         self._session: Optional[aiohttp.ClientSession] = None
         self._session_lock = asyncio.Lock()
 
-        # Build base URLs (always use https, SSL verification controlled separately)
+        # Load gateway configuration
+        if gateway_config is None:
+            services_config = get_services_config(get_services_config_path())
+            self.gateway_config = services_config.gateway
+        else:
+            self.gateway_config = gateway_config
+
+        # Build base URLs using gateway configuration
         self.base_url = f"https://{config.host}:{config.port}"
-        self.odata_base = f"{self.base_url}/sap/opu/odata"
+        self.odata_base = self.gateway_config.base_url_pattern.format(
+            host=config.host, port=config.port
+        )
 
     async def __aenter__(self) -> "SAPClient":
         """Async context manager entry"""
@@ -214,7 +229,13 @@ class SAPClient:
 
     async def list_services(self) -> List[Dict[str, Any]]:
         """List available OData services"""
-        url = f"{self.odata_base}/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
+        # Use catalog path from gateway configuration
+        catalog_path = self.gateway_config.service_catalog_path
+        # If catalog path is absolute, use it; otherwise append to odata_base
+        if catalog_path.startswith("http"):
+            url = catalog_path
+        else:
+            url = f"{self.base_url}{catalog_path}"
 
         # Add Accept header for JSON format
         headers = {"Accept": "application/json"}

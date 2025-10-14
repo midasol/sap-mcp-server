@@ -11,6 +11,7 @@ SAP MCP Server is a production-ready MCP server that provides SAP Gateway OData 
 - ✅ **SSE Transport**: HTTP-based Server-Sent Events for production deployment
 - ✅ **Stdio Transport**: Standard I/O for development and testing
 - ✅ **SAP Gateway Integration**: Full OData v2/v4 support
+- ✅ **YAML Configuration**: Generic, service-agnostic design with YAML-based configuration
 - ✅ **Authentication**: Secure SAP credential management
 - ✅ **Production Ready**: Docker, Kubernetes, and cloud deployment support
 - ✅ **Monitoring**: Built-in health checks and metrics
@@ -28,6 +29,8 @@ pip install -e ".[dev]"
 ```
 
 ### Configuration
+
+#### 1. Environment Variables
 
 ```bash
 # Copy environment template
@@ -51,7 +54,39 @@ SAP_PASSWORD=your_password
 MCP_HOST=0.0.0.0
 MCP_PORT=8000
 MCP_LOG_LEVEL=INFO
+
+# Optional: Custom services configuration path
+MCP_SERVICES_CONFIG_PATH=config/services.yaml
 ```
+
+#### 2. Service Configuration (YAML)
+
+The server uses YAML configuration to define SAP services and entities. This makes it completely generic and adaptable to any SAP OData service.
+
+**Create/Edit** `config/services.yaml`:
+
+```yaml
+# Gateway URL configuration
+gateway:
+  base_url_pattern: "https://{host}:{port}/sap/opu/odata"
+
+# SAP OData Services
+services:
+  - id: Z_SALES_ORDER_SRV
+    name: "Sales Order Service"
+    path: "/SAP/Z_SALES_ORDER_SRV"
+    version: v2
+    entities:
+      - name: SalesOrderSet
+        key_field: Vbeln
+        description: "Sales orders"
+        default_select:
+          - Vbeln
+          - Erdat
+          - Netwr
+```
+
+**See [CONFIGURATION_GUIDE.md](./CONFIGURATION_GUIDE.md) for complete YAML configuration documentation.**
 
 ### Running the Server
 
@@ -136,6 +171,34 @@ services:
 
 ## Available Tools
 
+### `sap_list_services`
+
+List all available SAP OData services configured in `services.yaml`.
+
+```json
+{
+  "name": "sap_list_services",
+  "arguments": {}
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "count": 2,
+  "services": [
+    {
+      "id": "Z_SALES_ORDER_SRV",
+      "name": "Sales Order Service",
+      "path": "/SAP/Z_SALES_ORDER_SRV",
+      "version": "v2",
+      "entities": [...]
+    }
+  ]
+}
+```
+
 ### `sap_authenticate`
 
 Authenticate with SAP Gateway and establish a session.
@@ -149,7 +212,7 @@ Authenticate with SAP Gateway and establish a session.
 
 ### `sap_get_entity`
 
-Retrieve a specific entity by key.
+Retrieve a specific entity by key. Service and entity must be defined in `services.yaml`.
 
 ```json
 {
@@ -162,13 +225,15 @@ Retrieve a specific entity by key.
 }
 ```
 
-### `sap_query_entities`
+**Note**: The tool validates that the service and entity exist in your YAML configuration and provides helpful error messages if not found.
+
+### `sap_query`
 
 Query entities with filters and pagination.
 
 ```json
 {
-  "name": "sap_query_entities",
+  "name": "sap_query",
   "arguments": {
     "service": "Z_SALES_ORDER_SRV",
     "entity_set": "SalesOrderSet",
@@ -256,6 +321,16 @@ bandit -r src/
 | `MCP_HOST` | Server bind address | `0.0.0.0` | No |
 | `MCP_PORT` | Server port | `8000` | No |
 | `MCP_LOG_LEVEL` | Logging level | `INFO` | No |
+| `MCP_SERVICES_CONFIG_PATH` | Path to services.yaml | `config/services.yaml` | No |
+
+### Service Configuration (YAML)
+
+See [CONFIGURATION_GUIDE.md](./CONFIGURATION_GUIDE.md) for complete documentation on:
+- YAML schema and structure
+- How to add new services and entities
+- Gateway URL pattern configuration
+- Configuration best practices
+- Troubleshooting and validation
 
 ## Troubleshooting
 

@@ -13,6 +13,7 @@ Standalone MCP server for SAP Gateway integration, designed for production deplo
 - ✅ SSE transport for production (HTTP/Server-Sent Events)
 - ✅ Stdio transport for development
 - ✅ SAP Gateway OData v2/v4 support
+- ✅ **YAML Configuration** - Generic, service-agnostic design
 - ✅ Docker & Kubernetes ready
 - ✅ Production monitoring and health checks
 
@@ -133,6 +134,8 @@ python examples/sse_client.py
 
 - **[Project Structure](./PROJECT_STRUCTURE.md)**: Detailed repository organization
 - **[Server README](./sap-mcp-server/README.md)**: Server installation and deployment
+- **[Configuration Guide](./sap-mcp-server/CONFIGURATION_GUIDE.md)**: Complete YAML configuration reference
+- **[Refactoring Summary](./sap-mcp-server/REFACTORING_SUMMARY.md)**: Architecture and refactoring details
 - **[Server Deployment](./sap-mcp-server/DEPLOYMENT.md)**: Production deployment guide
 - **[Client README](./sap-mcp-client/README.md)**: Client usage and examples
 

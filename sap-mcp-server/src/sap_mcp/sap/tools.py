@@ -3,6 +3,8 @@
 import logging
 from typing import Any, Dict
 
+from ..config.services_loader import get_services_config
+from ..config.settings import get_services_config_path
 from ..protocol.tools import MCPTool, tool_registry
 from .client import SAPClient
 
@@ -163,8 +165,31 @@ class SAPGetEntityTool(MCPTool):
 
             config = get_config(require_sap=True)
 
-            # Build service path
-            service_path = f"/SAP/{params['service']}"
+            # Load services configuration
+            services_config = get_services_config(get_services_config_path())
+
+            # Validate service exists
+            service_config = services_config.get_service(params["service"])
+            if not service_config:
+                available_services = services_config.list_service_ids()
+                return {
+                    "success": False,
+                    "error": f"Service '{params['service']}' not found in configuration. "
+                    f"Available services: {', '.join(available_services)}",
+                }
+
+            # Validate entity exists in service
+            entity_config = service_config.get_entity(params["entity_set"])
+            if not entity_config:
+                available_entities = [e.name for e in service_config.entities]
+                return {
+                    "success": False,
+                    "error": f"Entity set '{params['entity_set']}' not found in service '{params['service']}'. "
+                    f"Available entities: {', '.join(available_entities)}",
+                }
+
+            # Use service path from configuration
+            service_path = service_config.path
 
             # Parse select fields if provided
             select_fields = None
@@ -190,6 +215,7 @@ class SAPGetEntityTool(MCPTool):
                     "service": params["service"],
                     "entity_set": params["entity_set"],
                     "entity_key": params["entity_key"],
+                    "key_field": entity_config.key_field,
                     "data": result,
                 }
 
@@ -207,24 +233,44 @@ class SAPListServicesTool(MCPTool):
 
     @property
     def description(self) -> str:
-        return "List all available SAP OData services"
+        return "List all available SAP OData services configured in services.yaml"
 
     @property
     def input_schema(self) -> Dict[str, Any]:
         return {"type": "object", "properties": {}}
 
     async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """List available services"""
+        """List available services from configuration"""
         try:
-            # Mock response for now
+            # Load services configuration
+            services_config = get_services_config(get_services_config_path())
+
+            # Build service list with details
+            services = []
+            for service in services_config.services:
+                services.append(
+                    {
+                        "id": service.id,
+                        "name": service.name,
+                        "path": service.path,
+                        "version": service.version,
+                        "description": service.description,
+                        "entities": [
+                            {
+                                "name": entity.name,
+                                "key_field": entity.key_field,
+                                "description": entity.description,
+                            }
+                            for entity in service.entities
+                        ],
+                    }
+                )
+
             return {
                 "success": True,
-                "services": [
-                    "Z_SALES_ORDER_GENAI_SRV",
-                    "Z_CUSTOMER_SRV",
-                    "Z_MATERIAL_SRV",
-                ],
-                "message": "Mock service list (actual implementation pending)",
+                "count": len(services),
+                "services": services,
+                "source": "services.yaml configuration",
             }
 
         except Exception as e:
