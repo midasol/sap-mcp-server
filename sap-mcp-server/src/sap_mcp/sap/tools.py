@@ -3,7 +3,6 @@
 import logging
 from typing import Any, Dict
 
-from ..config.settings import SAPConnectionConfig
 from ..protocol.tools import MCPTool, tool_registry
 from .client import SAPClient
 
@@ -25,38 +24,25 @@ class SAPAuthenticateTool(MCPTool):
     def input_schema(self) -> Dict[str, Any]:
         return {
             "type": "object",
-            "properties": {
-                "host": {"type": "string", "description": "SAP Gateway host URL"},
-                "username": {"type": "string", "description": "SAP username"},
-                "password": {"type": "string", "description": "SAP password"},
-                "client": {
-                    "type": "string",
-                    "description": "SAP client number (optional)",
-                    "default": "100",
-                },
-            },
-            "required": ["host", "username", "password"],
+            "properties": {},
         }
 
     async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Execute authentication"""
         try:
-            config = SAPConnectionConfig(
-                host=params["host"],
-                username=params["username"],
-                password=params["password"],
-                client=params.get("client", "100"),
-            )
+            from ..config.settings import get_config
 
-            async with SAPClient(config) as client:
+            config = get_config(require_sap=True)
+
+            async with SAPClient(config.sap) as client:
                 success = await client.authenticate()
 
             if success:
                 return {
                     "success": True,
                     "message": "Successfully authenticated with SAP Gateway",
-                    "host": params["host"],
-                    "client": config.client,
+                    "host": config.sap.host,
+                    "client": config.sap.client,
                 }
             else:
                 return {"success": False, "error": "Authentication failed"}
@@ -137,6 +123,81 @@ class SAPQueryTool(MCPTool):
             return {"success": False, "error": str(e)}
 
 
+class SAPGetEntityTool(MCPTool):
+    """Tool for retrieving a single SAP entity by key"""
+
+    @property
+    def name(self) -> str:
+        return "sap_get_entity"
+
+    @property
+    def description(self) -> str:
+        return "Retrieve a single entity from SAP OData service by key (e.g., OrderID)"
+
+    @property
+    def input_schema(self) -> Dict[str, Any]:
+        return {
+            "type": "object",
+            "properties": {
+                "service": {"type": "string", "description": "OData service name"},
+                "entity_set": {
+                    "type": "string",
+                    "description": "Entity set name (e.g., zsd004Set)",
+                },
+                "entity_key": {
+                    "type": "string",
+                    "description": "Entity key value (e.g., OrderID like '91000092')",
+                },
+                "select": {
+                    "type": "string",
+                    "description": "Comma-separated list of fields to select (optional)",
+                },
+            },
+            "required": ["service", "entity_set", "entity_key"],
+        }
+
+    async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Retrieve entity by key"""
+        try:
+            from ..config.settings import get_config
+
+            config = get_config(require_sap=True)
+
+            # Build service path
+            service_path = f"/SAP/{params['service']}"
+
+            # Parse select fields if provided
+            select_fields = None
+            if "select" in params:
+                select_fields = [f.strip() for f in params["select"].split(",")]
+
+            async with SAPClient(config.sap) as client:
+                # Authenticate first
+                auth_success = await client.authenticate()
+                if not auth_success:
+                    return {"success": False, "error": "Authentication failed"}
+
+                # Get entity by key
+                result = await client.get_entity(
+                    service_path=service_path,
+                    entity_set=params["entity_set"],
+                    entity_key=params["entity_key"],
+                    select_fields=select_fields,
+                )
+
+                return {
+                    "success": True,
+                    "service": params["service"],
+                    "entity_set": params["entity_set"],
+                    "entity_key": params["entity_key"],
+                    "data": result,
+                }
+
+        except Exception as e:
+            logger.error(f"Failed to get entity: {e}")
+            return {"success": False, "error": str(e)}
+
+
 class SAPListServicesTool(MCPTool):
     """Tool for listing available SAP OData services"""
 
@@ -176,8 +237,9 @@ def register_sap_tools() -> None:
     """Register all SAP tools with the global registry"""
     tool_registry.register(SAPAuthenticateTool())
     tool_registry.register(SAPQueryTool())
+    tool_registry.register(SAPGetEntityTool())
     tool_registry.register(SAPListServicesTool())
-    logger.info("Registered 3 SAP tools")
+    logger.info("Registered 4 SAP tools")
 
 
 # Auto-register on import

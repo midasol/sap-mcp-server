@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sap-mcp"
+name = "sap-mcp-server"
 version = "0.1.0"
 description = "SAP Gateway MCP Server - Model Context Protocol server for SAP integration"
 readme = "README.md"
@@ -11,7 +11,7 @@ license = {text = "MIT"}
 authors = [
     {name = "SAP MCP Team", email = "sap-mcp@company.com"}
 ]
-keywords = ["SAP", "MCP", "OData", "Gateway", "AI", "Integration"]
+keywords = ["SAP", "MCP", "OData", "Gateway", "AI", "Integration", "Server"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -37,6 +37,8 @@ dependencies = [
     "cryptography>=41.0.7",
     "xmltodict>=0.13.0",
     "mcp>=1.0.0",
+    "starlette>=0.27.0",
+    "python-dotenv>=1.0.0",
 ]
 
 [project.optional-dependencies]
@@ -65,13 +67,14 @@ deployment = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/company/sap-mcp"
-Documentation = "https://sap-mcp.readthedocs.io"
-Repository = "https://github.com/company/sap-mcp.git"
-Issues = "https://github.com/company/sap-mcp/issues"
+Homepage = "https://github.com/company/sap-mcp-server"
+Documentation = "https://sap-mcp-server.readthedocs.io"
+Repository = "https://github.com/company/sap-mcp-server.git"
+Issues = "https://github.com/company/sap-mcp-server/issues"
 
 [project.scripts]
-sap-mcp = "sap_mcp.cli:main"
+sap-mcp-server = "sap_mcp.sse_server:main"
+sap-mcp-server-stdio = "sap_mcp.stdio_server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -86,7 +89,6 @@ target-version = ['py311']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
-  # directories
   \.eggs
   | \.git
   | \.hg
@@ -104,7 +106,7 @@ profile = "black"
 multi_line_output = 3
 line_length = 88
 known_first_party = ["sap_mcp"]
-known_third_party = ["fastapi", "pydantic", "aiohttp"]
+known_third_party = ["fastapi", "pydantic", "aiohttp", "starlette"]
 
 # MyPy configuration
 [tool.mypy]
@@ -183,9 +185,8 @@ exclude_lines = [
 # Bandit security linting configuration
 [tool.bandit]
 exclude_dirs = ["tests", "venv", ".venv"]
-skips = ["B101"]  # Skip assert_used in tests
+skips = ["B101"]
 
-# Flake8 configuration (in setup.cfg since flake8 doesn't support pyproject.toml)
 [tool.flake8]
 max-line-length = 88
 extend-ignore = ["E203", "W503"]

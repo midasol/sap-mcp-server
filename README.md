@@ -1,112 +1,176 @@
-# SAP Gateway MCP Server
+# SAP MCP - SAP Gateway Integration via Model Context Protocol
 
-A Model Context Protocol (MCP) server that provides seamless integration with SAP Gateway services, enabling AI agents and applications to interact with SAP systems through standardized, secure, and efficient APIs.
+Complete MCP integration solution for SAP Gateway, providing both server and client packages for flexible deployment scenarios.
 
-## 🚀 Features
+## 📦 Repository Structure
 
-- **MCP Protocol Compliance**: Full Model Context Protocol support for AI agent integration
-- **SAP Gateway Integration**: Native OData v2/v4 support with CSRF authentication
-- **Cloud-Native**: Ready for deployment on Cloud Run, Docker, or traditional VMs
-- **Security First**: Enterprise-grade security with encrypted credentials and audit logging
-- **Production Ready**: Comprehensive monitoring, health checks, and error handling
-- **Extensible**: Plugin architecture for custom SAP services and operations
+This repository contains two independent packages:
 
-## 🛠️ Available Tools
+### [sap-mcp-server](./sap-mcp-server/)
+Standalone MCP server for SAP Gateway integration, designed for production deployment.
 
-The MCP server provides the following tools for SAP integration:
+**Features**:
+- ✅ SSE transport for production (HTTP/Server-Sent Events)
+- ✅ Stdio transport for development
+- ✅ SAP Gateway OData v2/v4 support
+- ✅ Docker & Kubernetes ready
+- ✅ Production monitoring and health checks
 
-### Authentication
-- `sap_authenticate`: Establish authenticated sessions with SAP Gateway
+**Installation**:
+```bash
+cd sap-mcp-server
+pip install -e .
+```
 
-### Data Operations
-- `sap_query`: Execute OData queries to retrieve SAP data (with filtering, selection, pagination)
+**Quick Start**:
+```bash
+# Configure
+cp .env.example .env
+vim .env
 
-### Discovery
-- `sap_list_services`: Discover available OData services
+# Run server
+python -m sap_mcp.sse_server
+```
 
-### Planned Tools
-- `sap_create_order`: Create sales orders in SAP
-- `sap_get_metadata`: Retrieve service metadata and schemas
+### [sap-mcp-client](./sap-mcp-client/)
+Lightweight Python client library for connecting to SAP MCP Server.
 
-## 📋 Prerequisites
+**Features**:
+- ✅ Simple async API
+- ✅ SSE and stdio transport
+- ✅ Type-safe with Pydantic
+- ✅ Minimal dependencies
+- ✅ Example code included
 
-- Python 3.11+
-- SAP Gateway system with OData services
-- Valid SAP credentials
-- Docker (for containerized deployment)
+**Installation**:
+```bash
+cd sap-mcp-client
+pip install -e .
+```
+
+**Quick Start**:
+```python
+import asyncio
+from mcp import ClientSession
+from mcp.client.sse import sse_client
+
+async def main():
+    async with sse_client("http://localhost:8000/sse") as (r, w):
+        async with ClientSession(r, w) as session:
+            await session.initialize()
+            result = await session.call_tool("sap_authenticate", {})
+            print(result)
+
+asyncio.run(main())
+```
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────┐
+│  Production Environment             │
+│                                     │
+│  ┌──────────────────────────────┐   │
+│  │ Kubernetes Cluster           │   │
+│  │  ┌────────────────────────┐  │   │
+│  │  │ sap-mcp-server         │  │   │
+│  │  │ (3 replicas)           │  │   │
+│  │  │ SSE: :8000/sse         │  │   │
+│  │  └─────────┬──────────────┘  │   │
+│  └────────────┼─────────────────┘   │
+└───────────────┼─────────────────────┘
+                │ HTTP/SSE
+        ┌───────┼───────┐
+        │       │       │
+        ▼       ▼       ▼
+    ┌────────┐ ┌────────┐ ┌────────┐
+    │ App 1  │ │ App 2  │ │ App 3  │
+    │(client)│ │(client)│ │(client)│
+    └────────┘ └────────┘ └────────┘
+```
+
+**Deployment Model**:
+- **Server**: Centralized deployment (Docker/Kubernetes)
+- **Clients**: Distributed across applications (pip install)
+- **Communication**: HTTP/SSE for production, stdio for development
 
 ## 🚀 Quick Start
 
-### 1. Clone and Setup
+### 1. Server Setup
 
 ```bash
-git clone https://github.com/midasol/SAP-MCP-GCP
-cd sap-mcp
+cd sap-mcp-server
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\\Scripts\\activate
+# Install
+pip install -e .
 
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### 2. Configuration
-
-```bash
-# Copy environment template
+# Configure SAP credentials
 cp .env.example .env
+vim .env  # Set SAP_HOST, SAP_USERNAME, SAP_PASSWORD
 
-# Edit configuration
-vi .env
+# Run server
+python -m sap_mcp.sse_server
+# Server running at http://localhost:8000/sse
 ```
 
-Required environment variables:
+### 2. Client Setup
+
 ```bash
-SAP_HOST=your-sap-server.com
-SAP_USERNAME=your-username
-SAP_PASSWORD=your-password
+cd sap-mcp-client
+
+# Install
+pip install -e .
+
+# Configure server URL
+cp .env.example .env
+vim .env  # Set SAP_MCP_SERVER_URL
+
+# Run example
+python examples/sse_client.py
 ```
 
-### 3. Run the Server
+## 📚 Documentation
 
-#### As MCP Stdio Server (for MCP clients like Claude Desktop)
+- **[Project Structure](./PROJECT_STRUCTURE.md)**: Detailed repository organization
+- **[Server README](./sap-mcp-server/README.md)**: Server installation and deployment
+- **[Server Deployment](./sap-mcp-server/DEPLOYMENT.md)**: Production deployment guide
+- **[Client README](./sap-mcp-client/README.md)**: Client usage and examples
+
+## 🔧 Development
+
+### Server Development
 
 ```bash
-python -m sap_mcp.stdio_server
+cd sap-mcp-server
+python -m venv venv
+source venv/bin/activate
+pip install -e ".[dev]"
+pytest
 ```
 
-#### As HTTP Server (for REST API access)
+### Client Development
 
 ```bash
-# Development mode
-python -m sap_mcp.server
-
-# Or with uvicorn directly
-uvicorn sap_mcp.protocol.server:get_app --factory --host 0.0.0.0 --port 8000 --reload
-```
-
-### 4. Test the Connection
-
-```bash
-# Health check
-curl http://localhost:8000/health
-
-# List available tools
-curl http://localhost:8000/tools
+cd sap-mcp-client
+python -m venv venv
+source venv/bin/activate
+pip install -e ".[dev]"
+pytest
 ```
 
 ## 🐳 Docker Deployment
 
-### Local Docker
+### Server Container
 
 ```bash
-# Build image
+cd sap-mcp-server
+
+# Build
 docker build -t sap-mcp-server .
 
-# Run container
+# Run
 docker run -d \
-  --name sap-mcp-server \
+  --name sap-mcp \
   -p 8000:8000 \
   --env-file .env \
   sap-mcp-server
@@ -114,265 +178,162 @@ docker run -d \
 
 ### Docker Compose
 
-```bash
-# Start services
-docker-compose up -d
-
-# With monitoring stack
-docker-compose --profile monitoring up -d
-
-# View logs
-docker-compose logs -f sap-mcp-server
-```
-
-## ☁️ Cloud Deployment
-
-### Google Cloud Run
-
-```bash
-# Build and deploy
-gcloud builds submit --tag gcr.io/PROJECT_ID/sap-mcp-server
-gcloud run deploy sap-mcp-server \
-  --image gcr.io/PROJECT_ID/sap-mcp-server \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --set-env-vars SAP_HOST=your-sap-server.com
-```
-
-### VM Deployment
-
-```bash
-# Install on Ubuntu/Debian
-sudo apt update
-sudo apt install python3.11 python3.11-venv
-
-# Setup service
-sudo cp deployment/systemd/sap-mcp.service /etc/systemd/system/
-sudo systemctl enable sap-mcp
-sudo systemctl start sap-mcp
-```
-
-## 📚 Usage Examples
-
-### MCP Client (stdio)
-
-```python
-import asyncio
-from mcp.client.stdio import stdio_client
-from mcp.client.session import ClientSession
-from mcp import StdioServerParameters
-
-async def main():
-    # Configure stdio server connection
-    server_params = StdioServerParameters(
-        command="python",
-        args=["-m", "sap_mcp.stdio_server"]
-    )
-
-    async with stdio_client(server_params) as (read, write):
-        async with ClientSession(read, write) as session:
-            # Initialize the session
-            await session.initialize()
-
-            # Authenticate with SAP
-            auth_result = await session.call_tool("sap_authenticate", {
-                "host": "sap.company.com",
-                "username": "user",
-                "password": "pass"
-            })
-            print(f"Auth result: {auth_result}")
-
-            # Query SAP data
-            result = await session.call_tool("sap_query", {
-                "service": "Z_SALES_ORDER_GENAI_SRV",
-                "entity_set": "zsd004Set",
-                "filter": "Auart eq 'OR'"
-            })
-            print(f"Query result: {result}")
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-### cURL Examples
-
-```bash
-# Authenticate
-curl -X POST http://localhost:8000/tools/sap_authenticate \\
-  -H \"Content-Type: application/json\" \\
-  -d '{
-    \"host\": \"sap.company.com\",
-    \"username\": \"user\",
-    \"password\": \"pass\"
-  }'
-
-# Create sales order
-curl -X POST http://localhost:8000/tools/sap_create_order \\
-  -H \"Content-Type: application/json\" \\
-  -d '{
-    \"order_data\": {
-      \"Auart\": \"OR\",
-      \"Vkorg\": \"1000\",
-      \"Vtweg\": \"10\",
-      \"Spart\": \"00\",
-      \"Kunnr\": \"100001\"
-    }
-  }'
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `SAP_HOST` | SAP server hostname | - | ✅ |
-| `SAP_PORT` | SAP server port | 44300 | ❌ |
-| `SAP_USERNAME` | SAP username | - | ✅ |
-| `SAP_PASSWORD` | SAP password | - | ✅ |
-| `SAP_CLIENT` | SAP client number | 100 | ❌ |
-| `MCP_PORT` | Server port | 8000 | ❌ |
-| `LOG_LEVEL` | Logging level | INFO | ❌ |
-
-### Service Configuration
-
-Custom SAP services can be configured in `config/services.yaml`:
-
 ```yaml
+version: '3.8'
 services:
-  MY_CUSTOM_SERVICE:
-    name: \"MY_CUSTOM_SERVICE\"
-    path: \"/sap/opu/odata/SAP/MY_CUSTOM_SERVICE\"
-    version: \"v2\"
-    entities:
-      - \"CustomEntitySet\"
-    custom_headers:
-      \"Custom-Header\": \"Value\"
-```
-
-## 📊 Monitoring
-
-### Health Checks
-
-```bash
-# Application health
-curl http://localhost:8000/health
-
-# Detailed health with dependencies
-curl http://localhost:8000/health/detailed
-```
-
-### Metrics
-
-Prometheus metrics available at `/metrics`:
-
-- `sap_mcp_requests_total`: Total requests by tool and status
-- `sap_mcp_request_duration_seconds`: Request duration histogram
-- `sap_mcp_active_connections`: Active SAP connections
-- `sap_mcp_active_sessions`: Active SAP sessions
-
-### Logging
-
-Structured JSON logging with correlation IDs:
-
-```json
-{
-  \"timestamp\": \"2024-01-15T10:30:00Z\",
-  \"level\": \"INFO\",
-  \"correlation_id\": \"req-123\",
-  \"tool\": \"sap_create_order\",
-  \"duration_ms\": 1250,
-  \"status\": \"success\"
-}
-```
-
-## 🧪 Testing
-
-```bash
-# Install development dependencies
-pip install -r requirements-dev.txt
-
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=sap_mcp --cov-report=html
-
-# Run specific test categories
-pytest -m unit          # Unit tests only
-pytest -m integration   # Integration tests only
-pytest -m e2e           # End-to-end tests only
+  sap-mcp-server:
+    build: ./sap-mcp-server
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./sap-mcp-server/.env
+    restart: unless-stopped
 ```
 
 ## 🔒 Security
 
-### Best Practices
+**Server Security**:
+- Environment variables for SAP credentials
+- SSL/TLS for production deployments
+- API authentication on SSE endpoint
+- Network isolation (VPC, firewall)
 
-- Store credentials in environment variables or secure secret managers
-- Enable SSL/TLS verification in production
-- Use strong encryption keys for sensitive data
-- Implement proper network security groups
-- Enable audit logging for compliance
-- Regularly update dependencies
+**Client Security**:
+- No SAP credentials required
+- Server URL configuration only
+- HTTPS transport in production
+- Server handles all authentication
 
-### Security Features
+## 📊 Use Cases
 
-- CSRF token-based authentication
-- Request rate limiting
-- Session timeout management
-- Encrypted credential storage
-- Comprehensive audit logging
-- Input validation and sanitization
+### Use Case 1: AI Chatbot Integration
+
+```python
+# Client application (chatbot)
+from mcp import ClientSession
+from mcp.client.sse import sse_client
+
+async def get_order_status(order_id):
+    async with sse_client(server_url) as (r, w):
+        async with ClientSession(r, w) as session:
+            await session.initialize()
+            return await session.call_tool(
+                "sap_get_entity",
+                {
+                    "service": "Z_ORDER_SRV",
+                    "entity_set": "Orders",
+                    "entity_key": order_id
+                }
+            )
+```
+
+### Use Case 2: Data Integration Pipeline
+
+```python
+# ETL job connecting to SAP
+async def sync_sap_data():
+    async with sse_client(server_url) as (r, w):
+        async with ClientSession(r, w) as session:
+            await session.initialize()
+
+            # Query entities
+            orders = await session.call_tool(
+                "sap_query_entities",
+                {
+                    "service": "Z_ORDER_SRV",
+                    "entity_set": "Orders",
+                    "filter": "Status eq 'OPEN'",
+                    "top": 1000
+                }
+            )
+
+            # Process data...
+```
+
+### Use Case 3: Microservice SAP Gateway
+
+```python
+# FastAPI microservice
+from fastapi import FastAPI
+from mcp import ClientSession
+from mcp.client.sse import sse_client
+
+app = FastAPI()
+
+@app.get("/orders/{order_id}")
+async def get_order(order_id: str):
+    async with sse_client(SAP_MCP_URL) as (r, w):
+        async with ClientSession(r, w) as session:
+            await session.initialize()
+            result = await session.call_tool(
+                "sap_get_entity",
+                {"service": "Z_ORDER_SRV", "entity_set": "Orders", "entity_key": order_id}
+            )
+            return result
+```
+
+## 🧪 Testing
+
+### Server Tests
+
+```bash
+cd sap-mcp-server
+
+# Unit tests
+pytest tests/unit/
+
+# Integration tests (requires SAP)
+pytest tests/integration/ -m sap
+
+# All tests with coverage
+pytest --cov
+```
+
+### Client Tests
+
+```bash
+cd sap-mcp-client
+
+# Mock server tests
+pytest tests/
+
+# Integration tests (requires running server)
+SAP_MCP_SERVER_URL=http://localhost:8000/sse pytest tests/integration/
+```
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Setup
-
-```bash
-# Install pre-commit hooks
-pre-commit install
-
-# Run code formatting
-black src/ tests/
-isort src/ tests/
-
-# Run linting
-flake8 src/ tests/
-mypy src/
-
-# Run security scan
-bandit -r src/
-```
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see LICENSE file for details
 
 ## 🆘 Support
 
-- 📖 [Documentation](https://sap-mcp.readthedocs.io)
-- 🐛 [Issue Tracker](https://github.com/company/sap-mcp/issues)
-- 💬 [Discussions](https://github.com/company/sap-mcp/discussions)
-- 📧 [Email Support](mailto:sap-mcp@company.com)
+- **Documentation**: https://sap-mcp.readthedocs.io
+- **Issues**: https://github.com/company/sap-mcp/issues
+- **Discussions**: https://github.com/company/sap-mcp/discussions
 
 ## 🗺️ Roadmap
 
-- [ ] Additional SAP modules support (HR, Finance, etc.)
-- [ ] WebSocket support for real-time updates
-- [ ] GraphQL API layer
-- [ ] Enhanced caching strategies
+- [ ] Publish packages to PyPI
+- [ ] Add WebSocket transport option
+- [ ] Support SAP BTP Cloud Foundry
+- [ ] Add GraphQL interface
 - [ ] Multi-tenant support
-- [ ] Advanced monitoring and alerting
+- [ ] Advanced caching and performance optimization
+- [ ] SAP Business One integration
+- [ ] SAP S/4HANA Cloud support
 
-## 🙏 Acknowledgments
+## 📜 Changelog
 
-- [Model Context Protocol](https://github.com/anthropics/mcp) specification
-- SAP OData documentation and examples
-- Open source community contributions
+See [CHANGELOG.md](./CHANGELOG.md) for version history.
+
+---
+
+**Built with ❤️ for SAP integration via Model Context Protocol**

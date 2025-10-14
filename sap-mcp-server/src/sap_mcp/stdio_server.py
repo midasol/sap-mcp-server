@@ -2,7 +2,9 @@
 
 import asyncio
 import logging
+from pathlib import Path
 
+from dotenv import load_dotenv
 from mcp import types
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
@@ -15,6 +17,15 @@ logger = logging.getLogger(__name__)
 
 async def main() -> None:
     """Main entry point for stdio MCP server"""
+
+    # Load environment variables from .env.server file
+    env_path = Path(__file__).parent.parent.parent / ".env.server"
+    if not env_path.exists():
+        # Fallback to .env for backward compatibility
+        env_path = Path(__file__).parent.parent.parent / ".env"
+
+    load_dotenv(dotenv_path=env_path)
+    logger.info(f"Loaded server environment variables from {env_path}")
 
     # Create MCP server
     server = Server("sap-mcp")

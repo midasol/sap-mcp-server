@@ -30,9 +30,8 @@ class SAPClient:
         self._session: Optional[aiohttp.ClientSession] = None
         self._session_lock = asyncio.Lock()
 
-        # Build base URLs
-        protocol = "https" if config.verify_ssl else "http"
-        self.base_url = f"{protocol}://{config.host}:{config.port}"
+        # Build base URLs (always use https, SSL verification controlled separately)
+        self.base_url = f"https://{config.host}:{config.port}"
         self.odata_base = f"{self.base_url}/sap/opu/odata"
 
     async def __aenter__(self) -> "SAPClient":
@@ -54,8 +53,19 @@ class SAPClient:
         async with self._session_lock:
             if self._session is None or self._session.closed:
                 timeout = aiohttp.ClientTimeout(total=self.config.timeout)
+
+                # Create SSL context when verification is disabled (for self-signed certs)
+                ssl_context = None
+                if not self.config.verify_ssl:
+                    import ssl
+
+                    ssl_context = ssl.create_default_context()
+                    ssl_context.check_hostname = False
+                    ssl_context.verify_mode = ssl.CERT_NONE
+                    logger.warning("SSL certificate verification is disabled")
+
                 connector = aiohttp.TCPConnector(
-                    verify_ssl=self.config.verify_ssl,
+                    ssl=ssl_context if ssl_context else True,
                     limit=100,  # Connection pool limit
                     limit_per_host=10,
                 )
@@ -91,8 +101,14 @@ class SAPClient:
         data: Optional[Union[str, Dict[str, Any]]] = None,
         params: Optional[Dict[str, str]] = None,
         retry_count: int = 0,
-    ) -> aiohttp.ClientResponse:
-        """Make authenticated HTTP request to SAP"""
+        read_response: bool = True,
+    ) -> Union[aiohttp.ClientResponse, str]:
+        """Make authenticated HTTP request to SAP
+
+        Args:
+            read_response: If True, reads response body as text and returns it.
+                         If False, returns the response object (caller must read).
+        """
 
         if retry_count >= self.config.retry_attempts:
             raise SAPRequestError(
@@ -139,7 +155,13 @@ class SAPClient:
                     await self.authenticator.invalidate_token()
                     # Retry with new token
                     return await self._make_request(
-                        method, url, headers, data, params, retry_count + 1
+                        method,
+                        url,
+                        headers,
+                        data,
+                        params,
+                        retry_count + 1,
+                        read_response,
                     )
 
                 # Handle other errors
@@ -151,7 +173,12 @@ class SAPClient:
                         response_data={"url": url, "method": method},
                     )
 
-                return response
+                # Read response body if requested (to avoid connection closing issues)
+                if read_response:
+                    response_text = await response.text()
+                    return response_text
+                else:
+                    return response
 
         except asyncio.TimeoutError:
             raise SAPTimeoutError(f"Request timeout for {method} {url}")
@@ -163,7 +190,7 @@ class SAPClient:
                 )
                 await asyncio.sleep(2**retry_count)  # Exponential backoff
                 return await self._make_request(
-                    method, url, headers, data, params, retry_count + 1
+                    method, url, headers, data, params, retry_count + 1, read_response
                 )
             else:
                 raise SAPConnectionError(f"Connection error: {str(e)}")
@@ -173,10 +200,11 @@ class SAPClient:
         url = f"{self.odata_base}{service_path}/$metadata"
 
         headers = {"Accept": "application/xml"}
-        response = await self._make_request("GET", url, headers=headers)
+        xml_content = await self._make_request(
+            "GET", url, headers=headers, read_response=True
+        )
 
         # Parse XML metadata
-        xml_content = await response.text()
         try:
             metadata = xmltodict.parse(xml_content)
             logger.info(f"Retrieved metadata for service: {service_path}")
@@ -188,8 +216,13 @@ class SAPClient:
         """List available OData services"""
         url = f"{self.odata_base}/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
 
-        response = await self._make_request("GET", url)
-        data = await response.json()
+        # Add Accept header for JSON format
+        headers = {"Accept": "application/json"}
+
+        response_text = await self._make_request(
+            "GET", url, headers=headers, read_response=True
+        )
+        data = json.loads(response_text)
 
         # Extract service information
         services = []
@@ -221,6 +254,9 @@ class SAPClient:
         # Build URL
         url = f"{self.odata_base}{service_path}/{entity_set}"
 
+        # Add Accept header for JSON format
+        headers = {"Accept": "application/json"}
+
         # Build query parameters
         params = {}
 
@@ -246,8 +282,10 @@ class SAPClient:
         # Add format parameter for JSON response
         params["$format"] = "json"
 
-        response = await self._make_request("GET", url, params=params)
-        data = await response.json()
+        response_text = await self._make_request(
+            "GET", url, headers=headers, params=params, read_response=True
+        )
+        data = json.loads(response_text)
 
         logger.info(f"Queried entity set {entity_set} from service {service_path}")
         return cast(Dict[str, Any], data)
@@ -261,20 +299,14 @@ class SAPClient:
 
         headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
-        response = await self._make_request(
-            "POST", url, headers=headers, data=entity_data
+        response_text = await self._make_request(
+            "POST", url, headers=headers, data=entity_data, read_response=True
         )
 
-        if response.status == 201:
-            data = await response.json()
-            logger.info(f"Created entity in {entity_set}")
-            return cast(Dict[str, Any], data)
-        else:
-            error_text = await response.text()
-            raise SAPRequestError(
-                f"Failed to create entity: {response.status} - {error_text}",
-                status_code=response.status,
-            )
+        # For successful POST, parse the response
+        data = json.loads(response_text)
+        logger.info(f"Created entity in {entity_set}")
+        return cast(Dict[str, Any], data)
 
     async def update_entity(
         self,
@@ -289,22 +321,16 @@ class SAPClient:
 
         headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
-        response = await self._make_request(
-            "PUT", url, headers=headers, data=entity_data
+        response_text = await self._make_request(
+            "PUT", url, headers=headers, data=entity_data, read_response=True
         )
 
-        if response.status in [200, 204]:
-            if response.status == 200:
-                data = await response.json()
-                return cast(Dict[str, Any], data)
-            else:
-                return {"status": "updated"}
+        # Parse response if not empty (204 No Content returns empty string)
+        if response_text:
+            data = json.loads(response_text)
+            return cast(Dict[str, Any], data)
         else:
-            error_text = await response.text()
-            raise SAPRequestError(
-                f"Failed to update entity: {response.status} - {error_text}",
-                status_code=response.status,
-            )
+            return {"status": "updated"}
 
     async def delete_entity(
         self, service_path: str, entity_set: str, entity_key: str
@@ -313,17 +339,11 @@ class SAPClient:
 
         url = f"{self.odata_base}{service_path}/{entity_set}('{entity_key}')"
 
-        response = await self._make_request("DELETE", url)
+        # DELETE typically returns 204 No Content (empty response)
+        response_text = await self._make_request("DELETE", url, read_response=True)
 
-        if response.status == 204:
-            logger.info(f"Deleted entity {entity_key} from {entity_set}")
-            return True
-        else:
-            error_text = await response.text()
-            raise SAPRequestError(
-                f"Failed to delete entity: {response.status} - {error_text}",
-                status_code=response.status,
-            )
+        logger.info(f"Deleted entity {entity_key} from {entity_set}")
+        return True
 
     async def get_entity(
         self,
@@ -336,12 +356,25 @@ class SAPClient:
 
         url = f"{self.odata_base}{service_path}/{entity_set}('{entity_key}')"
 
+        # Add Accept header for JSON format
+        headers = {"Accept": "application/json"}
+
         params = {"$format": "json"}
         if select_fields:
             params["$select"] = ",".join(select_fields)
 
-        response = await self._make_request("GET", url, params=params)
-        data = await response.json()
+        try:
+            response_text = await self._make_request(
+                "GET", url, headers=headers, params=params, read_response=True
+            )
+            logger.debug(f"Response text: {response_text[:500]}")
 
-        logger.info(f"Retrieved entity {entity_key} from {entity_set}")
-        return cast(Dict[str, Any], data)
+            # Parse JSON from the text
+            data = json.loads(response_text)
+
+            logger.info(f"Retrieved entity {entity_key} from {entity_set}")
+            return cast(Dict[str, Any], data)
+
+        except Exception as e:
+            logger.error(f"Error in get_entity: {str(e)}")
+            raise

@@ -15,7 +15,9 @@ class SAPConnectionConfig(BaseSettings):
     client: str = Field("100", description="SAP client number")
     username: str = Field(..., description="SAP username")
     password: str = Field(..., description="SAP password")
-    verify_ssl: bool = Field(True, description="Verify SSL certificates")
+    verify_ssl: bool = Field(
+        False, description="Verify SSL certificates (set True for production)"
+    )
     timeout: int = Field(30, description="Request timeout in seconds")
     retry_attempts: int = Field(3, description="Number of retry attempts")
 
@@ -109,6 +111,7 @@ class AppConfig(BaseSettings):
         "env_file": ".env",
         "env_nested_delimiter": "__",
         "case_sensitive": False,
+        "extra": "allow",
     }
 
     @classmethod
