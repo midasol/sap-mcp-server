@@ -1,20 +1,19 @@
 # SAP MCP Server
 
-SAP Gateway Model Context Protocol (MCP) Server - Standalone server for SAP integration via MCP.
+SAP Gateway Model Context Protocol (MCP) Server - Stdio-based server for SAP integration via MCP.
 
 ## Overview
 
-SAP MCP Server is a production-ready MCP server that provides SAP Gateway OData integration through the Model Context Protocol. It runs as a standalone HTTP/SSE server that can be deployed independently and accessed by multiple clients.
+SAP MCP Server is a stdio-based MCP server that provides SAP Gateway OData integration through the Model Context Protocol. It uses standard input/output for communication, making it ideal for local development, Claude Desktop integration, and automated workflows.
 
 ## Features
 
-- ✅ **SSE Transport**: HTTP-based Server-Sent Events for production deployment
-- ✅ **Stdio Transport**: Standard I/O for development and testing
+- ✅ **Stdio Transport**: Standard I/O communication for simple, reliable operation
 - ✅ **SAP Gateway Integration**: Full OData v2/v4 support
 - ✅ **YAML Configuration**: Generic, service-agnostic design with YAML-based configuration
 - ✅ **Authentication**: Secure SAP credential management
-- ✅ **Production Ready**: Docker, Kubernetes, and cloud deployment support
-- ✅ **Monitoring**: Built-in health checks and metrics
+- ✅ **Claude Desktop Integration**: Direct integration with Claude Desktop
+- ✅ **Easy Setup**: No network configuration or port management needed
 
 ## Quick Start
 
@@ -32,31 +31,42 @@ pip install -e ".[dev]"
 
 #### 1. Environment Variables
 
-```bash
-# Copy environment template
-cp .env.example .env
+⚠️ **중요**: `.env.server` 파일에 **실제 SAP 서버 정보**를 입력해야 합니다.
 
-# Edit configuration
-vim .env
+```bash
+# Edit .env.server with your actual SAP credentials
+vim .env.server
 ```
 
-Required environment variables:
+**Required environment variables:**
 
 ```bash
 # SAP Connection
-SAP_HOST=your-sap-server.com
+SAP_HOST=actual-sap-server.company.com  # ← 실제 SAP 서버 주소
 SAP_PORT=44300
 SAP_CLIENT=100
-SAP_USERNAME=your_username
-SAP_PASSWORD=your_password
+SAP_USERNAME=actual_username            # ← 실제 사용자명
+SAP_PASSWORD=actual_password            # ← 실제 비밀번호
 
-# Server Configuration
-MCP_HOST=0.0.0.0
-MCP_PORT=8000
-MCP_LOG_LEVEL=INFO
+# Connection Settings
+SAP_VERIFY_SSL=false
+SAP_TIMEOUT=30
+SAP_RETRY_ATTEMPTS=3
 
 # Optional: Custom services configuration path
 MCP_SERVICES_CONFIG_PATH=config/services.yaml
+```
+
+**Verify configuration:**
+
+```bash
+python test_env_loading.py
+```
+
+Expected output when configured correctly:
+```
+✅ All environment variables are set with real values
+✅ SAPConnectionConfig created successfully!
 ```
 
 #### 2. Service Configuration (YAML)
@@ -90,78 +100,94 @@ services:
 
 ### Running the Server
 
-**SSE Mode (Production):**
+**Stdio Mode:**
 
 ```bash
-# Using Python module
-python -m sap_mcp.sse_server
+# Using Python module (recommended)
+python -m sap_mcp.stdio_server
 
 # Using entry point
 sap-mcp-server
-
-# With custom port
-MCP_PORT=9000 sap-mcp-server
 ```
 
-**Stdio Mode (Development):**
+The server will:
+1. Load environment variables from `.env.server`
+2. Initialize SAP connection
+3. Start listening on stdin/stdout for MCP protocol messages
 
-```bash
-python -m sap_mcp.stdio_server
+**Note**: Stdio mode is designed to be spawned by MCP clients. The server will wait for JSON-RPC messages on stdin and respond on stdout.
+
+### Claude Desktop Integration
+
+Add to your Claude Desktop configuration file:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+**Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "sap-mcp": {
+      "command": "python",
+      "args": ["-m", "sap_mcp.stdio_server"],
+      "env": {
+        "SAP_HOST": "actual-sap-server.company.com",
+        "SAP_PORT": "44300",
+        "SAP_CLIENT": "100",
+        "SAP_USERNAME": "actual_username",
+        "SAP_PASSWORD": "actual_password",
+        "SAP_VERIFY_SSL": "false"
+      }
+    }
+  }
+}
 ```
 
-### Docker Deployment
-
-```bash
-# Build image
-docker build -t sap-mcp-server .
-
-# Run container
-docker run -d \
-  --name sap-mcp \
-  -p 8000:8000 \
-  --env-file .env \
-  sap-mcp-server
+Or use environment file reference:
+```json
+{
+  "mcpServers": {
+    "sap-mcp": {
+      "command": "python",
+      "args": ["-m", "sap_mcp.stdio_server"]
+    }
+  }
+}
 ```
 
-### Docker Compose
-
-```yaml
-version: '3.8'
-services:
-  sap-mcp:
-    build: .
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-```
+Claude Desktop will automatically spawn the server and communicate via stdio.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────┐
-│  SAP MCP Server (SSE)               │
-│  http://server:8000/sse             │
+│  MCP Client (Claude Desktop, etc)   │
+│                                     │
+│  ┌─────────────────────────────┐   │
+│  │  MCP Client Library         │   │
+│  └─────────────┬───────────────┘   │
+└────────────────┼────────────────────┘
+                 │ stdin/stdout
+                 │ (JSON-RPC)
+┌────────────────▼────────────────────┐
+│  SAP MCP Server (Stdio)             │
 │                                     │
 │  ┌─────────────────────────────┐   │
 │  │  MCP Protocol Layer         │   │
+│  │  - Tool Registration        │   │
+│  │  - Message Handling         │   │
 │  └─────────────┬───────────────┘   │
 │                │                    │
 │  ┌─────────────▼───────────────┐   │
 │  │  SAP Gateway Client          │   │
 │  │  - Authentication            │   │
 │  │  - OData Operations          │   │
-│  │  - Connection Pooling        │   │
+│  │  - Error Handling            │   │
 │  └─────────────┬───────────────┘   │
 │                │                    │
 └────────────────┼────────────────────┘
-                 │ OData HTTP
+                 │ OData HTTPS
                  ▼
         ┌────────────────┐
         │  SAP Gateway   │
@@ -244,16 +270,15 @@ Query entities with filters and pagination.
 }
 ```
 
-## Production Deployment
+## Client Examples
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed production deployment guides including:
+Client examples are available in the `sap-mcp-client` package:
 
-- Kubernetes deployment
-- Load balancer configuration
-- SSL/TLS setup
-- Security best practices
-- Monitoring and logging
-- High availability setup
+- **stdio_client.py**: Basic stdio client that spawns the server
+- **order_inquiry_chatbot.py**: Interactive chatbot for order inquiries
+- **genai-example.py**: GenAI integration example
+
+See `../sap-mcp-client/examples/README.md` for detailed usage instructions.
 
 ## Development
 
@@ -334,46 +359,111 @@ See [CONFIGURATION_GUIDE.md](./CONFIGURATION_GUIDE.md) for complete documentatio
 
 ## Troubleshooting
 
-### Server Won't Start
+### Authentication Failed - Validation Errors
 
+**Error:**
+```
+Authentication failed: 3 validation errors for SAPConnectionConfig
+  host / username / password Field required
+```
+
+**Cause:** `.env.server` contains placeholder values or environment variables not loaded
+
+**Solution:**
+
+1. Run the test script:
+   ```bash
+   python test_env_loading.py
+   ```
+
+2. If placeholder values detected, edit `.env.server`:
+   ```bash
+   vim .env.server
+   ```
+
+3. Replace placeholders with actual values:
+   - ❌ `SAP_HOST=your-sap-server.com` (placeholder)
+   - ✅ `SAP_HOST=actual-server.company.com` (real value)
+
+4. Verify configuration again:
+   ```bash
+   python test_env_loading.py
+   ```
+
+### ModuleNotFoundError: No module named 'sap_mcp'
+
+**Cause:** Server package not installed
+
+**Solution:**
 ```bash
-# Check port availability
-netstat -tuln | grep 8000
-
-# Check environment variables
-python -c "from dotenv import load_dotenv; import os; load_dotenv(); print(os.environ.get('SAP_HOST'))"
-
-# Check logs
-tail -f logs/sap-mcp-server.log
+pip install -e .
 ```
 
 ### SAP Connection Failed
 
-```bash
-# Test SAP connectivity
-curl -k https://${SAP_HOST}:${SAP_PORT}/sap/opu/odata/sap/
+**Cause:** Network connectivity or credential issues
 
-# Verify credentials
-python -m sap_mcp.sap.auth
+**Solution:**
+
+1. Test SAP connectivity:
+   ```bash
+   curl -k https://${SAP_HOST}:${SAP_PORT}/sap/opu/odata/sap/
+   ```
+
+2. Verify credentials in `.env.server`
+
+3. Check SSL verification setting:
+   ```bash
+   # For development with self-signed certificates
+   SAP_VERIFY_SSL=false
+
+   # For production with valid certificates
+   SAP_VERIFY_SSL=true
+   ```
+
+### Service or Entity Not Found
+
+**Error:**
+```
+Service 'Z_SALES_ORDER_SRV' not found in configuration
 ```
 
-### SSE Connection Issues
+**Cause:** Service not defined in `config/services.yaml`
 
-```bash
-# Test SSE endpoint
-curl -N http://localhost:8000/sse
+**Solution:**
 
-# Check server health
-curl http://localhost:8000/health
-```
+1. Check available services:
+   ```bash
+   cat config/services.yaml
+   ```
+
+2. Add the service to `services.yaml`:
+   ```yaml
+   services:
+     - id: Z_SALES_ORDER_SRV
+       name: "Sales Order Service"
+       path: "/SAP/Z_SALES_ORDER_SRV"
+       version: v2
+       entities:
+         - name: SalesOrderSet
+           key_field: Vbeln
+   ```
+
+3. See [CONFIGURATION_GUIDE.md](./CONFIGURATION_GUIDE.md) for detailed YAML configuration
 
 ## Security
 
-- **Credentials**: Never commit `.env` files with real credentials
-- **SSL/TLS**: Use HTTPS in production with valid certificates
-- **Authentication**: Implement API authentication for SSE endpoint
-- **Network**: Use VPC/private networks for SAP connections
-- **Monitoring**: Enable audit logging and intrusion detection
+- **Credentials**: Never commit `.env.server` or `.env` files with real credentials
+  - `.env.server` is gitignored by default
+  - Use `.env.server.example` as a template
+- **SSL/TLS**:
+  - Use `SAP_VERIFY_SSL=true` in production
+  - Only use `SAP_VERIFY_SSL=false` for development with self-signed certificates
+- **Environment Variables**:
+  - In Claude Desktop, credentials are stored in the config file
+  - Ensure config file has appropriate permissions (600)
+- **Network**: Use VPN or private networks for SAP connections
+- **Monitoring**: Enable audit logging for SAP operations
 
 ## License
 

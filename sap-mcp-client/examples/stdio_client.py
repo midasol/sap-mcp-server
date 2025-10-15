@@ -1,85 +1,117 @@
+"""
+Stdio-based MCP Client - Auto-spawns server process
+
+This client automatically starts the SAP MCP server as a subprocess.
+The server package must be installed for this to work.
+
+Prerequisites:
+    pip install -e ../sap-mcp-server
+
+For connecting to a separately running server, use sse_client.py instead.
+"""
+
 import asyncio
 import json
+import sys
+from typing import Any, Dict
 
 from mcp import StdioServerParameters
 from mcp.client.session import ClientSession
 from mcp.client.stdio import stdio_client
 
 
+def format_response(result: Any) -> Dict[str, Any]:
+    """Parse and format MCP tool response"""
+    if not result.content or len(result.content) == 0:
+        return {"error": "Empty response"}
+
+    content_item = result.content[0]
+    if not hasattr(content_item, "text"):
+        return {"error": "No text content"}
+
+    try:
+        import ast
+
+        response_data = ast.literal_eval(content_item.text)
+
+        # Extract actual data from nested structure
+        if isinstance(response_data, list) and len(response_data) > 0:
+            actual_response = response_data[0]
+            if "text" in actual_response:
+                return ast.literal_eval(actual_response["text"])
+
+        return response_data
+
+    except (ValueError, SyntaxError) as e:
+        return {"error": f"Parse error: {e}", "raw": content_item.text}
+
+
 async def main() -> None:
-    # Connect to the MCP server via stdio
+    """Main test function"""
+    print("\n🚀 SAP MCP Client - Stdio Mode")
+    print("=" * 60)
+    print("This client auto-spawns the server as a subprocess")
+    print("=" * 60)
+
+    # Server will be spawned as a subprocess
     server_params = StdioServerParameters(
         command="python", args=["-m", "sap_mcp.stdio_server"]
     )
 
-    async with stdio_client(server_params) as (read, write):
-        async with ClientSession(read, write) as session:
-            # Initialize the session
-            await session.initialize()
+    try:
+        async with stdio_client(server_params) as (read, write):
+            async with ClientSession(read, write) as session:
+                # Initialize the session
+                print("\n📡 Initializing MCP session...")
+                await session.initialize()
+                print("✅ Session initialized")
 
-            # Authenticate with SAP (credentials loaded from environment variables)
-            auth_result = await session.call_tool("sap_authenticate", {})
-            print(f"Auth result: {auth_result}")
+                # Authenticate with SAP
+                print("\n=== SAP Authentication ===")
+                auth_result = await session.call_tool("sap_authenticate", {})
+                auth_response = format_response(auth_result)
 
-            # Get specific entity by OrderID
-            entity_result = await session.call_tool(
-                "sap_get_entity",
-                {
-                    "service": "Z_SALES_ORDER_GENAI_SRV",
-                    "entity_set": "zsd004Set",
-                    "entity_key": "91000092",
-                },
-            )
+                if auth_response.get("success"):
+                    print("✅ Authentication successful")
+                else:
+                    print(f"❌ Authentication failed: {auth_response.get('error')}")
+                    print("Please check SAP credentials in server's .env file")
+                    return
 
-            # Extract and format the JSON response
-            print("\n=== Entity Result (OrderID: 91000092) ===")
-            if entity_result.content and len(entity_result.content) > 0:
-                # Get the first content item (text response)
-                content_item = entity_result.content[0]
-                if hasattr(content_item, "text"):
-                    # The MCP response wraps the tool result in a string format
-                    # Parse it using ast.literal_eval first to handle single quotes
-                    import ast
+                # Get specific entity by OrderID
+                print("\n=== Get Entity (OrderID: 91000092) ===")
+                entity_result = await session.call_tool(
+                    "sap_get_entity",
+                    {
+                        "service": "Z_SALES_ORDER_GENAI_SRV",
+                        "entity_set": "zsd004Set",
+                        "entity_key": "91000092",
+                    },
+                )
 
-                    try:
-                        # Try to evaluate the string as Python literal
-                        response_data = ast.literal_eval(content_item.text)
-                        # Pretty print the data field which contains the entity
-                        if isinstance(response_data, list) and len(response_data) > 0:
-                            # Extract the actual response from the MCP wrapper
-                            actual_response = response_data[0]
-                            if "text" in actual_response:
-                                actual_data = ast.literal_eval(actual_response["text"])
-                                if "data" in actual_data:
-                                    print(
-                                        json.dumps(
-                                            actual_data["data"],
-                                            indent=2,
-                                            ensure_ascii=False,
-                                        )
-                                    )
-                                else:
-                                    print(
-                                        json.dumps(
-                                            actual_data, indent=2, ensure_ascii=False
-                                        )
-                                    )
-                        elif "data" in response_data:
-                            print(
-                                json.dumps(
-                                    response_data["data"], indent=2, ensure_ascii=False
-                                )
+                entity_response = format_response(entity_result)
+
+                if entity_response.get("success"):
+                    print("✅ Entity retrieved successfully")
+                    if "data" in entity_response:
+                        print(
+                            json.dumps(
+                                entity_response["data"], indent=2, ensure_ascii=False
                             )
-                        else:
-                            print(
-                                json.dumps(response_data, indent=2, ensure_ascii=False)
-                            )
-                    except (ValueError, SyntaxError) as e:
-                        # If parsing fails, print the raw response
-                        print(f"Error parsing response: {e}")
-                        print(content_item.text)
-            else:
-                print(f"{entity_result}")
+                        )
+                else:
+                    print(f"❌ Failed: {entity_response.get('error')}")
+
+                print("\n✅ Test completed")
+
+    except Exception as e:
+        print(f"\n❌ Error: {e}")
+        print(
+            "\nTroubleshooting:"
+        )
+        print("1. Is the server package installed? Run: pip install -e ../sap-mcp-server")
+        print("2. Can you run the server manually? Try: python -m sap_mcp.stdio_server")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
