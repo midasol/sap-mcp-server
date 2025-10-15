@@ -1,0 +1,34 @@
+# SAP Gateway Services Configuration
+# This file defines the OData services and entities available through the MCP server
+
+# Gateway URL configuration
+gateway:
+  # Base URL pattern for OData services
+  # Variables: {host}, {port}
+  base_url_pattern: "https://{host}:{port}/sap/opu/odata"
+
+  # Metadata endpoint suffix
+  metadata_suffix: "/$metadata"
+
+  # Service catalog path for listing available services
+  service_catalog_path: "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
+
+# SAP OData Services
+services:
+  # Sales Order GenAI Service (example)
+  - id: Z_SALES_ORDER_GENAI_SRV
+    name: "Sales Order GenAI Service"
+    path: "/SAP/Z_SALES_ORDER_GENAI_SRV"
+    version: v2
+    description: "Sales order management service for GenAI integration"
+    entities:
+      - name: zsd004Set
+        key_field: Vbeln
+        description: "Sales orders entity set"
+        default_select:
+          - Vbeln
+          - Erdat
+          - Ernam
+          - Netwr
+          - Waerk
+    custom_headers: {}

@@ -8,8 +8,8 @@ from typing import Dict, Optional
 
 import aiohttp
 
-from ..config.settings import SAPConnectionConfig
-from .exceptions import SAPAuthenticationError, SAPConnectionError
+from sap_mcp_server.config.settings import SAPConnectionConfig
+from sap_mcp_server.core.exceptions import SAPAuthenticationError, SAPConnectionError
 
 logger = logging.getLogger(__name__)
 

@@ -8,11 +8,11 @@ from typing import Any, Dict, List, Optional, Union, cast
 import aiohttp
 import xmltodict
 
-from ..config.schemas import GatewayConfig
-from ..config.services_loader import get_services_config
-from ..config.settings import SAPConnectionConfig, get_services_config_path
-from .auth import SAPAuthenticator
-from .exceptions import (
+from sap_mcp_server.config.schemas import GatewayConfig
+from sap_mcp_server.config.loader import get_services_config
+from sap_mcp_server.config.settings import SAPConnectionConfig, get_services_config_path
+from sap_mcp_server.core.auth import SAPAuthenticator
+from sap_mcp_server.core.exceptions import (
     SAPAuthenticationError,
     SAPConnectionError,
     SAPRequestError,
