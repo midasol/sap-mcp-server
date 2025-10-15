@@ -171,11 +171,8 @@ SAP_USERNAME=sapuser
 SAP_PASSWORD=sappass
 SAP_VERIFY_SSL=true
 
-# MCP Server
-MCP_PORT=8000
-MCP_HOST=0.0.0.0
+# MCP Server (Stdio)
 LOG_LEVEL=INFO
-MAX_WORKERS=10
 
 # Security
 SESSION_TIMEOUT=3600
@@ -286,36 +283,50 @@ RATE_LIMIT_PER_MINUTE=60
 
 ## 5. Deployment Architecture
 
-### 5.1 Container Specifications
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY src/ .
-EXPOSE 8000
-CMD ["python", "-m", "sap_mcp.server"]
+### 5.1 Package Installation
+```bash
+# Install from source
+cd sap-mcp-server
+pip install -e .
+
+# Run server
+python -m sap_mcp.stdio_server
+
+# Or use entry point
+sap-mcp-server
 ```
 
-### 5.2 Cloud Run Deployment
-- **Memory**: 1GB per instance
-- **CPU**: 1 vCPU per instance
-- **Max Instances**: 10 (auto-scaling)
-- **Request Timeout**: 30 seconds
-- **Health Check**: `/health` endpoint
+### 5.2 Claude Desktop Integration
+```json
+{
+  "mcpServers": {
+    "sap-mcp": {
+      "command": "python",
+      "args": ["-m", "sap_mcp.stdio_server"],
+      "env": {
+        "SAP_HOST": "sap.company.com",
+        "SAP_PORT": "44300",
+        "SAP_CLIENT": "100",
+        "SAP_USERNAME": "sapuser",
+        "SAP_PASSWORD": "sappass",
+        "SAP_VERIFY_SSL": "false"
+      }
+    }
+  }
+}
+```
 
-### 5.3 VM Deployment
+### 5.3 Systemd Service Deployment
 - **OS**: Ubuntu 22.04 LTS
 - **Resources**: 2 vCPU, 4GB RAM
 - **Process Management**: systemd service
-- **Monitoring**: Prometheus + Grafana
-- **Log Management**: rsyslog + log rotation
+- **Service File**: `/etc/systemd/system/sap-mcp.service`
+- **Log Management**: systemd journal + log rotation
 
 ### 5.4 Network Requirements
-- **Inbound**: Port 8000 (HTTPS)
 - **Outbound**: Port 44300 to SAP servers (HTTPS)
 - **Firewall**: Restrict access to known SAP servers
-- **Load Balancer**: Support for health check endpoints
+- **No Inbound Ports**: Stdio-based communication via stdin/stdout
 
 ## 6. Implementation Plan
 
@@ -338,10 +349,10 @@ CMD ["python", "-m", "sap_mcp.server"]
 - ✅ Documentation and deployment guides
 
 ### 6.4 Phase 4: Deployment & Operations (Week 7-8)
-- ✅ Docker containerization
-- ✅ Cloud Run deployment automation
-- ✅ VM deployment scripts and systemd service
-- ✅ Monitoring and alerting setup
+- ✅ Package distribution setup
+- ✅ Claude Desktop integration guide
+- ✅ Systemd service configuration
+- ✅ Client examples and documentation
 
 ## 7. Success Metrics
 

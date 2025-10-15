@@ -1,350 +1,351 @@
-# SAP MCP SSE Server Deployment Guide
+# SAP MCP Server - Installation & Usage Guide
 
 ## Overview
 
-SAP MCP supports two deployment modes:
+SAP MCP Server is a stdio-based MCP server for SAP Gateway integration. It communicates via standard input/output, making it ideal for:
 
-1. **Stdio Mode** (Development): Server and client run in same process
-2. **SSE Mode** (Production): Server runs separately, clients connect via HTTP
+- **Local Development**: Direct integration with MCP clients
+- **Claude Desktop**: Native Claude Desktop integration
+- **Automated Workflows**: CI/CD pipelines and automation scripts
+- **Command-Line Tools**: Interactive CLI applications
 
-## SSE Architecture
+## Installation
 
-```
-┌─────────────────────────────────────┐
-│  SAP MCP SSE Server                 │
-│  (Separate Server/Container)        │
-│                                     │
-│  http://server:8000/sse             │
-└─────────────┬───────────────────────┘
-              │ HTTP/SSE
-              │
-    ┌─────────┼─────────┐
-    │         │         │
-    ▼         ▼         ▼
-┌────────┐ ┌────────┐ ┌────────┐
-│Client 1│ │Client 2│ │Client N│
-└────────┘ └────────┘ └────────┘
-```
+### Prerequisites
 
-## Server Setup
+- Python 3.11 or higher
+- SAP Gateway access credentials
+- Network connectivity to SAP server
 
-### 1. Environment Configuration
-
-Copy `.env.example.server` to `.env.server`:
+### 1. Install Package
 
 ```bash
-cp .env.example.server .env.server
+cd sap-mcp-server
+pip install -e .
 ```
 
-Edit `.env.server`:
+### 2. Configure SAP Credentials
+
+⚠️ **Important**: Edit `.env.server` with your actual SAP credentials.
 
 ```bash
-# SAP Gateway Connection (REQUIRED)
-SAP_HOST=your-sap-server.com
+vim .env.server
+```
+
+```bash
+# SAP Gateway Connection
+SAP_HOST=actual-sap-server.company.com  # ← Real SAP server
 SAP_PORT=44300
 SAP_CLIENT=100
-SAP_USERNAME=your_username
-SAP_PASSWORD=your_password
+SAP_USERNAME=actual_username            # ← Real username
+SAP_PASSWORD=actual_password            # ← Real password
 
-# SSE Server Configuration
-MCP_HOST=0.0.0.0              # Listen on all interfaces
-MCP_PORT=8000                  # HTTP port
-MCP_LOG_LEVEL=INFO
+# Connection Settings
+SAP_VERIFY_SSL=false
+SAP_TIMEOUT=30
+SAP_RETRY_ATTEMPTS=3
 ```
 
-### 2. Start SSE Server
-
-**Development:**
-```bash
-python -m sap_mcp.sse_server
-```
-
-**Production (with uvicorn):**
-```bash
-uvicorn sap_mcp.sse_server:app --host 0.0.0.0 --port 8000
-```
-
-**Docker:**
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-COPY . .
-RUN pip install -e .
-
-CMD ["python", "-m", "sap_mcp.sse_server"]
-```
-
-**Docker Compose:**
-```yaml
-version: '3.8'
-services:
-  sap-mcp:
-    build: .
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env.server
-    restart: unless-stopped
-```
-
-### 3. Verify Server
+### 3. Verify Configuration
 
 ```bash
-curl http://localhost:8000/sse
+python test_env_loading.py
 ```
 
-Expected: SSE connection established
-
-## Client Setup
-
-### Python Client
-
-**Install MCP client:**
-```bash
-pip install mcp
+Expected output:
+```
+✅ All environment variables are set with real values
+✅ SAPConnectionConfig created successfully!
 ```
 
-**Example client code:**
+## Usage Modes
+
+### 1. Claude Desktop Integration
+
+Add to Claude Desktop configuration file:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+**Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "sap-mcp": {
+      "command": "python",
+      "args": ["-m", "sap_mcp.stdio_server"],
+      "env": {
+        "SAP_HOST": "actual-sap-server.company.com",
+        "SAP_PORT": "44300",
+        "SAP_CLIENT": "100",
+        "SAP_USERNAME": "actual_username",
+        "SAP_PASSWORD": "actual_password",
+        "SAP_VERIFY_SSL": "false"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop to activate the server.
+
+### 2. Python Client Integration
+
 ```python
 import asyncio
-from mcp import ClientSession
-from mcp.client.sse import sse_client
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
 
 async def main():
-    # Connect to SSE server
-    server_url = "http://localhost:8000/sse"
+    # Configure server parameters
+    server_params = StdioServerParameters(
+        command="python",
+        args=["-m", "sap_mcp.stdio_server"],
+        env=None  # Uses .env.server file
+    )
 
-    async with sse_client(server_url) as (read, write):
+    # Connect to server
+    async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
+            # Initialize session
             await session.initialize()
 
             # Call SAP tools
-            result = await session.call_tool("sap_authenticate", {})
+            result = await session.call_tool(
+                "sap_authenticate",
+                arguments={}
+            )
             print(result)
 
 asyncio.run(main())
 ```
 
-**Run test client:**
+### 3. Direct Server Execution
+
+For testing or debugging:
+
 ```bash
-python sap-mcp-client-sse-test.py
+# Using Python module
+python -m sap_mcp.stdio_server
+
+# Using entry point
+sap-mcp-server
 ```
 
-### Node.js Client
+The server will wait for JSON-RPC messages on stdin and respond on stdout.
 
-**Install MCP client:**
-```bash
-npm install @modelcontextprotocol/sdk
-```
+## Service Configuration
 
-**Example client code:**
-```javascript
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+### YAML Configuration
 
-async function main() {
-  const transport = new SSEClientTransport(
-    new URL("http://localhost:8000/sse")
-  );
-
-  const client = new Client({
-    name: "sap-mcp-client",
-    version: "1.0.0",
-  }, {
-    capabilities: {}
-  });
-
-  await client.connect(transport);
-
-  // Call SAP tools
-  const result = await client.callTool({
-    name: "sap_authenticate",
-    arguments: {}
-  });
-
-  console.log(result);
-}
-
-main();
-```
-
-## Production Deployment
-
-### 1. Load Balancer Setup
-
-```nginx
-upstream sap_mcp {
-    server sap-mcp-1:8000;
-    server sap-mcp-2:8000;
-    server sap-mcp-3:8000;
-}
-
-server {
-    listen 80;
-    server_name sap-mcp.company.com;
-
-    location /sse {
-        proxy_pass http://sap_mcp;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-        proxy_buffering off;
-        proxy_cache off;
-    }
-}
-```
-
-### 2. Kubernetes Deployment
+Edit `config/services.yaml` to define SAP services:
 
 ```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: sap-mcp
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: sap-mcp
-  template:
-    metadata:
-      labels:
-        app: sap-mcp
-    spec:
-      containers:
-      - name: sap-mcp
-        image: company/sap-mcp:latest
-        ports:
-        - containerPort: 8000
-        env:
-        - name: SAP_HOST
-          valueFrom:
-            secretKeyRef:
-              name: sap-credentials
-              key: host
-        - name: SAP_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: sap-credentials
-              key: username
-        - name: SAP_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: sap-credentials
-              key: password
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: sap-mcp
-spec:
-  selector:
-    app: sap-mcp
-  ports:
-  - port: 80
-    targetPort: 8000
-  type: LoadBalancer
+gateway:
+  base_url_pattern: "https://{host}:{port}/sap/opu/odata"
+
+services:
+  - id: Z_SALES_ORDER_SRV
+    name: "Sales Order Service"
+    path: "/SAP/Z_SALES_ORDER_SRV"
+    version: v2
+    entities:
+      - name: SalesOrderSet
+        key_field: Vbeln
+        description: "Sales orders"
+        default_select:
+          - Vbeln
+          - Erdat
+          - Netwr
 ```
 
-### 3. Security Considerations
+See [CONFIGURATION_GUIDE.md](./CONFIGURATION_GUIDE.md) for detailed configuration options.
 
-**HTTPS/TLS:**
-```bash
-# Use reverse proxy with SSL termination
-# Or configure uvicorn with SSL:
-uvicorn sap_mcp.sse_server:app \
-  --host 0.0.0.0 \
-  --port 8443 \
-  --ssl-keyfile /path/to/key.pem \
-  --ssl-certfile /path/to/cert.pem
+## Available Tools
+
+### 1. `sap_list_services`
+List all configured SAP services.
+
+```json
+{
+  "name": "sap_list_services",
+  "arguments": {}
+}
 ```
 
-**Authentication:**
-- Add API key validation in SSE endpoint
-- Use OAuth2/JWT for client authentication
-- Implement rate limiting
+### 2. `sap_authenticate`
+Authenticate with SAP Gateway.
 
-**Network:**
-- Use VPC/private network for SAP connections
-- Firewall rules to restrict SSE access
-- Monitor for unusual traffic patterns
-
-## Monitoring
-
-### Health Check
-
-```python
-# Add to sse_server.py
-from starlette.routing import Route
-
-async def health_check(request):
-    return JSONResponse({"status": "healthy"})
-
-routes = [
-    Route("/sse", endpoint=handle_sse),
-    Route("/health", endpoint=health_check),
-]
+```json
+{
+  "name": "sap_authenticate",
+  "arguments": {}
+}
 ```
 
-### Logging
+### 3. `sap_get_entity`
+Retrieve specific entity by key.
 
-```python
-# Configure structured logging
-import logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+```json
+{
+  "name": "sap_get_entity",
+  "arguments": {
+    "service": "Z_SALES_ORDER_SRV",
+    "entity_set": "SalesOrderSet",
+    "entity_key": "12345"
+  }
+}
 ```
 
-### Metrics
+### 4. `sap_query`
+Query entities with filters.
 
-```python
-# Add Prometheus metrics
-from prometheus_client import Counter, Histogram
-requests_total = Counter('mcp_requests_total', 'Total MCP requests')
-request_duration = Histogram('mcp_request_duration_seconds', 'Request duration')
+```json
+{
+  "name": "sap_query",
+  "arguments": {
+    "service": "Z_SALES_ORDER_SRV",
+    "entity_set": "SalesOrderSet",
+    "filter": "Status eq 'OPEN'",
+    "top": 50
+  }
+}
 ```
 
 ## Troubleshooting
 
-### Server not starting
+### Authentication Failed
 
-```bash
-# Check port availability
-netstat -tuln | grep 8000
-
-# Check environment variables
-python -c "from dotenv import load_dotenv; import os; load_dotenv('.env.server'); print(os.environ)"
+**Error:**
+```
+Authentication failed: 3 validation errors for SAPConnectionConfig
+  host / username / password Field required
 ```
 
-### Client connection failed
+**Solution:**
 
-```bash
-# Test SSE endpoint
-curl -N http://localhost:8000/sse
+1. Run test script:
+   ```bash
+   python test_env_loading.py
+   ```
 
-# Check server logs
-tail -f logs/sap-mcp.log
+2. Edit `.env.server` with actual credentials
+
+3. Verify configuration again
+
+### Module Not Found
+
+**Error:**
+```
+ModuleNotFoundError: No module named 'sap_mcp'
 ```
 
-### SAP authentication failed
-
+**Solution:**
 ```bash
-# Verify SAP credentials
-python -c "from sap_mcp.sap.auth import SAPAuthenticator; import asyncio; asyncio.run(SAPAuthenticator().authenticate())"
+cd sap-mcp-server
+pip install -e .
 ```
 
-## Migration from Stdio to SSE
+### SAP Connection Failed
 
-1. Keep stdio server for development
-2. Deploy SSE server to staging
-3. Test client connections
-4. Update production clients to use SSE
-5. Monitor and validate
+**Error:**
+```
+SAP connection error: Connection refused
+```
+
+**Solution:**
+
+1. Test SAP connectivity:
+   ```bash
+   curl -k https://${SAP_HOST}:${SAP_PORT}/sap/opu/odata/sap/
+   ```
+
+2. Verify credentials in `.env.server`
+
+3. Check SSL verification setting
+
+### Service Not Found
+
+**Error:**
+```
+Service 'Z_SALES_ORDER_SRV' not found in configuration
+```
+
+**Solution:**
+
+Add service to `config/services.yaml`:
+
+```yaml
+services:
+  - id: Z_SALES_ORDER_SRV
+    name: "Sales Order Service"
+    path: "/SAP/Z_SALES_ORDER_SRV"
+    version: v2
+    entities:
+      - name: SalesOrderSet
+        key_field: Vbeln
+```
+
+## Security Best Practices
+
+### Credential Management
+
+- **Never commit** `.env.server` or `.env` files
+- Use `.env.server.example` as template
+- Set appropriate file permissions: `chmod 600 .env.server`
+
+### Claude Desktop Security
+
+- Credentials stored in Claude Desktop config file
+- Ensure config file has restricted permissions: `chmod 600 claude_desktop_config.json`
+- Consider using environment variables instead of inline credentials
+
+### SAP Connection Security
+
+- **Production**: Use `SAP_VERIFY_SSL=true` with valid certificates
+- **Development**: `SAP_VERIFY_SSL=false` only for self-signed certificates
+- Use VPN or private network for SAP connections
+- Monitor SAP audit logs for suspicious activity
+
+## Development
+
+### Running Tests
+
+```bash
+# Install dev dependencies
+pip install -e ".[dev]"
+
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov
+
+# Run specific test
+pytest tests/test_sap_client.py
+```
+
+### Code Quality
+
+```bash
+# Format code
+black src/ tests/
+isort src/ tests/
+
+# Type checking
+mypy src/
+
+# Linting
+flake8 src/ tests/
+
+# Security scan
+bandit -r src/
+```
 
 ## References
 
-- [MCP SSE Documentation](https://modelcontextprotocol.io/docs/concepts/transports#sse)
-- [SAP MCP Architecture](./ARCHITECTURE.md)
-- [Client Examples](./examples/)
+- [Architecture Documentation](./ARCHITECTURE.md)
+- [Configuration Guide](./CONFIGURATION_GUIDE.md)
+- [Client Examples](../sap-mcp-client/examples/README.md)
+- [MCP Protocol Specification](https://spec.modelcontextprotocol.io/)
+- [SAP Gateway Documentation](https://help.sap.com/docs/ABAP_PLATFORM/68bf513362174d54b58cddec28794093/3a8e3e2d21d84af9a92c00bd97a99433.html)

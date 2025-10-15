@@ -17,14 +17,12 @@ graph TB
     end
 
     subgraph "Transport Layer"
-        B1["📡 stdio Transport"]
-        B2["🌐 HTTP Transport"]
+        B1["📡 stdio Transport<br/>(stdin/stdout)"]
     end
 
     subgraph "MCP Server Layer"
         C1["🔧 stdio_server.py<br/>(MCP SDK)"]
-        C2["🌐 protocol/server.py<br/>(FastAPI)"]
-        C3["📋 Tool Registry<br/>(Discovery & Validation)"]
+        C2["📋 Tool Registry<br/>(Discovery & Validation)"]
     end
 
     subgraph "Business Logic Layer"
@@ -45,15 +43,12 @@ graph TB
     A1 -->|stdio| B1
     A2 -->|stdio| B1
     A3 -->|stdio| B1
-    A3 -.->|HTTP| B2
 
     B1 --> C1
-    B2 --> C2
 
-    C1 --> C3
-    C2 --> C3
+    C1 --> C2
 
-    C3 --> D1
+    C2 --> D1
     D1 --> D2
     D1 --> E1
 
@@ -65,10 +60,8 @@ graph TB
     style A2 fill:#FF6B6B,stroke:#C92A2A,color:#FFF
     style A3 fill:#FF6B6B,stroke:#C92A2A,color:#FFF
     style B1 fill:#4ECDC4,stroke:#0A9396,color:#000
-    style B2 fill:#4ECDC4,stroke:#0A9396,color:#000
     style C1 fill:#95E1D3,stroke:#38B2AC,color:#000
     style C2 fill:#95E1D3,stroke:#38B2AC,color:#000
-    style C3 fill:#95E1D3,stroke:#38B2AC,color:#000
     style D1 fill:#FFD93D,stroke:#F4A261,color:#000
     style D2 fill:#FFD93D,stroke:#F4A261,color:#000
     style E1 fill:#A8DADC,stroke:#457B9D,color:#000
@@ -87,49 +80,33 @@ graph LR
         A1["Environment Loading<br/>(.env.server)"]
         A2["MCP SDK Integration"]
         A3["Tool Registration"]
-        A4["Session Management"]
-    end
-
-    subgraph "protocol/server.py"
-        B1["FastAPI Application"]
-        B2["HTTP Endpoints"]
-        B3["CORS Middleware"]
-        B4["Error Handling"]
+        A4["stdio Communication<br/>(stdin/stdout)"]
     end
 
     subgraph "Tool Registry"
-        C1["Tool Discovery"]
-        C2["Input Validation"]
-        C3["Execution Orchestration"]
-        C4["Performance Tracking"]
+        B1["Tool Discovery"]
+        B2["Input Validation"]
+        B3["Execution Orchestration"]
+        B4["Performance Tracking"]
     end
 
     A1 --> A2
     A2 --> A3
     A3 --> A4
 
+    A4 --> B1
     B1 --> B2
     B2 --> B3
     B3 --> B4
-
-    A4 --> C1
-    B4 --> C1
-    C1 --> C2
-    C2 --> C3
-    C3 --> C4
 
     style A1 fill:#FFD93D,stroke:#F4A261,color:#000
     style A2 fill:#FFD93D,stroke:#F4A261,color:#000
     style A3 fill:#FFD93D,stroke:#F4A261,color:#000
     style A4 fill:#FFD93D,stroke:#F4A261,color:#000
-    style B1 fill:#95E1D3,stroke:#38B2AC,color:#000
-    style B2 fill:#95E1D3,stroke:#38B2AC,color:#000
-    style B3 fill:#95E1D3,stroke:#38B2AC,color:#000
-    style B4 fill:#95E1D3,stroke:#38B2AC,color:#000
-    style C1 fill:#A8DADC,stroke:#457B9D,color:#000
-    style C2 fill:#A8DADC,stroke:#457B9D,color:#000
-    style C3 fill:#A8DADC,stroke:#457B9D,color:#000
-    style C4 fill:#A8DADC,stroke:#457B9D,color:#000
+    style B1 fill:#A8DADC,stroke:#457B9D,color:#000
+    style B2 fill:#A8DADC,stroke:#457B9D,color:#000
+    style B3 fill:#A8DADC,stroke:#457B9D,color:#000
+    style B4 fill:#A8DADC,stroke:#457B9D,color:#000
 ```
 
 ### SAP Integration Components
@@ -572,8 +549,7 @@ graph TB
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| **Transport** | MCP stdio | Native MCP protocol support |
-| **Web Framework** | FastAPI | HTTP server and API endpoints |
+| **Transport** | MCP stdio | Native MCP protocol support via stdin/stdout |
 | **Async Runtime** | asyncio | Asynchronous I/O operations |
 | **HTTP Client** | aiohttp | Async HTTP requests to SAP |
 | **Configuration** | Pydantic | Type-safe configuration management |
@@ -595,11 +571,11 @@ graph TB
 ### ✅ Completed Components
 
 - **MCP stdio Server**: Full implementation with MCP SDK
-- **HTTP Server**: FastAPI-based REST API
 - **SAP Client**: OData v2 client with authentication
 - **Tool Registry**: Tool discovery and execution
-- **3 Core Tools**: authenticate, get_entity, query, list_services
+- **4 Core Tools**: authenticate, get_entity, query, list_services
 - **Configuration**: Environment-based configuration with Pydantic
+- **YAML Service Config**: Generic, service-agnostic configuration system
 - **AI Chatbot**: Interactive chatbot with Gemini AI integration
 
 ### 🚧 In Progress
@@ -610,11 +586,11 @@ graph TB
 
 ### 📋 Planned
 
-- Additional SAP tools (create_order, get_metadata)
-- Caching layer (Redis)
-- Advanced monitoring (Prometheus/Grafana)
-- Multi-tenant support
-- Additional SAP modules
+- Additional SAP tools (create_order, update_entity, get_metadata)
+- Caching layer for improved performance
+- Advanced error recovery mechanisms
+- Additional SAP modules (HR, Finance, Materials Management)
+- Enhanced logging and diagnostics
 
 ## Design Principles
 

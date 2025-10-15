@@ -14,11 +14,11 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
 - **Quality**: 90%+ test coverage, zero security incidents
 
 ### Technology Stack
-- **Backend**: Python 3.11+, FastAPI, Uvicorn
-- **MCP**: Native MCP SDK (stdio + HTTP transport)
+- **Backend**: Python 3.11+
+- **MCP**: Native MCP SDK (stdio transport)
 - **SAP Integration**: aiohttp for async OData calls
-- **Testing**: pytest, pytest-asyncio, httpx
-- **Deployment**: Docker, Cloud Run, systemd
+- **Testing**: pytest, pytest-asyncio
+- **Deployment**: Python package installation, systemd service
 
 ### Current Implementation Status
 
@@ -27,9 +27,7 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
   - Environment variable loading from `.env.server`
   - MCP SDK integration with tool registration
   - Session lifecycle management
-- HTTP server implementation (`protocol/server.py`)
-  - FastAPI-based REST API
-  - CORS middleware and error handling
+  - stdin/stdout communication via JSON-RPC
 - SAP client with authentication and OData support
   - CSRF token management
   - Session cookie handling
@@ -39,7 +37,7 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
   - Execution orchestration
 - Configuration management with Pydantic
   - Environment-based configuration loading
-  - Separate `.env.server` and `.env.client` files
+  - `.env.server` file for SAP credentials
   - Backward compatibility with `.env`
 - 4 core SAP tools implemented
   - `sap_authenticate`: Session establishment (no credentials in tool call)
@@ -116,7 +114,7 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
   - Docker image build automation
 
 **Acceptance Criteria**:
-✅ Development environment runs FastAPI hello world
+✅ Development environment runs stdio server
 ✅ All code quality tools (black, isort, mypy) pass
 ✅ CI/CD pipeline passes on sample commit
 ✅ Test coverage reporting configured
@@ -129,17 +127,17 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
 **Dependencies**: Development environment
 
 **Tasks**:
-- [ ] **FastAPI Application Bootstrap** (3h)
+- [ ] **MCP Stdio Server Bootstrap** (3h)
   ```python
-  # src/sap_mcp/server.py
-  from fastapi import FastAPI
-  from fastapi.middleware.cors import CORSMiddleware
+  # src/sap_mcp/stdio_server.py
+  from mcp.server import Server
+  from mcp.server.stdio import stdio_server
 
-  app = FastAPI(
-      title="SAP Gateway MCP Server",
-      description="MCP server for SAP Gateway integration",
-      version="0.1.0"
-  )
+  app = Server("sap-gateway-mcp")
+
+  @app.list_tools()
+  async def list_tools():
+      return [...]
   ```
 - [ ] **MCP Protocol Schema Definition** (4h)
   - Tool registration schemas (JSON Schema)
@@ -166,18 +164,18 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
 - [ ] **Tool Registry System** (3h)
   - Dynamic tool discovery
   - Tool validation and registration
-  - OpenAPI schema generation
-- [ ] **HTTP Middleware Stack** (3h)
-  - CORS configuration
+  - MCP tool schema generation
+- [ ] **Error Handling System** (3h)
+  - Structured error responses
   - Request logging with correlation IDs
-  - Error handling middleware
+  - Error categorization
   - Response time tracking
 
 **Acceptance Criteria**:
-✅ FastAPI server starts and serves OpenAPI docs
-✅ MCP tool registration endpoint functional
+✅ Stdio server starts and handles JSON-RPC messages
+✅ MCP tool registration functional
 ✅ Basic error handling returns proper JSON
-✅ Middleware logs requests with correlation IDs
+✅ Logging system tracks requests with correlation IDs
 
 ---
 
@@ -328,7 +326,7 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
   - HTTPS enforcement verification
 
 **Phase 1 Success Criteria**:
-✅ **Technical**: FastAPI server running with MCP protocol support
+✅ **Technical**: Stdio server running with MCP protocol support
 ✅ **Integration**: SAP client successfully connects and authenticates
 ✅ **Quality**: >80% test coverage, all CI/CD checks passing
 ✅ **Performance**: <3s startup time, <500ms basic responses
@@ -556,34 +554,34 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
 **Estimated Time**: 18 hours
 
 **Tasks**:
-- [ ] **Authentication & Authorization** (6h)
+- [ ] **Input Sanitization** (6h)
   ```python
-  # src/sap_mcp/security/auth.py
-  from fastapi.security import HTTPBearer
+  # src/sap_mcp/security/validation.py
+  from pydantic import BaseModel, validator
 
-  security = HTTPBearer()
-
-  async def verify_token(token: str = Depends(security)):
-      # Implement token validation
-      pass
+  class ToolInputValidator(BaseModel):
+      @validator('*')
+      def sanitize_input(cls, value):
+          # Implement input validation
+          pass
   ```
 - [ ] **Rate Limiting** (4h)
-  - Per-client rate limiting
+  - Per-client rate limiting (based on session)
   - Tool-specific rate limits
   - Burst handling with token bucket
-- [ ] **Input Sanitization** (4h)
+- [ ] **Enhanced Input Validation** (4h)
   - SQL injection prevention
   - XML/JSON payload validation
   - Path traversal protection
 - [ ] **Secrets Management** (4h)
   - Environment variable encryption
-  - Integration with cloud secret managers
+  - Integration with system secret managers
   - Credential rotation support
 
 **Acceptance Criteria**:
-✅ Authentication required for all endpoints
+✅ Session-based rate limiting implemented
 ✅ Rate limiting prevents abuse
-✅ All inputs properly sanitized
+✅ All inputs properly sanitized and validated
 ✅ Secrets encrypted at rest
 
 ---
@@ -692,122 +690,129 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
 
 ### 📋 Task Breakdown
 
-#### 4.1 Docker & Containerization (Day 28-29)
+#### 4.1 Package Distribution & Installation (Day 28-29)
 **Owner**: DevOps Engineer
 **Estimated Time**: 12 hours
 
 **Tasks**:
-- [ ] **Production Dockerfile** (4h)
-  ```dockerfile
-  FROM python:3.11-slim as builder
-  # Multi-stage build optimization
-  WORKDIR /app
-  COPY requirements.txt .
-  RUN pip install --user --no-cache-dir -r requirements.txt
+- [ ] **Package Configuration** (4h)
+  ```python
+  # pyproject.toml optimization
+  [project]
+  name = "sap-mcp-server"
+  version = "0.1.0"
+  dependencies = [...]
 
-  FROM python:3.11-slim
-  COPY --from=builder /root/.local /root/.local
-  # Security and optimization configurations
-  ```
-- [ ] **Docker Compose Configuration** (3h)
-  - Production docker-compose.yml
-  - Environment variable management
-  - Volume mounting for logs
-- [ ] **Health Check Implementation** (2h)
-  - Docker health check commands
-  - Graceful shutdown handling
-  - Container restart policies
-- [ ] **Image Optimization** (3h)
-  - Multi-stage build refinement
-  - Security scanning integration
-  - Image size optimization
-
-**Acceptance Criteria**:
-✅ Docker image builds successfully
-✅ Container starts and passes health checks
-✅ Image size optimized (<500MB target)
-✅ Security vulnerabilities addressed
-
----
-
-#### 4.2 Cloud Run Deployment (Day 29-30)
-**Owner**: Cloud Specialist
-**Estimated Time**: 10 hours
-**Parallel**: Can work alongside Docker optimization
-
-**Tasks**:
-- [ ] **Cloud Run Configuration** (4h)
-  ```yaml
-  # cloudrun.yaml
-  apiVersion: serving.knative.dev/v1
-  kind: Service
-  metadata:
-    name: sap-mcp-server
-  spec:
-    template:
-      metadata:
-        annotations:
-          autoscaling.knative.dev/maxScale: "10"
-          run.googleapis.com/memory: "1Gi"
-  ```
-- [ ] **Secret Manager Integration** (3h)
-  - SAP credentials management
-  - Secret rotation policies
-  - Environment-specific secrets
-- [ ] **Deployment Pipeline** (2h)
-  - GitHub Actions for Cloud Run
-  - Automated testing before deploy
-  - Rollback procedures
-- [ ] **Monitoring Setup** (1h)
-  - Cloud Monitoring integration
-  - Custom metrics configuration
-  - Alerting policies
-
-**Acceptance Criteria**:
-✅ Application deploys successfully to Cloud Run
-✅ Auto-scaling works under load
-✅ Secrets properly managed and encrypted
-✅ Monitoring and alerting operational
-
----
-
-#### 4.3 VM Deployment Support (Day 30-31)
-**Owner**: System Administrator
-**Estimated Time**: 8 hours
-**Parallel**: Can work alongside Cloud Run deployment
-
-**Tasks**:
-- [ ] **Systemd Service Configuration** (3h)
-  ```ini
-  # /etc/systemd/system/sap-mcp.service
-  [Unit]
-  Description=SAP Gateway MCP Server
-  After=network.target
-
-  [Service]
-  Type=simple
-  User=sapmcp
-  WorkingDirectory=/opt/sap-mcp
-  ExecStart=/opt/sap-mcp/venv/bin/python -m sap_mcp.server
+  [project.scripts]
+  sap-mcp-server = "sap_mcp.stdio_server:main"
   ```
 - [ ] **Installation Scripts** (3h)
   - Automated installation script
+  - Virtual environment setup
   - Dependency management
-  - User and permission setup
-- [ ] **Nginx Configuration** (1h)
-  - Reverse proxy setup
-  - SSL termination
-  - Load balancing configuration
-- [ ] **Backup & Recovery** (1h)
-  - Configuration backup procedures
-  - Log rotation setup
-  - Recovery documentation
+- [ ] **Systemd Service Configuration** (2h)
+  - Service file creation
+  - Graceful shutdown handling
+  - Auto-restart policies
+- [ ] **Package Testing** (3h)
+  - Installation testing on clean systems
+  - Entry point validation
+  - Dependency resolution verification
 
 **Acceptance Criteria**:
-✅ Service installs and starts automatically
-✅ Nginx reverse proxy configured correctly
-✅ Backup and recovery procedures documented
-✅ SSL certificates properly configured
+✅ Package installs successfully via pip
+✅ Entry points work correctly
+✅ All dependencies properly declared
+✅ Installation documented and tested
+
+---
+
+#### 4.2 Claude Desktop Integration (Day 29-30)
+**Owner**: Integration Specialist
+**Estimated Time**: 10 hours
+**Parallel**: Can work alongside package distribution
+
+**Tasks**:
+- [ ] **Claude Desktop Configuration Template** (4h)
+  ```json
+  {
+    "mcpServers": {
+      "sap-mcp": {
+        "command": "python",
+        "args": ["-m", "sap_mcp.stdio_server"],
+        "env": {
+          "SAP_HOST": "...",
+          "SAP_PORT": "44300",
+          "SAP_CLIENT": "100",
+          "SAP_USERNAME": "...",
+          "SAP_PASSWORD": "..."
+        }
+      }
+    }
+  }
+  ```
+- [ ] **Environment Configuration Guide** (3h)
+  - SAP credentials setup instructions
+  - Configuration validation steps
+  - Troubleshooting common issues
+- [ ] **Integration Testing** (2h)
+  - Test with Claude Desktop
+  - Verify tool discovery
+  - Validate stdio communication
+- [ ] **Documentation** (1h)
+  - Claude Desktop integration guide
+  - Configuration examples
+  - Security best practices
+
+**Acceptance Criteria**:
+✅ Server works with Claude Desktop
+✅ Tool discovery functional in Claude
+✅ Stdio communication stable
+✅ Configuration guide complete
+
+---
+
+#### 4.3 MCP Client Examples (Day 30-31)
+**Owner**: Developer Advocate
+**Estimated Time**: 8 hours
+**Parallel**: Can work alongside Claude Desktop integration
+
+**Tasks**:
+- [ ] **Python Client Example** (3h)
+  ```python
+  # examples/stdio_client.py
+  from mcp import ClientSession, StdioServerParameters
+  from mcp.client.stdio import stdio_client
+
+  server_params = StdioServerParameters(
+      command="python",
+      args=["-m", "sap_mcp.stdio_server"],
+      env=None  # Uses .env.server
+  )
+
+  async with stdio_client(server_params) as (read, write):
+      async with ClientSession(read, write) as session:
+          await session.initialize()
+          # Call SAP tools
+  ```
+- [ ] **Interactive Chatbot Example** (3h)
+  - Order inquiry chatbot
+  - Natural language processing
+  - SAP tool integration
+- [ ] **Example Documentation** (1h)
+  - Usage instructions
+  - Code walkthroughs
+  - Common patterns
+- [ ] **Testing & Validation** (1h)
+  - Example code testing
+  - Documentation verification
+  - User feedback integration
+
+**Acceptance Criteria**:
+✅ Python client example works end-to-end
+✅ Chatbot demonstrates real-world usage
+✅ Examples well-documented
+✅ All examples tested and validated
 
 ---
 
@@ -817,27 +822,27 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
 
 **Tasks**:
 - [ ] **API Documentation** (3h)
-  - OpenAPI specification completion
+  - MCP tool schemas and descriptions
   - Interactive documentation
   - Code examples for each tool
 - [ ] **Deployment Guides** (3h)
-  - Cloud Run deployment guide
-  - VM deployment guide
-  - Kubernetes deployment guide
+  - Package installation guide
+  - Claude Desktop integration guide
+  - Systemd service setup guide
 - [ ] **Operations Manual** (2h)
   - Troubleshooting guide
-  - Performance tuning guide
-  - Monitoring playbook
+  - Configuration guide
+  - Common issues and solutions
 - [ ] **Security Documentation** (2h)
-  - Security configuration guide
-  - Compliance checklist
-  - Incident response procedures
+  - Credential management guide
+  - Security best practices
+  - Environment variable security
 
 **Acceptance Criteria**:
-✅ Complete API documentation with examples
-✅ Deployment guides tested and validated
+✅ Complete tool documentation with examples
+✅ Installation guides tested and validated
 ✅ Operations manual covers common scenarios
-✅ Security documentation audit-ready
+✅ Security documentation comprehensive
 
 ---
 
@@ -847,23 +852,23 @@ This workflow provides a comprehensive, step-by-step implementation guide for th
 
 **Tasks**:
 - [ ] **End-to-End Testing** (4h)
-  - Production deployment testing
-  - Load testing in production environment
-  - Disaster recovery testing
+  - Claude Desktop integration testing
+  - Python client example validation
+  - Tool functionality verification
 - [ ] **User Acceptance Testing** (2h)
   - Stakeholder demonstration
   - Feature validation against PRD
   - Performance validation
-- [ ] **Go-Live Preparation** (2h)
-  - Production cutover checklist
-  - Monitoring dashboard setup
-  - Support team training
+- [ ] **Release Preparation** (2h)
+  - Package version finalization
+  - Release notes preparation
+  - Installation guide verification
 
 **Phase 4 Success Criteria**:
-✅ **Deployment**: Successfully deployed to all target environments
-✅ **Performance**: Meets all SLA requirements in production
-✅ **Documentation**: Complete operational documentation
-✅ **Readiness**: Team trained and ready for production support
+✅ **Integration**: Successfully works with Claude Desktop and Python clients
+✅ **Performance**: Meets all performance requirements
+✅ **Documentation**: Complete installation and usage documentation
+✅ **Readiness**: Package ready for distribution and use
 
 ---
 
@@ -986,20 +991,20 @@ graph TD
 ### Technical Artifacts
 ✅ **Production-Ready MCP Server** with 5 core tools
 ✅ **Comprehensive Test Suite** (>90% coverage)
-✅ **Docker Images** optimized for production
-✅ **Deployment Automation** for multiple platforms
+✅ **Python Package** ready for pip installation
+✅ **Client Examples** for stdio and Claude Desktop integration
 
 ### Documentation Package
-✅ **API Documentation** with interactive examples
-✅ **Deployment Guides** for Cloud Run, VM, Kubernetes
+✅ **Tool Documentation** with usage examples
+✅ **Installation Guides** for pip, Claude Desktop, and systemd
 ✅ **Operations Manual** with troubleshooting guides
-✅ **Security Documentation** for compliance
+✅ **Security Documentation** for credential management
 
 ### Infrastructure Assets
-✅ **CI/CD Pipeline** with automated testing and deployment
-✅ **Monitoring & Alerting** with Prometheus and Grafana
-✅ **Security Scanning** integrated into development workflow
-✅ **Performance Monitoring** with custom metrics
+✅ **CI/CD Pipeline** with automated testing
+✅ **Package Distribution** via pip/PyPI
+✅ **Security Best Practices** documentation
+✅ **Performance Benchmarks** and optimization guidelines
 
 ---
 

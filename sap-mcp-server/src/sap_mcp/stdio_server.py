@@ -19,10 +19,26 @@ async def main() -> None:
     """Main entry point for stdio MCP server"""
 
     # Load environment variables from .env.server file
-    env_path = Path(__file__).parent.parent.parent / ".env.server"
-    if not env_path.exists():
+    # Search in multiple locations to handle different installation methods
+    env_paths = [
+        Path.cwd() / ".env.server",  # Current working directory
+        Path.cwd() / "sap-mcp-server" / ".env.server",  # If running from project root
+        Path(__file__).parent.parent.parent / ".env.server",  # Relative to source
+        Path.home() / ".env.server",  # User home directory
+    ]
+    
+    env_path = None
+    for path in env_paths:
+        if path.exists():
+            env_path = path
+            break
+    
+    if env_path is None:
         # Fallback to .env for backward compatibility
-        env_path = Path(__file__).parent.parent.parent / ".env"
+        env_path = Path.cwd() / ".env"
+        if not env_path.exists():
+            logger.warning("No .env.server or .env file found in any expected location")
+            logger.warning(f"Searched locations: {[str(p) for p in env_paths]}")
 
     load_dotenv(dotenv_path=env_path)
     logger.info(f"Loaded server environment variables from {env_path}")

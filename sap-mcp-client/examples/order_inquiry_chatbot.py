@@ -291,7 +291,7 @@ async def main():
     }
 
     # Initialize chatbot
-    print("📝 SAP credentials loaded from .env.server file")
+    # Note: SAP credentials are loaded by the MCP server from .env.server
     chatbot = OrderInquiryChatbot(gemini_api_key, sap_config)
 
     print("\n" + "=" * 60)

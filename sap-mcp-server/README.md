@@ -343,8 +343,6 @@ bandit -r src/
 | `SAP_VERIFY_SSL` | Verify SSL certificates | `false` | No |
 | `SAP_TIMEOUT` | Request timeout (seconds) | `30` | No |
 | `SAP_RETRY_ATTEMPTS` | Number of retries | `3` | No |
-| `MCP_HOST` | Server bind address | `0.0.0.0` | No |
-| `MCP_PORT` | Server port | `8000` | No |
 | `MCP_LOG_LEVEL` | Logging level | `INFO` | No |
 | `MCP_SERVICES_CONFIG_PATH` | Path to services.yaml | `config/services.yaml` | No |
 
