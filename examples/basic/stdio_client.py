@@ -5,7 +5,7 @@ This client automatically starts the SAP MCP server as a subprocess.
 The server package must be installed for this to work.
 
 Prerequisites:
-    pip install -e ../sap-mcp-server
+    pip install -e ../../packages/server
 
 For connecting to a separately running server, use sse_client.py instead.
 """
@@ -55,7 +55,7 @@ async def main() -> None:
 
     # Server will be spawned as a subprocess
     server_params = StdioServerParameters(
-        command="python", args=["-m", "sap_mcp.stdio_server"]
+        command="python", args=["-m", "sap_mcp_server.transports.stdio"]
     )
 
     try:
@@ -109,8 +109,8 @@ async def main() -> None:
         print(
             "\nTroubleshooting:"
         )
-        print("1. Is the server package installed? Run: pip install -e ../sap-mcp-server")
-        print("2. Can you run the server manually? Try: python -m sap_mcp.stdio_server")
+        print("1. Is the server package installed? Run: pip install -e ../../packages/server")
+        print("2. Can you run the server manually? Try: python -m sap_mcp_server.transports.stdio")
         sys.exit(1)
 
 

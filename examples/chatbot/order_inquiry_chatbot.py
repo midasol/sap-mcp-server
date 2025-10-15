@@ -116,7 +116,7 @@ Examples:
         print("\n📡 Retrieving order information from SAP...")
 
         server_params = StdioServerParameters(
-            command="python", args=["-m", "sap_mcp.stdio_server"]
+            command="python", args=["-m", "sap_mcp_server.transports.stdio"]
         )
 
         try:
