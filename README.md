@@ -36,271 +36,324 @@ Production-ready MCP (Model Context Protocol) server that enables AI agents and 
 ### System Overview
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#00529B','primaryTextColor':'#FFFFFF','primaryBorderColor':'#003D73','lineColor':'#555555','secondaryColor':'#D95319','tertiaryColor':'#28A745'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0066CC','primaryTextColor':'#FFFFFF','primaryBorderColor':'#004C99','lineColor':'#64748B','secondaryColor':'#10B981','tertiaryColor':'#8B5CF6','fontSize':'14px','fontFamily':'system-ui, -apple-system, sans-serif'}}}%%
 graph TB
-    subgraph "Client Applications"
-        A1[AI Agent<br/>LLM/GenAI]:::clientNode
-        A2[Python Client<br/>SDK]:::clientNode
-        A3[Order Chatbot<br/>Example]:::clientNode
+    subgraph clients["<b>🎯 Client Applications</b>"]
+        direction TB
+        A1["<b>AI Agent</b><br/><small>LLM/GenAI Integration</small>"]:::clientNode
+        A2["<b>Python Client</b><br/><small>SDK & Libraries</small>"]:::clientNode
+        A3["<b>Order Chatbot</b><br/><small>Example Application</small>"]:::clientNode
     end
 
-    subgraph "MCP Server Layer"
-        B1[Stdio Transport<br/>stdin/stdout]:::transportNode
-        B2[SSE Transport<br/>Future]:::futureNode
+    subgraph transport["<b>🚀 MCP Server Layer</b>"]
+        direction TB
+        B1["<b>Stdio Transport</b><br/><small>stdin/stdout Stream</small>"]:::transportNode
+        B2["<b>SSE Transport</b><br/><small>Future Release</small>"]:::futureNode
     end
 
-    subgraph "Tool Registry"
-        C1[sap_authenticate<br/>Auth Tool]:::toolNode
-        C2[sap_query<br/>Query Tool]:::toolNode
-        C3[sap_get_entity<br/>Entity Tool]:::toolNode
-        C4[sap_list_services<br/>Service Tool]:::toolNode
+    subgraph registry["<b>🛠️ Tool Registry</b>"]
+        direction LR
+        C1["<b>sap_authenticate</b><br/><small>Authentication</small>"]:::toolNode
+        C2["<b>sap_query</b><br/><small>OData Queries</small>"]:::toolNode
+        C3["<b>sap_get_entity</b><br/><small>Entity Retrieval</small>"]:::toolNode
+        C4["<b>sap_list_services</b><br/><small>Service Discovery</small>"]:::toolNode
     end
 
-    subgraph "Core Layer"
-        D1[SAP Client<br/>OData Handler]:::coreNode
-        D2[Auth Manager<br/>Credentials]:::coreNode
-        D3[Config Loader<br/>YAML/ENV]:::coreNode
+    subgraph core["<b>⚡ Core Layer</b>"]
+        direction LR
+        D1["<b>SAP Client</b><br/><small>OData Handler</small>"]:::coreNode
+        D2["<b>Auth Manager</b><br/><small>Credentials</small>"]:::coreNode
+        D3["<b>Config Loader</b><br/><small>YAML/ENV</small>"]:::coreNode
     end
 
-    subgraph "Utilities"
-        E1[Validators<br/>Input/Security]:::utilNode
-        E2[Logger<br/>Structured]:::utilNode
-        E3[Error Handler<br/>Production]:::utilNode
+    subgraph utils["<b>🔧 Utilities</b>"]
+        direction LR
+        E1["<b>Validators</b><br/><small>Input/Security</small>"]:::utilNode
+        E2["<b>Logger</b><br/><small>Structured Logs</small>"]:::utilNode
+        E3["<b>Error Handler</b><br/><small>Production Grade</small>"]:::utilNode
     end
 
-    subgraph "SAP Gateway"
-        F1[OData Services<br/>v2/v4]:::sapNode
-        F2[Business Data<br/>Orders/Sales]:::sapNode
+    subgraph sap["<b>🏢 SAP Gateway</b>"]
+        direction TB
+        F1["<b>OData Services</b><br/><small>v2/v4 Protocol</small>"]:::sapNode
+        F2["<b>Business Data</b><br/><small>Orders/Sales/Inventory</small>"]:::sapNode
     end
 
-    A1 & A2 & A3 --> B1
-    A1 & A2 & A3 -.-> B2
-    B1 --> C1 & C2 & C3 & C4
-    C1 & C2 & C3 & C4 --> D1
-    C1 --> D2
-    C2 & C3 & C4 --> D3
-    D1 & D2 & D3 --> E1 & E2 & E3
-    D1 --> F1
-    F1 --> F2
+    A1 & A2 & A3 -.->|"Active Connection"| B1
+    A1 & A2 & A3 -.->|"Future Support"| B2
+    B1 ==>|"Tool Dispatch"| C1 & C2 & C3 & C4
+    C1 & C2 & C3 & C4 ==>|"Core Services"| D1
+    C1 ==>|"Auth Flow"| D2
+    C2 & C3 & C4 ==>|"Config Access"| D3
+    D1 & D2 & D3 -->|"Validation & Logging"| E1 & E2 & E3
+    D1 ==>|"OData Protocol"| F1
+    F1 ==>|"Data Access"| F2
 
-    classDef clientNode fill:#00529B,stroke:#003D73,stroke-width:3px,color:#FFFFFF
-    classDef transportNode fill:#D95319,stroke:#A74214,stroke-width:3px,color:#FFFFFF
-    classDef futureNode fill:#B0B0B0,stroke:#8C8C8C,stroke-width:2px,color:#333333
-    classDef toolNode fill:#28A745,stroke:#1E7E34,stroke-width:3px,color:#FFFFFF
-    classDef coreNode fill:#6F42C1,stroke:#563D7C,stroke-width:3px,color:#FFFFFF
-    classDef utilNode fill:#FFC107,stroke:#D39E00,stroke-width:3px,color:#000000
-    classDef sapNode fill:#DC3545,stroke:#B02A37,stroke-width:3px,color:#FFFFFF
+    classDef clientNode fill:#0066CC,stroke:#004C99,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef transportNode fill:#10B981,stroke:#059669,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef futureNode fill:#94A3B8,stroke:#64748B,stroke-width:2px,stroke-dasharray:5 5,color:#1E293B,rx:8,ry:8
+    classDef toolNode fill:#8B5CF6,stroke:#7C3AED,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef coreNode fill:#EC4899,stroke:#DB2777,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef utilNode fill:#F59E0B,stroke:#D97706,stroke-width:2.5px,color:#1F2937,rx:8,ry:8
+    classDef sapNode fill:#EF4444,stroke:#DC2626,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
 ```
 
 ### Component Details
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#007BFF','primaryTextColor':'#FFFFFF','primaryBorderColor':'#0056B3','lineColor':'#555555','secondaryColor':'#28A745'}}}%%
-graph LR
-    subgraph "packages/server/src/sap_mcp_server"
-        subgraph "transports/"
-            T1[stdio.py<br/>CLI Entry Point]:::transportNode
-            T2[sse.py<br/>Future SSE]:::futureNode
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0066CC','primaryTextColor':'#FFFFFF','primaryBorderColor':'#004C99','lineColor':'#64748B','fontSize':'13px','fontFamily':'system-ui, -apple-system, sans-serif'}}}%%
+graph TB
+    subgraph pkg["<b>📦 packages/server/src/sap_mcp_server</b>"]
+        direction TB
+
+        subgraph trans["<b>🚀 transports/</b>"]
+            direction LR
+            T1["<b>stdio.py</b><br/><small>CLI Entry Point</small>"]:::transportNode
+            T2["<b>sse.py</b><br/><small>Future SSE Support</small>"]:::futureNode
         end
 
-        subgraph "tools/"
-            TO1[auth_tool.py<br/>Authentication]:::toolNode
-            TO2[query_tool.py<br/>OData Query]:::toolNode
-            TO3[entity_tool.py<br/>Single Entity]:::toolNode
-            TO4[service_tool.py<br/>Service List]:::toolNode
-            TO5[base.py<br/>Tool Base Class]:::baseNode
+        subgraph tools["<b>🛠️ tools/</b>"]
+            direction TB
+            TO5["<b>base.py</b><br/><small>Tool Base Class</small>"]:::baseNode
+
+            subgraph toolImpl["Tool Implementations"]
+                direction LR
+                TO1["<b>auth_tool.py</b><br/><small>Authentication</small>"]:::toolNode
+                TO2["<b>query_tool.py</b><br/><small>OData Query</small>"]:::toolNode
+                TO3["<b>entity_tool.py</b><br/><small>Single Entity</small>"]:::toolNode
+                TO4["<b>service_tool.py</b><br/><small>Service List</small>"]:::toolNode
+            end
         end
 
-        subgraph "core/"
-            C1[sap_client.py<br/>OData Client]:::coreNode
-            C2[auth.py<br/>Auth Manager]:::coreNode
-            C3[exceptions.py<br/>Custom Errors]:::coreNode
+        subgraph core["<b>⚡ core/</b>"]
+            direction LR
+            C1["<b>sap_client.py</b><br/><small>OData Client</small>"]:::coreNode
+            C2["<b>auth.py</b><br/><small>Auth Manager</small>"]:::coreNode
+            C3["<b>exceptions.py</b><br/><small>Custom Errors</small>"]:::coreNode
         end
 
-        subgraph "config/"
-            CF1[settings.py<br/>Env Config]:::configNode
-            CF2[loader.py<br/>YAML Loader]:::configNode
-            CF3[schemas.py<br/>Pydantic Models]:::configNode
+        subgraph config["<b>⚙️ config/</b>"]
+            direction LR
+            CF1["<b>settings.py</b><br/><small>Env Config</small>"]:::configNode
+            CF2["<b>loader.py</b><br/><small>YAML Loader</small>"]:::configNode
+            CF3["<b>schemas.py</b><br/><small>Pydantic Models</small>"]:::configNode
         end
 
-        subgraph "utils/"
-            U1[logger.py<br/>Structured Logs]:::utilNode
-            U2[validators.py<br/>Input Validation]:::utilNode
+        subgraph utils["<b>🔧 utils/</b>"]
+            direction LR
+            U1["<b>logger.py</b><br/><small>Structured Logs</small>"]:::utilNode
+            U2["<b>validators.py</b><br/><small>Input Validation</small>"]:::utilNode
         end
 
-        subgraph "protocol/"
-            P1[schemas.py<br/>MCP Schemas]:::protocolNode
+        subgraph protocol["<b>📡 protocol/</b>"]
+            P1["<b>schemas.py</b><br/><small>MCP Request/Response</small>"]:::protocolNode
         end
     end
 
-    T1 --> TO1 & TO2 & TO3 & TO4
-    TO1 & TO2 & TO3 & TO4 --> TO5
-    TO5 --> C1 & C2
-    C1 --> CF1 & CF2
-    C2 --> CF1
-    C1 & C2 --> U1 & U2
-    TO5 --> P1
+    T1 ==>|"Dispatches to"| TO1 & TO2 & TO3 & TO4
+    TO1 & TO2 & TO3 & TO4 -.->|"Extends"| TO5
+    TO5 ==>|"Uses"| C1 & C2
+    C1 -->|"Loads"| CF1 & CF2
+    C2 -->|"Reads"| CF1
+    C1 & C2 -->|"Validates & Logs"| U1 & U2
+    TO5 -.->|"Implements"| P1
+    C3 -.->|"Error Types"| C1 & C2
 
-    classDef transportNode fill:#C0C0C0,stroke:#9A9A9A,stroke-width:2px,color:#000000
-    classDef futureNode fill:#B0B0B0,stroke:#8C8C8C,stroke-width:2px,color:#333333
-    classDef toolNode fill:#28A745,stroke:#1E7E34,stroke-width:2px,color:#FFFFFF
-    classDef baseNode fill:#218838,stroke:#19692C,stroke-width:2px,color:#FFFFFF
-    classDef coreNode fill:#6F42C1,stroke:#563D7C,stroke-width:2px,color:#FFFFFF
-    classDef configNode fill:#007BFF,stroke:#0056B3,stroke-width:2px,color:#FFFFFF
-    classDef utilNode fill:#FFC107,stroke:#D39E00,stroke-width:2px,color:#000000
-    classDef protocolNode fill:#17A2B8,stroke:#117A8B,stroke-width:2px,color:#FFFFFF
+    classDef transportNode fill:#10B981,stroke:#059669,stroke-width:2.5px,color:#FFFFFF,rx:6,ry:6
+    classDef futureNode fill:#94A3B8,stroke:#64748B,stroke-width:2px,stroke-dasharray:5 5,color:#1E293B,rx:6,ry:6
+    classDef toolNode fill:#8B5CF6,stroke:#7C3AED,stroke-width:2px,color:#FFFFFF,rx:6,ry:6
+    classDef baseNode fill:#6366F1,stroke:#4F46E5,stroke-width:2.5px,color:#FFFFFF,rx:6,ry:6
+    classDef coreNode fill:#EC4899,stroke:#DB2777,stroke-width:2.5px,color:#FFFFFF,rx:6,ry:6
+    classDef configNode fill:#0066CC,stroke:#004C99,stroke-width:2.5px,color:#FFFFFF,rx:6,ry:6
+    classDef utilNode fill:#F59E0B,stroke:#D97706,stroke-width:2.5px,color:#1F2937,rx:6,ry:6
+    classDef protocolNode fill:#06B6D4,stroke:#0891B2,stroke-width:2.5px,color:#FFFFFF,rx:6,ry:6
 ```
 
 ### Data Flow: Order Query Example
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#007BFF','primaryTextColor':'#FFFFFF','primaryBorderColor':'#0056B3','lineColor':'#555555'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0066CC','primaryTextColor':'#FFFFFF','primaryBorderColor':'#004C99','lineColor':'#64748B','fontSize':'14px','fontFamily':'system-ui, -apple-system, sans-serif','actorBkg':'#F8FAFC','actorBorder':'#CBD5E1','actorTextColor':'#1E293B','noteBkgColor':'#EFF6FF','noteBorderColor':'#3B82F6','noteTextColor':'#1E40AF'}}}%%
 sequenceDiagram
     autonumber
-    participant Client as 🤖 AI Agent/Client
-    participant Transport as 📡 Stdio Transport
-    participant Registry as 📋 Tool Registry
-    participant AuthTool as 🔐 Auth Tool
-    participant QueryTool as 🔍 Query Tool
-    participant SAPClient as 🔧 SAP Client
-    participant Validator as ✅ Validator
-    participant Logger as 📊 Logger
-    participant SAP as 🏢 SAP Gateway
-
-    rect rgba(0, 123, 255, 0.1)
-        Note over Client,Transport: <b>Session Initialization</b>
-        Client->>Transport: Connect via stdio
-        Transport->>Registry: Initialize tool registry
-        Registry-->>Transport: 4 tools registered
+    box rgba(59, 130, 246, 0.08) Client Layer
+        participant Client as 🤖<br/><b>AI Agent/Client</b>
+    end
+    box rgba(16, 185, 129, 0.08) Transport Layer
+        participant Transport as 📡<br/><b>Stdio Transport</b>
+        participant Registry as 📋<br/><b>Tool Registry</b>
+    end
+    box rgba(139, 92, 246, 0.08) Tool Layer
+        participant AuthTool as 🔐<br/><b>Auth Tool</b>
+        participant QueryTool as 🔍<br/><b>Query Tool</b>
+    end
+    box rgba(236, 72, 153, 0.08) Core Layer
+        participant SAPClient as 🔧<br/><b>SAP Client</b>
+    end
+    box rgba(245, 158, 11, 0.08) Support Layer
+        participant Validator as ✅<br/><b>Validator</b>
+        participant Logger as 📊<br/><b>Logger</b>
+    end
+    box rgba(239, 68, 68, 0.08) External
+        participant SAP as 🏢<br/><b>SAP Gateway</b>
     end
 
-    rect rgba(217, 83, 25, 0.1)
-        Note over Client,SAP: <b>Authentication Phase</b>
-        Client->>Transport: call_tool(sap_authenticate)
-        Transport->>Registry: Get tool: sap_authenticate
-        Registry->>AuthTool: Execute
-        AuthTool->>Validator: Validate credentials
-        Validator-->>AuthTool: ✅ Valid
-        AuthTool->>Logger: Log auth attempt
-        AuthTool->>SAPClient: Authenticate with SAP
-        SAPClient->>SAP: POST /auth
-        SAP-->>SAPClient: Session token
-        SAPClient-->>AuthTool: ✅ Authenticated
-        AuthTool-->>Transport: Success response
-        Transport-->>Client: Auth token
+    rect rgba(59, 130, 246, 0.05)
+        Note over Client,Registry: <b>⚡ Phase 1: Session Initialization</b>
+        Client->>+Transport: Connect via stdio stream
+        Transport->>+Registry: Initialize tool registry
+        Registry-->>-Transport: ✅ 4 tools registered
+        Transport-->>-Client: Connection established
     end
 
-    rect rgba(40, 167, 69, 0.1)
-        Note over Client,SAP: <b>Query Execution Phase</b>
-        Client->>Transport: call_tool(sap_query, {filter: "OrderID eq '91000043'"})
-        Transport->>Registry: Get tool: sap_query
-        Registry->>QueryTool: Execute with params
-        QueryTool->>Validator: Validate OData filter
-        Validator-->>QueryTool: ✅ Safe filter
-        QueryTool->>Logger: Log query start
-        QueryTool->>SAPClient: Execute OData query
-        SAPClient->>SAP: GET /OrderSet?$filter=...
-        SAP-->>SAPClient: Order data (XML/JSON)
-        SAPClient->>SAPClient: Parse response
-        SAPClient-->>QueryTool: Parsed order data
-        QueryTool->>Logger: Log query success
-        QueryTool-->>Transport: Order details
-        Transport-->>Client: Formatted response
+    rect rgba(16, 185, 129, 0.05)
+        Note over Client,SAP: <b>🔐 Phase 2: Authentication</b>
+        Client->>+Transport: call_tool(sap_authenticate, {})
+        Transport->>+Registry: Get tool: sap_authenticate
+        Registry->>+AuthTool: Execute authentication
+        AuthTool->>+Validator: Validate credentials
+        Validator-->>-AuthTool: ✅ Credentials valid
+        AuthTool->>+Logger: Log authentication attempt
+        Logger-->>-AuthTool: Logged
+        AuthTool->>+SAPClient: Authenticate with SAP
+        SAPClient->>+SAP: POST /sap/opu/odata/auth
+        SAP-->>-SAPClient: 200 OK + Session token
+        SAPClient-->>-AuthTool: ✅ Authenticated successfully
+        AuthTool-->>-Registry: Success response
+        Registry-->>-Transport: Auth token + session ID
+        Transport-->>-Client: ✅ Authentication complete
     end
 
-    rect rgba(255, 193, 7, 0.1)
-        Note over Client,Logger: <b>Performance Tracking</b>
-        Logger->>Logger: Calculate metrics
-        Logger->>Logger: Write structured log
+    rect rgba(139, 92, 246, 0.05)
+        Note over Client,SAP: <b>🔍 Phase 3: Query Execution</b>
+        Client->>+Transport: call_tool(sap_query, {filter: "OrderID eq '91000043'"})
+        Transport->>+Registry: Get tool: sap_query
+        Registry->>+QueryTool: Execute with parameters
+        QueryTool->>+Validator: Validate OData filter syntax
+        Validator-->>-QueryTool: ✅ Filter is safe
+        QueryTool->>+Logger: Log query start
+        Logger-->>-QueryTool: Logged
+        QueryTool->>+SAPClient: Execute OData query
+        SAPClient->>+SAP: GET /OrderSet?$filter=OrderID eq '91000043'
+        SAP-->>-SAPClient: 200 OK + Order data (JSON)
+        SAPClient->>SAPClient: Parse & transform response
+        SAPClient-->>-QueryTool: ✅ Parsed order data
+        QueryTool->>+Logger: Log query success + metrics
+        Logger-->>-QueryTool: Logged
+        QueryTool-->>-Registry: Order details
+        Registry-->>-Transport: Formatted response
+        Transport-->>-Client: ✅ Query complete
+    end
+
+    rect rgba(245, 158, 11, 0.05)
+        Note over Logger: <b>📊 Phase 4: Performance Tracking</b>
+        Logger->>Logger: Calculate execution metrics
+        Logger->>Logger: Write structured JSON log
+        Logger->>Logger: Update performance counters
     end
 ```
 
 ### Tool Execution Flow
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#28A745','primaryTextColor':'#FFFFFF','primaryBorderColor':'#1E7E34','lineColor':'#555555'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0066CC','primaryTextColor':'#FFFFFF','primaryBorderColor':'#004C99','lineColor':'#64748B','fontSize':'14px','fontFamily':'system-ui, -apple-system, sans-serif'}}}%%
 flowchart TD
-    Start([Client Request]):::startNode --> Validate{Validate<br/>Input}:::decisionNode
+    Start([<b>🚀 Client Request</b><br/><small>Tool invocation</small>]):::startNode
 
-    Validate -->|Invalid| Error1[Return<br/>Validation Error]:::errorNode
-    Validate -->|Valid| Auth{Authenticated?}:::decisionNode
+    Start --> Validate{<b>🔍 Validate Input</b><br/><small>Schema check</small><br/><small>Security scan</small>}:::decisionNode
 
-    Auth -->|No| DoAuth[Execute<br/>Authentication]:::processNode
-    DoAuth --> AuthCheck{Auth<br/>Success?}:::decisionNode
-    AuthCheck -->|No| Error2[Return<br/>Auth Error]:::errorNode
-    AuthCheck -->|Yes| Execute
+    Validate -->|"❌ Invalid"| Error1[<b>🚫 Validation Error</b><br/><small>Return error details</small>]:::errorNode
+    Validate -->|"✅ Valid"| Auth{<b>🔐 Authenticated?</b><br/><small>Session check</small>}:::decisionNode
 
-    Auth -->|Yes| Execute[Execute<br/>Tool Logic]:::processNode
+    Auth -->|"No"| DoAuth[<b>🔑 Execute Auth</b><br/><small>Credential validation</small><br/><small>SAP handshake</small>]:::authNode
+    DoAuth --> AuthCheck{<b>✅ Auth Success?</b><br/><small>Token received</small>}:::decisionNode
 
-    Execute --> SAPCall[Call SAP<br/>OData API]:::sapNode
-    SAPCall --> SAPCheck{SAP<br/>Response?}:::decisionNode
+    AuthCheck -->|"❌ Failed"| Error2[<b>🚫 Auth Error</b><br/><small>Invalid credentials</small>]:::errorNode
+    AuthCheck -->|"✅ Success"| Execute
 
-    SAPCheck -->|Error| Error3[Return<br/>SAP Error]:::errorNode
-    SAPCheck -->|Success| Parse[Parse<br/>Response]:::processNode
+    Auth -->|"Yes"| Execute[<b>⚡ Execute Tool</b><br/><small>Business logic</small><br/><small>Parameter processing</small>]:::processNode
 
-    Parse --> Transform[Transform<br/>to MCP Format]:::processNode
-    Transform --> Log[Log<br/>Performance]:::logNode
-    Log --> Success([Return<br/>Success]):::successNode
+    Execute --> SAPCall[<b>🌐 SAP OData Call</b><br/><small>HTTP request</small><br/><small>SSL/TLS encrypted</small>]:::sapNode
 
-    Error1 & Error2 & Error3 --> LogError[Log<br/>Error]:::logNode
-    LogError --> End([Error Response]):::endNode
+    SAPCall --> SAPCheck{<b>📡 SAP Response</b><br/><small>Status check</small>}:::decisionNode
 
-    classDef startNode fill:#28A745,stroke:#1E7E34,stroke-width:3px,color:#FFFFFF
-    classDef decisionNode fill:#FFC107,stroke:#D39E00,stroke-width:3px,color:#000000
-    classDef processNode fill:#007BFF,stroke:#0056B3,stroke-width:3px,color:#FFFFFF
-    classDef sapNode fill:#6F42C1,stroke:#563D7C,stroke-width:3px,color:#FFFFFF
-    classDef errorNode fill:#DC3545,stroke:#B02A37,stroke-width:3px,color:#FFFFFF
-    classDef logNode fill:#17A2B8,stroke:#117A8B,stroke-width:3px,color:#FFFFFF
-    classDef successNode fill:#28A745,stroke:#1E7E34,stroke-width:3px,color:#FFFFFF
-    classDef endNode fill:#DC3545,stroke:#B02A37,stroke-width:3px,color:#FFFFFF
+    SAPCheck -->|"❌ Error"| Error3[<b>🚫 SAP Error</b><br/><small>Service unavailable</small><br/><small>or data error</small>]:::errorNode
+    SAPCheck -->|"✅ 200 OK"| Parse[<b>📊 Parse Response</b><br/><small>XML/JSON parsing</small><br/><small>Data extraction</small>]:::processNode
+
+    Parse --> Transform[<b>🔄 Transform Data</b><br/><small>MCP format</small><br/><small>Schema mapping</small>]:::processNode
+
+    Transform --> Log[<b>📝 Log Metrics</b><br/><small>Performance data</small><br/><small>Audit trail</small>]:::logNode
+
+    Log --> Success([<b>✅ Success Response</b><br/><small>Return to client</small>]):::successNode
+
+    Error1 & Error2 & Error3 --> LogError[<b>📝 Log Error</b><br/><small>Error context</small><br/><small>Stack trace</small>]:::logNode
+
+    LogError --> End([<b>❌ Error Response</b><br/><small>Return to client</small>]):::endNode
+
+    classDef startNode fill:#10B981,stroke:#059669,stroke-width:3px,color:#FFFFFF,rx:10,ry:10
+    classDef decisionNode fill:#F59E0B,stroke:#D97706,stroke-width:2.5px,color:#1F2937,rx:8,ry:8
+    classDef authNode fill:#8B5CF6,stroke:#7C3AED,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef processNode fill:#0066CC,stroke:#004C99,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef sapNode fill:#EC4899,stroke:#DB2777,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef errorNode fill:#EF4444,stroke:#DC2626,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef logNode fill:#06B6D4,stroke:#0891B2,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef successNode fill:#10B981,stroke:#059669,stroke-width:3px,color:#FFFFFF,rx:10,ry:10
+    classDef endNode fill:#EF4444,stroke:#DC2626,stroke-width:3px,color:#FFFFFF,rx:10,ry:10
 ```
 
 ### Security Architecture
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#DC3545','primaryTextColor':'#FFFFFF','primaryBorderColor':'#B02A37','lineColor':'#555555'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0066CC','primaryTextColor':'#FFFFFF','primaryBorderColor':'#004C99','lineColor':'#64748B','fontSize':'14px','fontFamily':'system-ui, -apple-system, sans-serif'}}}%%
 graph TB
-    subgraph "Security Layers"
-        subgraph "Layer 1: Input Validation"
-            L1A[OData Filter<br/>Validation]:::securityNode
-            L1B[Entity Key<br/>Validation]:::securityNode
-            L1C[Parameter<br/>Sanitization]:::securityNode
+    subgraph security["<b>🛡️ Defense in Depth Security Architecture</b>"]
+        direction TB
+
+        subgraph layer1["<b>Layer 1: Input Validation</b> <small>(Entry Point Security)</small>"]
+            direction LR
+            L1A["<b>🔍 OData Filter</b><br/><small>SQL injection prevention</small><br/><small>Syntax validation</small>"]:::inputNode
+            L1B["<b>🔑 Entity Key</b><br/><small>Format validation</small><br/><small>Type checking</small>"]:::inputNode
+            L1C["<b>🧹 Sanitization</b><br/><small>XSS prevention</small><br/><small>Input cleaning</small>"]:::inputNode
         end
 
-        subgraph "Layer 2: Authentication"
-            L2A[Credential<br/>Validation]:::authNode
-            L2B[Session<br/>Management]:::authNode
-            L2C[Token<br/>Handling]:::authNode
+        subgraph layer2["<b>Layer 2: Authentication</b> <small>(Identity Verification)</small>"]
+            direction LR
+            L2A["<b>✅ Credentials</b><br/><small>User validation</small><br/><small>Password checks</small>"]:::authNode
+            L2B["<b>🎫 Sessions</b><br/><small>Session lifecycle</small><br/><small>Timeout handling</small>"]:::authNode
+            L2C["<b>🔐 Tokens</b><br/><small>JWT/Bearer tokens</small><br/><small>Token rotation</small>"]:::authNode
         end
 
-        subgraph "Layer 3: Authorization"
-            L3A[Service Access<br/>Control]:::authzNode
-            L3B[Entity Set<br/>Permissions]:::authzNode
+        subgraph layer3["<b>Layer 3: Authorization</b> <small>(Access Control)</small>"]
+            direction LR
+            L3A["<b>🚦 Service Access</b><br/><small>Service-level RBAC</small><br/><small>Permission matrix</small>"]:::authzNode
+            L3B["<b>📋 Entity Permissions</b><br/><small>Data-level access</small><br/><small>Field filtering</small>"]:::authzNode
         end
 
-        subgraph "Layer 4: Transport Security"
-            L4A[SSL/TLS<br/>Encryption]:::transportNode
-            L4B[Certificate<br/>Verification]:::transportNode
+        subgraph layer4["<b>Layer 4: Transport Security</b> <small>(Encryption Layer)</small>"]
+            direction LR
+            L4A["<b>🔒 SSL/TLS</b><br/><small>TLS 1.2+ only</small><br/><small>Perfect forward secrecy</small>"]:::transportNode
+            L4B["<b>📜 Certificates</b><br/><small>Chain validation</small><br/><small>Revocation check</small>"]:::transportNode
         end
 
-        subgraph "Layer 5: Audit & Monitoring"
-            L5A[Structured<br/>Logging]:::auditNode
-            L5B[Performance<br/>Metrics]:::auditNode
-            L5C[Error<br/>Tracking]:::auditNode
+        subgraph layer5["<b>Layer 5: Audit & Monitoring</b> <small>(Observability)</small>"]
+            direction LR
+            L5A["<b>📊 Structured Logs</b><br/><small>JSON logging</small><br/><small>PII exclusion</small>"]:::auditNode
+            L5B["<b>⚡ Performance</b><br/><small>Metrics tracking</small><br/><small>SLA monitoring</small>"]:::auditNode
+            L5C["<b>🚨 Error Tracking</b><br/><small>Exception logging</small><br/><small>Alert triggers</small>"]:::auditNode
         end
     end
 
-    L1A & L1B & L1C --> L2A
-    L2A --> L2B --> L2C
-    L2C --> L3A & L3B
-    L3A & L3B --> L4A & L4B
-    L4A & L4B --> L5A & L5B & L5C
+    L1A & L1B & L1C ==>|"Validated Input"| L2A
+    L2A ==>|"Identity Verified"| L2B
+    L2B ==>|"Session Active"| L2C
+    L2C ==>|"Authenticated"| L3A & L3B
+    L3A & L3B ==>|"Authorized"| L4A & L4B
+    L4A & L4B ==>|"Encrypted"| L5A & L5B & L5C
 
-    classDef securityNode fill:#DC3545,stroke:#B02A37,stroke-width:3px,color:#FFFFFF
-    classDef authNode fill:#D95319,stroke:#A74214,stroke-width:3px,color:#FFFFFF
-    classDef authzNode fill:#FFC107,stroke:#D39E00,stroke-width:3px,color:#000000
-    classDef transportNode fill:#6F42C1,stroke:#563D7C,stroke-width:3px,color:#FFFFFF
-    classdef auditNode fill:#007BFF,stroke:#0056B3,stroke-width:3px,color:#FFFFFF
+    classDef inputNode fill:#EF4444,stroke:#DC2626,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef authNode fill:#F59E0B,stroke:#D97706,stroke-width:2.5px,color:#1F2937,rx:8,ry:8
+    classDef authzNode fill:#8B5CF6,stroke:#7C3AED,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef transportNode fill:#EC4899,stroke:#DB2777,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef auditNode fill:#06B6D4,stroke:#0891B2,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
 ```
 
 ---
