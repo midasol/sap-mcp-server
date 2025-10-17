@@ -141,7 +141,7 @@ graph LR
     C1 & C2 --> U1 & U2
     TO5 --> P1
 
-    classDef transportNode fill:#ff6600,stroke:#cc5200,stroke-width:2px,color:#ffffff
+    classDef transportNode fill:#d3d3d3,stroke:#999999,stroke-width:2px,color:#333333
     classDef futureNode fill:#cccccc,stroke:#999999,stroke-width:2px,color:#666666
     classDef toolNode fill:#00cc66,stroke:#009944,stroke-width:2px,color:#ffffff
     classDef baseNode fill:#00996b,stroke:#006644,stroke-width:2px,color:#ffffff
@@ -167,15 +167,15 @@ sequenceDiagram
     participant Logger as 📊 Logger
     participant SAP as 🏢 SAP Gateway
 
-    rect rgb(230, 240, 255)
-        Note over Client,Transport: Session Initialization
+    rect rgb(200, 220, 255)
+        Note over Client,Transport: <b>Session Initialization</b>
         Client->>Transport: Connect via stdio
         Transport->>Registry: Initialize tool registry
         Registry-->>Transport: 4 tools registered
     end
 
-    rect rgb(255, 240, 230)
-        Note over Client,SAP: Authentication Phase
+    rect rgb(255, 220, 200)
+        Note over Client,SAP: <b>Authentication Phase</b>
         Client->>Transport: call_tool(sap_authenticate)
         Transport->>Registry: Get tool: sap_authenticate
         Registry->>AuthTool: Execute
@@ -190,8 +190,8 @@ sequenceDiagram
         Transport-->>Client: Auth token
     end
 
-    rect rgb(230, 255, 240)
-        Note over Client,SAP: Query Execution Phase
+    rect rgb(200, 255, 220)
+        Note over Client,SAP: <b>Query Execution Phase</b>
         Client->>Transport: call_tool(sap_query, {filter: "OrderID eq '91000043'"})
         Transport->>Registry: Get tool: sap_query
         Registry->>QueryTool: Execute with params
@@ -208,8 +208,8 @@ sequenceDiagram
         Transport-->>Client: Formatted response
     end
 
-    rect rgb(255, 245, 230)
-        Note over Client,Logger: Performance Tracking
+    rect rgb(255, 235, 200)
+        Note over Client,Logger: <b>Performance Tracking</b>
         Logger->>Logger: Calculate metrics
         Logger->>Logger: Write structured log
     end
