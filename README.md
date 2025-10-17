@@ -92,9 +92,9 @@ graph TB
     classDef clientNode fill:#0066CC,stroke:#004C99,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
     classDef transportNode fill:#10B981,stroke:#059669,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
     classDef futureNode fill:#94A3B8,stroke:#64748B,stroke-width:2px,stroke-dasharray:5 5,color:#1E293B,rx:8,ry:8
-    classDef toolNode fill:#8B5CF6,stroke:#7C3AED,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
+    classDef toolNode fill:none,stroke:#7C3AED,stroke-width:2.5px,color:#7C3AED,rx:8,ry:8
     classDef coreNode fill:#EC4899,stroke:#DB2777,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
-    classDef utilNode fill:#F59E0B,stroke:#D97706,stroke-width:2.5px,color:#1F2937,rx:8,ry:8
+    classDef utilNode fill:none,stroke:#D97706,stroke-width:2.5px,color:#D97706,rx:8,ry:8
     classDef sapNode fill:#EF4444,stroke:#DC2626,stroke-width:2.5px,color:#FFFFFF,rx:8,ry:8
 ```
 
@@ -161,18 +161,18 @@ graph TB
 
     classDef transportNode fill:#10B981,stroke:#059669,stroke-width:2.5px,color:#FFFFFF,rx:6,ry:6
     classDef futureNode fill:#94A3B8,stroke:#64748B,stroke-width:2px,stroke-dasharray:5 5,color:#1E293B,rx:6,ry:6
-    classDef toolNode fill:#8B5CF6,stroke:#7C3AED,stroke-width:2px,color:#FFFFFF,rx:6,ry:6
+    classDef toolNode fill:none,stroke:#7C3AED,stroke-width:2px,color:#7C3AED,rx:6,ry:6
     classDef baseNode fill:#6366F1,stroke:#4F46E5,stroke-width:2.5px,color:#FFFFFF,rx:6,ry:6
     classDef coreNode fill:#EC4899,stroke:#DB2777,stroke-width:2.5px,color:#FFFFFF,rx:6,ry:6
     classDef configNode fill:#0066CC,stroke:#004C99,stroke-width:2.5px,color:#FFFFFF,rx:6,ry:6
-    classDef utilNode fill:#F59E0B,stroke:#D97706,stroke-width:2.5px,color:#1F2937,rx:6,ry:6
+    classDef utilNode fill:none,stroke:#D97706,stroke-width:2.5px,color:#D97706,rx:6,ry:6
     classDef protocolNode fill:#06B6D4,stroke:#0891B2,stroke-width:2.5px,color:#FFFFFF,rx:6,ry:6
 ```
 
 ### Data Flow: Order Query Example
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0066CC','primaryTextColor':'#FFFFFF','primaryBorderColor':'#004C99','lineColor':'#64748B','fontSize':'14px','fontFamily':'system-ui, -apple-system, sans-serif','actorBkg':'#F8FAFC','actorBorder':'#CBD5E1','actorTextColor':'#1E293B','noteBkgColor':'#EFF6FF','noteBorderColor':'#3B82F6','noteTextColor':'#1E40AF'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0066CC','primaryTextColor':'#1E293B','primaryBorderColor':'#004C99','lineColor':'#1E293B','fontSize':'14px','fontFamily':'system-ui, -apple-system, sans-serif','actorBkg':'#F8FAFC','actorBorder':'#CBD5E1','actorTextColor':'#1E293B','noteBkgColor':'#EFF6FF','noteBorderColor':'#3B82F6','noteTextColor':'#1E40AF','signalColor':'#1E293B','signalTextColor':'#1E293B','labelTextColor':'#1E293B'}}}%%
 sequenceDiagram
     autonumber
     box rgba(59, 130, 246, 0.08) Client Layer
