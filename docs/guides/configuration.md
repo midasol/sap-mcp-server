@@ -61,7 +61,7 @@ services:
 
 ### 2. Environment Variables
 
-**File**: `.env`
+**File**: `.env.server`
 
 **Service Configuration**:
 ```bash

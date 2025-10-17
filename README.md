@@ -1087,12 +1087,10 @@ black . && isort . && flake8 . && mypy . && bandit -r src/
 ## 📖 Documentation
 
 - **[Server Package README](./packages/server/README.md)**: Detailed server documentation
+- **[Client Package README](./packages/client/README.md)**: Client SDK and examples
 - **[Configuration Guide](./docs/guides/configuration.md)**: YAML and environment setup
 - **[Deployment Guide](./docs/guides/deployment.md)**: Production deployment
-- **[Development History](./CONVERSATION_SUMMARY.md)**: Complete development log
-- **[Phase 4 Report](./PHASE4_UTILS_TESTING_COMPLETED.md)**: Utils and testing phase
-- **[Phase 5 Report](./PHASE5_CLEANUP_COMPLETED.md)**: Cleanup phase
-- **[Refactoring Guide](./REFACTORING_GUIDE.md)**: Architecture migration
+- **[Architecture Documentation](./docs/architecture/server.md)**: System architecture details
 
 ---
 

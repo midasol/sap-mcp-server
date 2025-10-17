@@ -180,3 +180,6 @@ temp/
 # SAP specific
 attachments/
 text_files/
+
+# Serena MCP
+.serena/
