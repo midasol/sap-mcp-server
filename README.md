@@ -167,14 +167,14 @@ sequenceDiagram
     participant Logger as 📊 Logger
     participant SAP as 🏢 SAP Gateway
 
-    rect rgb(200, 220, 255)
+    rect rgb(173, 200, 255)
         Note over Client,Transport: <b>Session Initialization</b>
         Client->>Transport: Connect via stdio
         Transport->>Registry: Initialize tool registry
         Registry-->>Transport: 4 tools registered
     end
 
-    rect rgb(255, 220, 200)
+    rect rgb(255, 200, 173)
         Note over Client,SAP: <b>Authentication Phase</b>
         Client->>Transport: call_tool(sap_authenticate)
         Transport->>Registry: Get tool: sap_authenticate
@@ -190,7 +190,7 @@ sequenceDiagram
         Transport-->>Client: Auth token
     end
 
-    rect rgb(200, 255, 220)
+    rect rgb(173, 255, 200)
         Note over Client,SAP: <b>Query Execution Phase</b>
         Client->>Transport: call_tool(sap_query, {filter: "OrderID eq '91000043'"})
         Transport->>Registry: Get tool: sap_query
@@ -208,7 +208,7 @@ sequenceDiagram
         Transport-->>Client: Formatted response
     end
 
-    rect rgb(255, 235, 200)
+    rect rgb(255, 220, 173)
         Note over Client,Logger: <b>Performance Tracking</b>
         Logger->>Logger: Calculate metrics
         Logger->>Logger: Write structured log
