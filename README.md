@@ -36,7 +36,7 @@ Production-ready MCP (Model Context Protocol) server that enables AI agents and 
 ### System Overview
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0066cc','primaryTextColor':'#ffffff','primaryBorderColor':'#004d99','lineColor':'#ff6600','secondaryColor':'#ff6600','tertiaryColor':'#00cc66','noteBkgColor':'#ffcc00','noteTextColor':'#000000'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#00529B','primaryTextColor':'#FFFFFF','primaryBorderColor':'#003D73','lineColor':'#555555','secondaryColor':'#D95319','tertiaryColor':'#28A745'}}}%%
 graph TB
     subgraph "Client Applications"
         A1[AI Agent<br/>LLM/GenAI]:::clientNode
@@ -83,19 +83,19 @@ graph TB
     D1 --> F1
     F1 --> F2
 
-    classDef clientNode fill:#0066cc,stroke:#004d99,stroke-width:3px,color:#ffffff
-    classDef transportNode fill:#ff6600,stroke:#cc5200,stroke-width:3px,color:#ffffff
-    classDef futureNode fill:#cccccc,stroke:#999999,stroke-width:2px,color:#666666
-    classDef toolNode fill:#00cc66,stroke:#009944,stroke-width:3px,color:#ffffff
-    classDef coreNode fill:#9933ff,stroke:#7700cc,stroke-width:3px,color:#ffffff
-    classDef utilNode fill:#ffcc00,stroke:#cc9900,stroke-width:3px,color:#000000
-    classDef sapNode fill:#ff3366,stroke:#cc0033,stroke-width:3px,color:#ffffff
+    classDef clientNode fill:#00529B,stroke:#003D73,stroke-width:3px,color:#FFFFFF
+    classDef transportNode fill:#D95319,stroke:#A74214,stroke-width:3px,color:#FFFFFF
+    classDef futureNode fill:#B0B0B0,stroke:#8C8C8C,stroke-width:2px,color:#333333
+    classDef toolNode fill:#28A745,stroke:#1E7E34,stroke-width:3px,color:#FFFFFF
+    classDef coreNode fill:#6F42C1,stroke:#563D7C,stroke-width:3px,color:#FFFFFF
+    classDef utilNode fill:#FFC107,stroke:#D39E00,stroke-width:3px,color:#000000
+    classDef sapNode fill:#DC3545,stroke:#B02A37,stroke-width:3px,color:#FFFFFF
 ```
 
 ### Component Details
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0066cc','primaryTextColor':'#ffffff','primaryBorderColor':'#004d99','lineColor':'#666666','secondaryColor':'#ff6600'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#007BFF','primaryTextColor':'#FFFFFF','primaryBorderColor':'#0056B3','lineColor':'#555555','secondaryColor':'#28A745'}}}%%
 graph LR
     subgraph "packages/server/src/sap_mcp_server"
         subgraph "transports/"
@@ -141,20 +141,20 @@ graph LR
     C1 & C2 --> U1 & U2
     TO5 --> P1
 
-    classDef transportNode fill:#d3d3d3,stroke:#999999,stroke-width:2px,color:#333333
-    classDef futureNode fill:#cccccc,stroke:#999999,stroke-width:2px,color:#666666
-    classDef toolNode fill:#00cc66,stroke:#009944,stroke-width:2px,color:#ffffff
-    classDef baseNode fill:#00996b,stroke:#006644,stroke-width:2px,color:#ffffff
-    classDef coreNode fill:#9933ff,stroke:#7700cc,stroke-width:2px,color:#ffffff
-    classDef configNode fill:#3399ff,stroke:#0066cc,stroke-width:2px,color:#ffffff
-    classDef utilNode fill:#ffcc00,stroke:#cc9900,stroke-width:2px,color:#000000
-    classDef protocolNode fill:#ff99cc,stroke:#ff3399,stroke-width:2px,color:#000000
+    classDef transportNode fill:#C0C0C0,stroke:#9A9A9A,stroke-width:2px,color:#000000
+    classDef futureNode fill:#B0B0B0,stroke:#8C8C8C,stroke-width:2px,color:#333333
+    classDef toolNode fill:#28A745,stroke:#1E7E34,stroke-width:2px,color:#FFFFFF
+    classDef baseNode fill:#218838,stroke:#19692C,stroke-width:2px,color:#FFFFFF
+    classDef coreNode fill:#6F42C1,stroke:#563D7C,stroke-width:2px,color:#FFFFFF
+    classDef configNode fill:#007BFF,stroke:#0056B3,stroke-width:2px,color:#FFFFFF
+    classDef utilNode fill:#FFC107,stroke:#D39E00,stroke-width:2px,color:#000000
+    classDef protocolNode fill:#17A2B8,stroke:#117A8B,stroke-width:2px,color:#FFFFFF
 ```
 
 ### Data Flow: Order Query Example
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0066cc','primaryTextColor':'#ffffff','primaryBorderColor':'#004d99','lineColor':'#ff6600'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#007BFF','primaryTextColor':'#FFFFFF','primaryBorderColor':'#0056B3','lineColor':'#555555'}}}%%
 sequenceDiagram
     autonumber
     participant Client as 🤖 AI Agent/Client
@@ -167,14 +167,14 @@ sequenceDiagram
     participant Logger as 📊 Logger
     participant SAP as 🏢 SAP Gateway
 
-    rect rgb(173, 200, 255)
+    rect rgba(0, 123, 255, 0.1)
         Note over Client,Transport: <b>Session Initialization</b>
         Client->>Transport: Connect via stdio
         Transport->>Registry: Initialize tool registry
         Registry-->>Transport: 4 tools registered
     end
 
-    rect rgb(255, 200, 173)
+    rect rgba(217, 83, 25, 0.1)
         Note over Client,SAP: <b>Authentication Phase</b>
         Client->>Transport: call_tool(sap_authenticate)
         Transport->>Registry: Get tool: sap_authenticate
@@ -190,7 +190,7 @@ sequenceDiagram
         Transport-->>Client: Auth token
     end
 
-    rect rgb(173, 255, 200)
+    rect rgba(40, 167, 69, 0.1)
         Note over Client,SAP: <b>Query Execution Phase</b>
         Client->>Transport: call_tool(sap_query, {filter: "OrderID eq '91000043'"})
         Transport->>Registry: Get tool: sap_query
@@ -208,7 +208,7 @@ sequenceDiagram
         Transport-->>Client: Formatted response
     end
 
-    rect rgb(255, 220, 173)
+    rect rgba(255, 193, 7, 0.1)
         Note over Client,Logger: <b>Performance Tracking</b>
         Logger->>Logger: Calculate metrics
         Logger->>Logger: Write structured log
@@ -218,7 +218,7 @@ sequenceDiagram
 ### Tool Execution Flow
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#00cc66','primaryTextColor':'#ffffff','primaryBorderColor':'#009944','lineColor':'#ff6600'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#28A745','primaryTextColor':'#FFFFFF','primaryBorderColor':'#1E7E34','lineColor':'#555555'}}}%%
 flowchart TD
     Start([Client Request]):::startNode --> Validate{Validate<br/>Input}:::decisionNode
 
@@ -245,20 +245,20 @@ flowchart TD
     Error1 & Error2 & Error3 --> LogError[Log<br/>Error]:::logNode
     LogError --> End([Error Response]):::endNode
 
-    classDef startNode fill:#00cc66,stroke:#009944,stroke-width:3px,color:#ffffff
-    classDef decisionNode fill:#ffcc00,stroke:#cc9900,stroke-width:3px,color:#000000
-    classDef processNode fill:#0066cc,stroke:#004d99,stroke-width:3px,color:#ffffff
-    classDef sapNode fill:#9933ff,stroke:#7700cc,stroke-width:3px,color:#ffffff
-    classDef errorNode fill:#ff3366,stroke:#cc0033,stroke-width:3px,color:#ffffff
-    classDef logNode fill:#ff6600,stroke:#cc5200,stroke-width:3px,color:#ffffff
-    classDef successNode fill:#00cc66,stroke:#009944,stroke-width:3px,color:#ffffff
-    classDef endNode fill:#ff3366,stroke:#cc0033,stroke-width:3px,color:#ffffff
+    classDef startNode fill:#28A745,stroke:#1E7E34,stroke-width:3px,color:#FFFFFF
+    classDef decisionNode fill:#FFC107,stroke:#D39E00,stroke-width:3px,color:#000000
+    classDef processNode fill:#007BFF,stroke:#0056B3,stroke-width:3px,color:#FFFFFF
+    classDef sapNode fill:#6F42C1,stroke:#563D7C,stroke-width:3px,color:#FFFFFF
+    classDef errorNode fill:#DC3545,stroke:#B02A37,stroke-width:3px,color:#FFFFFF
+    classDef logNode fill:#17A2B8,stroke:#117A8B,stroke-width:3px,color:#FFFFFF
+    classDef successNode fill:#28A745,stroke:#1E7E34,stroke-width:3px,color:#FFFFFF
+    classDef endNode fill:#DC3545,stroke:#B02A37,stroke-width:3px,color:#FFFFFF
 ```
 
 ### Security Architecture
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#ff3366','primaryTextColor':'#ffffff','primaryBorderColor':'#cc0033','lineColor':'#666666'}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#DC3545','primaryTextColor':'#FFFFFF','primaryBorderColor':'#B02A37','lineColor':'#555555'}}}%%
 graph TB
     subgraph "Security Layers"
         subgraph "Layer 1: Input Validation"
@@ -296,11 +296,11 @@ graph TB
     L3A & L3B --> L4A & L4B
     L4A & L4B --> L5A & L5B & L5C
 
-    classDef securityNode fill:#ff3366,stroke:#cc0033,stroke-width:3px,color:#ffffff
-    classDef authNode fill:#ff6600,stroke:#cc5200,stroke-width:3px,color:#ffffff
-    classDef authzNode fill:#ffcc00,stroke:#cc9900,stroke-width:3px,color:#000000
-    classDef transportNode fill:#9933ff,stroke:#7700cc,stroke-width:3px,color:#ffffff
-    classDef auditNode fill:#0066cc,stroke:#004d99,stroke-width:3px,color:#ffffff
+    classDef securityNode fill:#DC3545,stroke:#B02A37,stroke-width:3px,color:#FFFFFF
+    classDef authNode fill:#D95319,stroke:#A74214,stroke-width:3px,color:#FFFFFF
+    classDef authzNode fill:#FFC107,stroke:#D39E00,stroke-width:3px,color:#000000
+    classDef transportNode fill:#6F42C1,stroke:#563D7C,stroke-width:3px,color:#FFFFFF
+    classdef auditNode fill:#007BFF,stroke:#0056B3,stroke-width:3px,color:#FFFFFF
 ```
 
 ---
