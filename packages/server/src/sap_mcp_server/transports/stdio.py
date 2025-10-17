@@ -89,11 +89,17 @@ async def main() -> None:
         )
 
 
-if __name__ == "__main__":
+def cli_main() -> None:
+    """CLI entry point for console_scripts"""
     # Configure logging
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
+    # Run async main
     asyncio.run(main())
+
+
+if __name__ == "__main__":
+    cli_main()

@@ -65,7 +65,7 @@ Repository = "https://github.com/company/sap-mcp.git"
 Issues = "https://github.com/company/sap-mcp/issues"
 
 [project.scripts]
-sap-mcp-server-stdio = "sap_mcp_server.transports.stdio:main"
+sap-mcp-server-stdio = "sap_mcp_server.transports.stdio:cli_main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

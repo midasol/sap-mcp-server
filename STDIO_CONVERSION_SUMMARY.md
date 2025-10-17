@@ -28,10 +28,10 @@
   ```toml
   # 이전:
   sap-mcp-server = "sap_mcp.sse_server:main"
-  sap-mcp-server-stdio = "sap_mcp.stdio_server:main"
+  sap-mcp-server-stdio = "sap_mcp_server.transports.stdio:main"
 
   # 현재:
-  sap-mcp-server = "sap_mcp.stdio_server:main"
+  sap-mcp-server = "sap_mcp_server.transports.stdio:main"
   ```
 
 #### `.env.server`
@@ -160,7 +160,7 @@ pip install -e .
   "mcpServers": {
     "sap-mcp": {
       "command": "python",
-      "args": ["-m", "sap_mcp.stdio_server"],
+      "args": ["-m", "sap_mcp_server.transports.stdio"],
       "env": {
         "SAP_HOST": "actual-sap-server.company.com",
         "SAP_PORT": "44300",

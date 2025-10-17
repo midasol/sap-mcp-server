@@ -73,7 +73,7 @@ Add to Claude Desktop configuration file:
   "mcpServers": {
     "sap-mcp": {
       "command": "python",
-      "args": ["-m", "sap_mcp.stdio_server"],
+      "args": ["-m", "sap_mcp_server.transports.stdio"],
       "env": {
         "SAP_HOST": "actual-sap-server.company.com",
         "SAP_PORT": "44300",
@@ -100,7 +100,7 @@ async def main():
     # Configure server parameters
     server_params = StdioServerParameters(
         command="python",
-        args=["-m", "sap_mcp.stdio_server"],
+        args=["-m", "sap_mcp_server.transports.stdio"],
         env=None  # Uses .env.server file
     )
 
@@ -126,7 +126,7 @@ For testing or debugging:
 
 ```bash
 # Using Python module
-python -m sap_mcp.stdio_server
+python -m sap_mcp_server.transports.stdio
 
 # Using entry point
 sap-mcp-server

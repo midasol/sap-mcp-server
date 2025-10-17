@@ -24,7 +24,7 @@ Stdio 프로토콜은 클라이언트가 서버 프로세스를 자동으로 실
 - 별도의 네트워크 설정 불필요
 
 **작동 방식:**
-1. 클라이언트가 `python -m sap_mcp.stdio_server` 실행
+1. 클라이언트가 `python -m sap_mcp_server.transports.stdio` 실행
 2. stdin/stdout 파이프를 통한 JSON-RPC 통신
 3. 클라이언트 종료 시 서버도 자동 종료
 
@@ -158,7 +158,7 @@ This client auto-spawns the server as a subprocess
   "mcpServers": {
     "sap-mcp": {
       "command": "python",
-      "args": ["-m", "sap_mcp.stdio_server"],
+      "args": ["-m", "sap_mcp_server.transports.stdio"],
       "env": {
         "SAP_HOST": "your-sap-server.com",
         "SAP_PORT": "44300",
@@ -240,7 +240,7 @@ pip install -e .
 
 2. 서버 직접 실행 테스트:
    ```bash
-   python -m sap_mcp.stdio_server
+   python -m sap_mcp_server.transports.stdio
    ```
 
 3. 로그 확인하여 에러 메시지 확인
