@@ -326,41 +326,42 @@ flowchart TD
 ### Security Architecture
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'fontSize':'16px', 'fontFamily':'arial'}}}%%
 graph TB
     subgraph security["🛡️ Defense in Depth Security Architecture"]
         direction TB
 
-        subgraph layer1["Layer 1: Input Validation <small>(Entry Point Security)</small>"]
+        subgraph layer1["Layer 1: Input Validation - Entry Point Security"]
             direction LR
-            L1A["🔍 OData Filter<br/><small>SQL injection prevention</small><br/><small>Syntax validation</small>"]
-            L1B["🔑 Entity Key<br/><small>Format validation</small><br/><small>Type checking</small>"]
-            L1C["🧹 Sanitization<br/><small>XSS prevention</small><br/><small>Input cleaning</small>"]
+            L1A["🔍 OData Filter<br/>SQL injection prevention<br/>Syntax validation"]
+            L1B["🔑 Entity Key<br/>Format validation<br/>Type checking"]
+            L1C["🧹 Sanitization<br/>XSS prevention<br/>Input cleaning"]
         end
 
-        subgraph layer2["Layer 2: Authentication <small>(Identity Verification)</small>"]
+        subgraph layer2["Layer 2: Authentication - Identity Verification"]
             direction LR
-            L2A["✅ Credentials<br/><small>User validation</small><br/><small>Password checks</small>"]
-            L2B["🎫 Sessions<br/><small>Session lifecycle</small><br/><small>Timeout handling</small>"]
-            L2C["🔐 Tokens<br/><small>JWT/Bearer tokens</small><br/><small>Token rotation</small>"]
+            L2A["✅ Credentials<br/>User validation<br/>Password checks"]
+            L2B["🎫 Sessions<br/>Session lifecycle<br/>Timeout handling"]
+            L2C["🔐 Tokens<br/>JWT/Bearer tokens<br/>Token rotation"]
         end
 
-        subgraph layer3["Layer 3: Authorization <small>(Access Control)</small>"]
+        subgraph layer3["Layer 3: Authorization - Access Control"]
             direction LR
-            L3A["🚦 Service Access<br/><small>Service-level RBAC</small><br/><small>Permission matrix</small>"]
-            L3B["📋 Entity Permissions<br/><small>Data-level access</small><br/><small>Field filtering</small>"]
+            L3A["🚦 Service Access<br/>Service-level RBAC<br/>Permission matrix"]
+            L3B["📋 Entity Permissions<br/>Data-level access<br/>Field filtering"]
         end
 
-        subgraph layer4["Layer 4: Transport Security <small>(Encryption Layer)</small>"]
+        subgraph layer4["Layer 4: Transport Security - Encryption Layer"]
             direction LR
-            L4A["🔒 SSL/TLS<br/><small>TLS 1.2+ only</small><br/><small>Perfect forward secrecy</small>"]
-            L4B["📜 Certificates<br/><small>Chain validation</small><br/><small>Revocation check</small>"]
+            L4A["🔒 SSL/TLS<br/>TLS 1.2+ only<br/>Perfect forward secrecy"]
+            L4B["📜 Certificates<br/>Chain validation<br/>Revocation check"]
         end
 
-        subgraph layer5["Layer 5: Audit & Monitoring <small>(Observability)</small>"]
+        subgraph layer5["Layer 5: Audit & Monitoring - Observability"]
             direction LR
-            L5A["📊 Structured Logs<br/><small>JSON logging</small><br/><small>PII exclusion</small>"]
-            L5B["⚡ Performance<br/><small>Metrics tracking</small><br/><small>SLA monitoring</small>"]
-            L5C["🚨 Error Tracking<br/><small>Exception logging</small><br/><small>Alert triggers</small>"]
+            L5A["📊 Structured Logs<br/>JSON logging<br/>PII exclusion"]
+            L5B["⚡ Performance<br/>Metrics tracking<br/>SLA monitoring"]
+            L5C["🚨 Error Tracking<br/>Exception logging<br/>Alert triggers"]
         end
     end
 
@@ -371,11 +372,11 @@ graph TB
     L3A & L3B -->|Authorized| L4A & L4B
     L4A & L4B -->|Encrypted| L5A & L5B & L5C
 
-    classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px
-    classDef authzNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
-    classDef transportNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef auditNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
+    classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:15px
+    classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:15px
+    classDef authzNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:15px
+    classDef transportNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:15px
+    classDef auditNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:15px
 
     class L1A,L1B,L1C inputNode
     class L2A,L2B,L2C authNode
