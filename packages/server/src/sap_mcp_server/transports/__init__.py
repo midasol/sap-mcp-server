@@ -1,3 +1,3 @@
 """MCP Transport implementations"""
 
-__all__ = ["stdio", "sse"]
+__all__ = ["stdio"]

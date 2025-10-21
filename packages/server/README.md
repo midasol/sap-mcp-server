@@ -89,9 +89,8 @@ src/sap_mcp_server/
 │   ├── query_tool.py        # OData queries
 │   ├── entity_tool.py       # Entity retrieval
 │   └── service_tool.py      # Service discovery
-├── transports/              # Transport layers
-│   ├── stdio.py             # Stdio transport ✅
-│   └── sse.py               # SSE transport (planned)
+├── transports/              # Transport layer
+│   └── stdio.py             # Stdio transport ✅
 └── utils/                   # Utilities
     ├── logger.py            # Structured logging
     └── validators.py        # Input validation

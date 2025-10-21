@@ -3,5 +3,5 @@ import pytest
 
 @pytest.fixture
 def server_url():
-    """Test server URL"""
-    return "http://localhost:8000/sse"
+    """Test server URL (placeholder for future HTTP endpoint)"""
+    return "http://localhost:8000"

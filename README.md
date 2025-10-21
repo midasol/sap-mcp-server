@@ -47,7 +47,6 @@ graph TB
     subgraph transport["🚀 MCP Server Layer"]
         direction TB
         B1["Stdio Transport<br/><small>stdin/stdout Stream</small>"]
-        B2["SSE Transport<br/><small>Future Release</small>"]
     end
 
     subgraph registry["🛠️ Tool Registry"]
@@ -79,7 +78,6 @@ graph TB
     end
 
     A1 & A2 & A3 -->|Active Connection| B1
-    A1 & A2 & A3 -.->|Future Support| B2
     B1 -->|Tool Dispatch| C1 & C2 & C3 & C4
     C1 & C2 & C3 & C4 -->|Core Services| D1
     C1 -->|Auth Flow| D2
@@ -98,7 +96,6 @@ graph TB
 
     class A1,A2,A3 clientNode
     class B1 transportNode
-    class B2 futureNode
     class C1,C2,C3,C4 toolNode
     class D1,D2,D3 coreNode
     class E1,E2,E3 utilNode
@@ -115,7 +112,6 @@ graph TB
         subgraph trans["🚀 transports/"]
             direction LR
             T1["stdio.py<br/><small>CLI Entry Point</small>"]
-            T2["sse.py<br/><small>Future SSE Support</small>"]
         end
 
         subgraph tools["🛠️ tools/"]
@@ -175,7 +171,6 @@ graph TB
     classDef protocolNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
 
     class T1 transportNode
-    class T2 futureNode
     class TO1,TO2,TO3,TO4 toolNode
     class TO5 baseNode
     class C1,C2,C3 coreNode
@@ -410,9 +405,8 @@ sap-mcp/
 │   │   │   │   ├── query_tool.py        # OData queries
 │   │   │   │   ├── entity_tool.py       # Entity retrieval
 │   │   │   │   └── service_tool.py      # Service discovery
-│   │   │   ├── transports/              # Transport layer (2 files)
-│   │   │   │   ├── stdio.py             # Stdio transport ✅
-│   │   │   │   └── sse.py               # SSE transport (planned)
+│   │   │   ├── transports/              # Transport layer
+│   │   │   │   └── stdio.py             # Stdio transport ✅
 │   │   │   └── utils/                   # Utilities (3 files)
 │   │   │       ├── logger.py            # Structured logging
 │   │   │       └── validators.py        # Input validation
@@ -459,8 +453,6 @@ sap-mcp/
 
 #### 🚀 Transport
 - ✅ **Stdio**: Production-ready stdin/stdout
-- 📝 **SSE**: Planned for browser clients
-- 📝 **WebSocket**: Future implementation
 
 </td>
 </tr>
@@ -1257,10 +1249,8 @@ black . && isort . && flake8 . && mypy . && bandit -r src/
 ### 📝 Planned (v0.3.0)
 
 **High Priority**:
-- [ ] SSE Transport implementation (browser clients)
 - [ ] Increase test coverage to 70%+
 - [ ] Performance benchmarks
-- [ ] WebSocket transport
 
 **Medium Priority**:
 - [ ] Client library (`packages/client/src/`)
@@ -1319,7 +1309,7 @@ black . && isort . && flake8 . && mypy . && bandit -r src/
 | **Tests** | 45 (44 passing, 98% success rate) |
 | **Python Modules** | 24 |
 | **SAP Tools** | 4 |
-| **Transport Layers** | 1 (Stdio), 1 planned (SSE) |
+| **Transport Layers** | 1 (Stdio) |
 | **Development Time** | ~3 hours (all 5 phases) |
 | **Python Version** | 3.11+ |
 | **Dependencies** | 11 core, 9 dev |
