@@ -326,7 +326,7 @@ flowchart TD
 ### Security Architecture
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'fontSize':'16px', 'fontFamily':'arial'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'fontSize':'14px', 'fontFamily':'arial'}}}%%
 graph TB
     subgraph security["🛡️ Defense in Depth Security Architecture"]
         direction TB
