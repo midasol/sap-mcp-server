@@ -584,6 +584,247 @@ python -m pytest -m integration   # Integration tests only
 
 ---
 
+## 🤖 Integration with Gemini CLI
+
+### Prerequisites
+
+- Node.js 18+ and npm installed
+- SAP MCP Server installed (see Quick Start above)
+- Google Account for Gemini API access
+
+### 1. Install Gemini CLI
+
+```bash
+# Install Gemini CLI globally
+npm install -g @google/gemini-cli
+
+# Verify installation
+gemini --version
+```
+
+### 2. Authenticate Gemini CLI
+
+**Option A: Using Gemini API Key (Recommended for Getting Started)**
+
+1. Get your API key from [Google AI Studio](https://aistudio.google.com/apikey)
+2. Set the environment variable:
+
+```bash
+export GEMINI_API_KEY="your-api-key-here"
+```
+
+**Option B: Using Google Cloud (For Production)**
+
+```bash
+# Install Google Cloud CLI first
+gcloud auth application-default login
+
+# Set your project
+export GOOGLE_CLOUD_PROJECT="your-project-id"
+export GOOGLE_CLOUD_LOCATION="us-central1"
+```
+
+### 3. Register SAP MCP Server
+
+**Method A: Using CLI Command (Recommended)**
+
+```bash
+# Register the server
+gemini mcp add sap-server sap-mcp-server-stdio
+
+# Verify registration
+gemini mcp list
+```
+
+**Method B: Manual Configuration**
+
+Edit `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "sap-server": {
+      "command": "sap-mcp-server-stdio",
+      "description": "SAP Gateway MCP Server for OData integration",
+      "timeout": 30000,
+      "trust": false
+    }
+  }
+}
+```
+
+**Alternative: Using Python Module Path**
+
+If `sap-mcp-server-stdio` is not in your PATH:
+
+```json
+{
+  "mcpServers": {
+    "sap-server": {
+      "command": "python",
+      "args": ["-m", "sap_mcp_server.transports.stdio"],
+      "cwd": "/path/to/sap-mcp/packages/server",
+      "description": "SAP Gateway MCP Server",
+      "timeout": 30000,
+      "trust": false
+    }
+  }
+}
+```
+
+### 4. Start Using SAP MCP with Gemini CLI
+
+```bash
+# Start Gemini CLI
+gemini
+
+# Check MCP server status
+> /mcp
+
+# View available SAP tools
+> /mcp desc
+
+# Example: Query SAP orders
+> Use the SAP tools to authenticate and query order number 91000043
+
+# Example: List available SAP services
+> What SAP services are available?
+
+# Example: Get customer details
+> Retrieve details for customer CUST001 from SAP
+```
+
+### Advanced Configuration
+
+**Enable Auto-Approval for Trusted Server**
+
+```json
+{
+  "mcpServers": {
+    "sap-server": {
+      "command": "sap-mcp-server-stdio",
+      "trust": true,
+      "timeout": 30000
+    }
+  }
+}
+```
+
+**Filter Specific Tools**
+
+```json
+{
+  "mcpServers": {
+    "sap-server": {
+      "command": "sap-mcp-server-stdio",
+      "includeTools": ["sap_authenticate", "sap_query"],
+      "excludeTools": ["sap_list_services"],
+      "timeout": 30000
+    }
+  }
+}
+```
+
+**Add Environment Variables (if needed)**
+
+```json
+{
+  "mcpServers": {
+    "sap-server": {
+      "command": "sap-mcp-server-stdio",
+      "env": {
+        "SAP_HOST": "${SAP_HOST}",
+        "SAP_USERNAME": "${SAP_USERNAME}",
+        "SAP_PASSWORD": "${SAP_PASSWORD}"
+      },
+      "timeout": 30000
+    }
+  }
+}
+```
+
+### Troubleshooting
+
+**Server Connection Failed**
+
+```bash
+# Test server directly
+sap-mcp-server-stdio
+
+# Check if command is in PATH
+which sap-mcp-server-stdio
+
+# If not found, use absolute path in settings.json
+which python  # Use this path in "command" field
+```
+
+**Authentication Errors**
+
+```bash
+# Verify .env.server configuration
+cat /path/to/sap-mcp/.env.server
+
+# Re-authenticate with Gemini CLI
+> /mcp auth sap-server
+```
+
+**Remove and Re-register Server**
+
+```bash
+# Remove existing server
+gemini mcp remove sap-server
+
+# Re-add with correct configuration
+gemini mcp add sap-server sap-mcp-server-stdio
+```
+
+### Available SAP Tools in Gemini CLI
+
+Once registered, you can use these SAP tools through natural language:
+
+| Tool | Description | Example Prompt |
+|------|-------------|----------------|
+| **sap_authenticate** | Authenticate with SAP Gateway | "Authenticate with SAP" |
+| **sap_query** | Query SAP entities with OData filters | "Query all orders for customer CUST001" |
+| **sap_get_entity** | Retrieve specific entity by key | "Get details for order 91000043" |
+| **sap_list_services** | List available SAP services | "What SAP services are available?" |
+
+### Example Workflows
+
+**1. Order Inquiry Workflow**
+
+```bash
+gemini
+
+> Connect to SAP and find all orders placed in the last week for customer CUST001
+# Gemini will:
+# 1. Call sap_authenticate
+# 2. Call sap_query with appropriate filters
+# 3. Format and present the results
+```
+
+**2. Customer Analysis**
+
+```bash
+> Analyze the top 5 customers by order volume using SAP data
+# Gemini will:
+# 1. Authenticate
+# 2. Query customer orders
+# 3. Aggregate and analyze the data
+# 4. Present insights
+```
+
+**3. Service Discovery**
+
+```bash
+> What SAP services and entity sets are available in the system?
+# Gemini will:
+# 1. Call sap_list_services
+# 2. Format the service catalog
+```
+
+---
+
 ## 🔧 Available Tools
 
 ### 1. SAP Authenticate

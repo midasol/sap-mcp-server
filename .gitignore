@@ -183,3 +183,5 @@ text_files/
 
 # Serena MCP
 .serena/
+# Gemini CLI local configuration
+.gemini/
