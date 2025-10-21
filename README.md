@@ -328,7 +328,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize':'16px', 'fontFamily':'arial'}}}%%
 graph TB
-    subgraph security["🛡️ Defense in Depth Security Architecture\n"]
+    subgraph security["🛡️ Defense in Depth Security Architecture<br/>"]
         direction TB
 
         subgraph layer1["Layer 1: Input Validation - Entry Point Security"]
