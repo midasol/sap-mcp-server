@@ -1097,10 +1097,18 @@ source .venv/bin/activate
 python -c "from sap_mcp_server.config.settings import get_connection_config; print(get_connection_config())"
 ```
 
-**Common Issue**: If authentication fails with "Field required" errors, it usually means `.env.server` is not being loaded. Verify:
-- File exists in project root: `/path/to/sap-mcp/.env.server`
-- Gemini CLI `settings.json` has correct `cwd` parameter
-- File has proper permissions: `chmod 600 .env.server`
+**Common Issues**:
+
+1. **"Field required" errors**: `.env.server` is not being loaded. Verify:
+   - File exists in project root: `/path/to/sap-mcp/.env.server`
+   - Gemini CLI `settings.json` has correct `cwd` parameter
+   - File has proper permissions: `chmod 600 .env.server`
+
+2. **401 Unauthorized errors**: Fixed in v0.2.1 (2025-01-22)
+   - **Previous Issue**: SAP Gateway was rejecting requests without `sap-client` parameter
+   - **Current Status**: Automatically handled - all requests include `sap-client` parameter
+   - **Verification**: Ensure you have updated to v0.2.1 or later
+   - **Manual Check**: Authentication should now succeed with valid credentials
 
 ---
 
@@ -1725,7 +1733,24 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 📜 Version History
 
-### v0.2.0 (Current) - 2025-01-15
+### v0.2.1 (Current) - 2025-01-22
+
+**Bug Fixes**:
+- 🐛 **Critical Fix**: Added missing `sap-client` parameter to all SAP Gateway API requests
+  - **Issue**: Authentication was failing with 401 Unauthorized errors
+  - **Root Cause**: SAP Gateway requires `sap-client` parameter to route requests to correct SAP client
+  - **Solution**:
+    - Modified `auth.py` to include `sap-client` in CSRF token and authentication URLs
+    - Modified `sap_client.py` to automatically inject `sap-client` parameter in all API requests
+  - **Impact**: All SAP Gateway operations now work correctly with proper client routing
+
+**Technical Details**:
+- Updated `SAPAuthenticator._get_csrf_token()` to append `?sap-client={client}` to URLs
+- Updated `SAPAuthenticator._authenticate_session()` to append `?sap-client={client}` to URLs
+- Updated `SAPClient._make_request()` to automatically add `sap-client` to request params
+- No configuration changes required - uses existing `SAP_CLIENT` from `.env.server`
+
+### v0.2.0 - 2025-01-15
 
 **Major Features**:
 - ✅ Complete modular architecture
