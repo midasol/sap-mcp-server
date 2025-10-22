@@ -791,7 +791,51 @@ export GOOGLE_CLOUD_LOCATION="us-central1"
 
 ### 3. Register SAP MCP Server
 
-**Method A: Using CLI Command (Recommended)**
+**Method A: Using Absolute Path (Recommended for Virtual Environments)**
+
+If you installed the server in a virtual environment, use the absolute path to the executable:
+
+1. **Find the absolute path**:
+```bash
+# Navigate to your SAP MCP directory
+cd /path/to/sap-mcp
+
+# Get the absolute path
+pwd
+# Example output: /Users/sanggyulee/my-project/python-project/sap-mcp
+```
+
+2. **Edit `~/.gemini/settings.json`**:
+```json
+{
+  "mcpServers": {
+    "sap-server": {
+      "command": "/Users/sanggyulee/my-project/python-project/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "description": "SAP Gateway MCP Server for OData integration",
+      "timeout": 30000,
+      "trust": false
+    }
+  }
+}
+```
+
+**Replace `/Users/sanggyulee/my-project/python-project/sap-mcp` with your actual project path.**
+
+3. **Verify the path**:
+```bash
+# Test the command works
+/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio --help
+
+# Verify registration
+gemini mcp list
+# Expected: ✓ sap-server: ... (stdio) - Connected
+```
+
+---
+
+**Method B: Using CLI Command (If installed globally)**
+
+If `sap-mcp-server-stdio` is in your system PATH:
 
 ```bash
 # Register the server
@@ -801,32 +845,19 @@ gemini mcp add sap-server sap-mcp-server-stdio
 gemini mcp list
 ```
 
-**Method B: Manual Configuration**
+**Note**: This method only works if you added the virtual environment to your PATH or installed the package globally.
 
-Edit `~/.gemini/settings.json`:
+---
 
-```json
-{
-  "mcpServers": {
-    "sap-server": {
-      "command": "sap-mcp-server-stdio",
-      "description": "SAP Gateway MCP Server for OData integration",
-      "timeout": 30000,
-      "trust": false
-    }
-  }
-}
-```
+**Method C: Using Python Module Path**
 
-**Alternative: Using Python Module Path**
-
-If `sap-mcp-server-stdio` is not in your PATH:
+Alternative approach using Python module:
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "python",
+      "command": "/path/to/sap-mcp/.venv/bin/python",
       "args": ["-m", "sap_mcp_server.transports.stdio"],
       "cwd": "/path/to/sap-mcp/packages/server",
       "description": "SAP Gateway MCP Server",
@@ -867,7 +898,7 @@ gemini
 {
   "mcpServers": {
     "sap-server": {
-      "command": "sap-mcp-server-stdio",
+      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "trust": true,
       "timeout": 30000
     }
@@ -875,13 +906,17 @@ gemini
 }
 ```
 
+**Note**: Set `"trust": true` to skip approval prompts for each tool call. Only enable for trusted servers.
+
+---
+
 **Filter Specific Tools**
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "sap-mcp-server-stdio",
+      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "includeTools": ["sap_authenticate", "sap_query"],
       "excludeTools": ["sap_list_services"],
       "timeout": 30000
@@ -890,13 +925,20 @@ gemini
 }
 ```
 
-**Add Environment Variables (if needed)**
+**Use Cases**:
+- `includeTools`: Only allow specific tools (whitelist)
+- `excludeTools`: Block specific tools (blacklist)
+- Cannot use both simultaneously
+
+---
+
+**Add Environment Variables (Optional)**
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "sap-mcp-server-stdio",
+      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "env": {
         "SAP_HOST": "${SAP_HOST}",
         "SAP_USERNAME": "${SAP_USERNAME}",
@@ -908,39 +950,169 @@ gemini
 }
 ```
 
+**Note**: Environment variables in `settings.json` override values from `.env.server`. Not recommended for security reasons - prefer using `.env.server` file instead.
+
+---
+
+**Increase Timeout for Slow Networks**
+
+```json
+{
+  "mcpServers": {
+    "sap-server": {
+      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "timeout": 60000,  // 60 seconds (default: 30000)
+      "trust": false
+    }
+  }
+}
+```
+
+**When to increase**:
+- Slow network connections
+- Large data queries
+- Complex SAP operations
+- Frequent timeout errors
+
 ### Troubleshooting
 
-**Server Connection Failed**
+**Problem: Server shows "Disconnected" status**
+
+```bash
+# Check MCP server status
+gemini mcp list
+# If you see: ✗ sap-server: sap-mcp-server-stdio (stdio) - Disconnected
+```
+
+**Solution 1: Use absolute path (Most Common)**
+
+The command is likely in a virtual environment. Update `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "sap-server": {
+      "command": "/full/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "description": "SAP Gateway MCP Server",
+      "timeout": 30000,
+      "trust": false
+    }
+  }
+}
+```
+
+**Find your absolute path**:
+```bash
+# Navigate to SAP MCP directory
+cd /path/to/sap-mcp
+
+# Get full path
+pwd
+# Example: /Users/sanggyulee/my-project/python-project/sap-mcp
+
+# Verify command exists
+ls -la .venv/bin/sap-mcp-server-stdio
+```
+
+---
+
+**Problem: Command not found in PATH**
 
 ```bash
 # Test server directly
 sap-mcp-server-stdio
+# Error: command not found
 
-# Check if command is in PATH
+# Check if command exists
 which sap-mcp-server-stdio
-
-# If not found, use absolute path in settings.json
-which python  # Use this path in "command" field
+# Returns: command not found
 ```
 
-**Authentication Errors**
+**Solution 2: Check virtual environment**
 
 ```bash
-# Verify .env.server configuration
-cat /path/to/sap-mcp/.env.server
+# Check if virtual environment exists
+ls -la .venv/bin/sap-mcp-server-stdio
 
-# Re-authenticate with Gemini CLI
-> /mcp auth sap-server
+# If exists, use absolute path in settings.json
+# If not exists, reinstall:
+cd packages/server
+pip install -e .
 ```
 
-**Remove and Re-register Server**
+---
+
+**Problem: Authentication Errors**
 
 ```bash
-# Remove existing server
-gemini mcp remove sap-server
+# Verify .env.server exists and has correct credentials
+cat .env.server
 
-# Re-add with correct configuration
-gemini mcp add sap-server sap-mcp-server-stdio
+# Required fields:
+# SAP_HOST=your-host
+# SAP_PORT=443
+# SAP_USERNAME=your-username
+# SAP_PASSWORD=your-password
+# SAP_CLIENT=100
+```
+
+**Solution 3: Verify credentials**
+
+```bash
+# Test authentication manually
+source .venv/bin/activate
+python -c "from sap_mcp_server.config.settings import get_connection_config; print(get_connection_config())"
+```
+
+---
+
+**Problem: Need to re-register server**
+
+```bash
+# Remove existing server configuration
+rm ~/.gemini/settings.json
+
+# Or edit manually to remove sap-server entry
+```
+
+**Solution 4: Clean re-registration**
+
+```bash
+# Method 1: Edit settings directly
+vim ~/.gemini/settings.json
+
+# Method 2: Use absolute path (recommended)
+# Follow "Method A: Using Absolute Path" in section 3 above
+```
+
+---
+
+**Quick Diagnostic Steps**
+
+1. **Check server executable**:
+```bash
+/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio --help
+# Should show server startup messages
+```
+
+2. **Check Gemini CLI settings**:
+```bash
+cat ~/.gemini/settings.json | grep -A 5 "sap-server"
+# Verify "command" path is correct
+```
+
+3. **Test connection**:
+```bash
+gemini mcp list
+# Should show: ✓ sap-server: ... - Connected
+```
+
+4. **Test in Gemini CLI**:
+```bash
+gemini
+> /mcp
+> /mcp desc
+# Should list SAP tools
 ```
 
 ### Available SAP Tools in Gemini CLI
