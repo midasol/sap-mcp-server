@@ -387,48 +387,44 @@ graph TB
 ```
 sap-mcp/
 ├── packages/
-│   ├── server/                          ✅ Production-Ready MCP Server
-│   │   ├── src/sap_mcp_server/
-│   │   │   ├── core/                    # SAP client & auth (3 files)
-│   │   │   │   ├── sap_client.py        # OData operations
-│   │   │   │   ├── auth.py              # Credential management
-│   │   │   │   └── exceptions.py        # Custom exceptions
-│   │   │   ├── config/                  # Configuration (4 files)
-│   │   │   │   ├── settings.py          # Environment config
-│   │   │   │   ├── loader.py            # YAML loader
-│   │   │   │   └── schemas.py           # Pydantic models
-│   │   │   ├── protocol/                # MCP protocol (2 files)
-│   │   │   │   └── schemas.py           # Request/Response schemas
-│   │   │   ├── tools/                   # 4 modular SAP tools
-│   │   │   │   ├── base.py              # Tool base class
-│   │   │   │   ├── auth_tool.py         # Authentication
-│   │   │   │   ├── query_tool.py        # OData queries
-│   │   │   │   ├── entity_tool.py       # Entity retrieval
-│   │   │   │   └── service_tool.py      # Service discovery
-│   │   │   ├── transports/              # Transport layer
-│   │   │   │   └── stdio.py             # Stdio transport ✅
-│   │   │   └── utils/                   # Utilities (3 files)
-│   │   │       ├── logger.py            # Structured logging
-│   │   │       └── validators.py        # Input validation
-│   │   ├── tests/                       # 45 tests (56% coverage)
-│   │   │   ├── conftest.py              # 8 fixtures
-│   │   │   ├── unit/                    # Fast isolated tests
-│   │   │   └── integration/             # Integration tests
-│   │   └── pyproject.toml               # Package config
-│   │
-│   └── client/                          📝 Client SDK & Examples
-│       ├── examples/                    # Example applications
-│       │   ├── stdio_client.py          # Basic MCP client
-│       │   ├── order_inquiry_chatbot.py # AI chatbot example
-│       │   └── genai-example.py         # Gemini integration
-│       └── tests/                       # Client tests
+│   └── server/                          ✅ Production-Ready MCP Server
+│       ├── src/sap_mcp_server/
+│       │   ├── core/                    # SAP client & auth (3 files)
+│       │   │   ├── sap_client.py        # OData operations
+│       │   │   ├── auth.py              # Credential management
+│       │   │   └── exceptions.py        # Custom exceptions
+│       │   ├── config/                  # Configuration (4 files)
+│       │   │   ├── settings.py          # Environment config
+│       │   │   ├── loader.py            # YAML loader
+│       │   │   └── schemas.py           # Pydantic models
+│       │   ├── protocol/                # MCP protocol (2 files)
+│       │   │   └── schemas.py           # Request/Response schemas
+│       │   ├── tools/                   # 4 modular SAP tools
+│       │   │   ├── base.py              # Tool base class
+│       │   │   ├── auth_tool.py         # Authentication
+│       │   │   ├── query_tool.py        # OData queries
+│       │   │   ├── entity_tool.py       # Entity retrieval
+│       │   │   └── service_tool.py      # Service discovery
+│       │   ├── transports/              # Transport layer
+│       │   │   └── stdio.py             # Stdio transport ✅
+│       │   └── utils/                   # Utilities (3 files)
+│       │       ├── logger.py            # Structured logging
+│       │       └── validators.py        # Input validation
+│       ├── config/                      # Server configuration
+│       │   ├── services.yaml            # SAP services config
+│       │   └── services.yaml.example    # Configuration template
+│       ├── tests/                       # 45 tests (56% coverage)
+│       │   ├── conftest.py              # 8 fixtures
+│       │   ├── unit/                    # Fast isolated tests
+│       │   └── integration/             # Integration tests
+│       └── pyproject.toml               # Package config
 │
-├── examples/                            # Additional examples
 ├── docs/                                # Documentation
 │   ├── guides/                          # User guides
 │   └── api/                             # API reference
 ├── scripts/                             # Development scripts
 ├── .env.server                          # Server configuration
+├── .env.server.example                  # Configuration template
 └── README.md                            # This file
 ```
 
@@ -1394,27 +1390,6 @@ async def main():
             print(entity_result)
 ```
 
-### AI Chatbot Example
-
-```python
-from sap_mcp_client import OrderInquiryChatbot
-
-# Initialize chatbot with Gemini API
-chatbot = OrderInquiryChatbot(
-    gemini_api_key="your-api-key",
-    sap_config={
-        "service": "Z_SALES_ORDER_GENAI_SRV",
-        "entity_set": "zsd004Set"
-    }
-)
-
-# Natural language query
-response = await chatbot.process_query(
-    "Show me details for order 91000043"
-)
-print(response)
-```
-
 ### Structured Logging
 
 ```python
@@ -1644,19 +1619,20 @@ black . && isort . && flake8 . && mypy . && bandit -r src/
 **High Priority**:
 - [ ] Increase test coverage to 70%+
 - [ ] Performance benchmarks
+- [ ] API documentation (Sphinx)
 
 **Medium Priority**:
-- [ ] Client library (`packages/client/src/`)
-- [ ] API documentation (Sphinx)
 - [ ] Docker deployment guide
 - [ ] Kubernetes manifests
-
-**Low Priority**:
 - [ ] Prometheus metrics
 - [ ] OpenTelemetry integration
+
+**Low Priority**:
 - [ ] Rate limiting
 - [ ] Caching layer
 - [ ] GraphQL support
+- [ ] WebSocket transport
+- [ ] HTTP/REST transport
 
 ---
 
@@ -1712,10 +1688,10 @@ black . && isort . && flake8 . && mypy . && bandit -r src/
 ## 📖 Documentation
 
 - **[Server Package README](./packages/server/README.md)**: Detailed server documentation
-- **[Client Package README](./packages/client/README.md)**: Client SDK and examples
 - **[Configuration Guide](./docs/guides/configuration.md)**: YAML and environment setup
 - **[Deployment Guide](./docs/guides/deployment.md)**: Production deployment
 - **[Architecture Documentation](./docs/architecture/server.md)**: System architecture details
+- **[API Reference](./docs/api/)**: Tool and protocol documentation
 
 ---
 
@@ -1727,9 +1703,9 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
-- **Issues**: [Create an issue](https://github.com/company/sap-mcp/issues)
+- **Issues**: [Create an issue](https://github.com/midasol/SAP-MCP-GCP/issues)
 - **Documentation**: See `docs/` directory
-- **Examples**: Check `packages/client/examples/` directory
+- **Server Package**: See `packages/server/` for implementation details
 - **Community**: Join our discussions
 
 ---
