@@ -554,13 +554,16 @@ sap-mcp/
 # Navigate to project root
 cd /path/to/sap-mcp
 
-# Copy environment template (if .env.server doesn't exist)
+# Copy environment template
 cp .env.server.example .env.server
 
 # Edit configuration with your SAP credentials
 vim .env.server
+# Or use your preferred editor:
+# nano .env.server
+# code .env.server
 
-# Set proper permissions (recommended)
+# Set proper permissions (recommended for security)
 chmod 600 .env.server
 ```
 
