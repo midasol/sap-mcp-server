@@ -16,25 +16,45 @@ logger = logging.getLogger(__name__)
 
 
 def find_env_file() -> Path | None:
-    """Find .env.server file in multiple possible locations"""
+    """Find .env.server file in multiple possible locations
+
+    Priority order:
+    1. Project root (when cwd is set by MCP client like Gemini CLI)
+    2. Project root relative to this file's location
+    3. User home directory (last resort)
+
+    Note: .env.server should be located at the project root directory.
+    """
+    # Calculate project root from file location
+    # Current file: packages/server/src/sap_mcp_server/transports/stdio.py
+    # Project root: 6 levels up
+    project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+
     env_paths = [
-        Path.cwd() / ".env.server",  # Current working directory
-        Path.cwd() / "sap-mcp-server" / ".env.server",  # If running from project root
-        Path(__file__).parent.parent.parent.parent.parent.parent / ".env.server",  # Project root
-        Path.home() / ".env.server",  # User home directory
+        Path.cwd() / ".env.server",              # Current working directory (set by MCP client)
+        project_root / ".env.server",            # Project root (calculated from file location)
+        Path.home() / ".env.server",             # User home directory (fallback)
     ]
 
     for path in env_paths:
         if path.exists():
+            logger.info(f"Found .env.server at: {path}")
             return path
 
     # Fallback to .env for backward compatibility
-    env_path = Path.cwd() / ".env"
-    if env_path.exists():
-        return env_path
+    env_fallback_paths = [
+        Path.cwd() / ".env",
+        project_root / ".env",
+    ]
+
+    for path in env_fallback_paths:
+        if path.exists():
+            logger.warning(f"Using .env file (deprecated, use .env.server): {path}")
+            return path
 
     logger.warning("No .env.server or .env file found in any expected location")
     logger.warning(f"Searched locations: {[str(p) for p in env_paths]}")
+    logger.warning(f"Expected location: {project_root / '.env.server'}")
     return None
 
 

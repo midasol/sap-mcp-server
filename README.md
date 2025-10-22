@@ -534,12 +534,31 @@ The SAP MCP server requires two configuration files:
 
 #### 2.1. SAP Connection Configuration (`.env.server`)
 
+**File Location**: `.env.server` must be in the **project root directory**.
+
+```
+sap-mcp/
+├── .env.server              ← Configuration file (create here)
+├── .env.server.example      ← Example template
+├── packages/
+│   └── server/
+└── README.md
+```
+
+**Setup Steps**:
+
 ```bash
-# Copy environment template
+# Navigate to project root
+cd /path/to/sap-mcp
+
+# Copy environment template (if .env.server doesn't exist)
 cp .env.server.example .env.server
 
 # Edit configuration with your SAP credentials
 vim .env.server
+
+# Set proper permissions (recommended)
+chmod 600 .env.server
 ```
 
 **Required Environment Variables**:
