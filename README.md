@@ -534,14 +534,17 @@ The SAP MCP server requires two configuration files:
 
 #### 2.1. SAP Connection Configuration (`.env.server`)
 
+> **⚠️ IMPORTANT**: As of v0.2.0, `.env.server` has been consolidated to the **project root directory only**. The previous `packages/server/.env.server` location is no longer supported.
+
 **File Location**: `.env.server` must be in the **project root directory**.
 
 ```
 sap-mcp/
-├── .env.server              ← Configuration file (create here)
+├── .env.server              ← Configuration file (ONLY location - create here)
 ├── .env.server.example      ← Example template
 ├── packages/
 │   └── server/
+│       └── .env.server      ← ❌ NO LONGER USED (removed in v0.2.0)
 └── README.md
 ```
 
@@ -830,6 +833,7 @@ pwd
   "mcpServers": {
     "sap-server": {
       "command": "/Users/sanggyulee/my-project/python-project/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "cwd": "/Users/sanggyulee/my-project/python-project/sap-mcp",
       "description": "SAP Gateway MCP Server for OData integration",
       "timeout": 30000,
       "trust": false
@@ -839,6 +843,8 @@ pwd
 ```
 
 **Replace `/Users/sanggyulee/my-project/python-project/sap-mcp` with your actual project path.**
+
+> **📝 Note**: The `cwd` (current working directory) parameter is **required** for `.env.server` file discovery. It ensures the server runs from the project root directory where the configuration file is located.
 
 3. **Verify the path**:
 ```bash
@@ -1061,10 +1067,10 @@ pip install -e .
 
 ---
 
-**Problem: Authentication Errors**
+**Problem: Authentication Errors or `.env.server` not found**
 
 ```bash
-# Verify .env.server exists and has correct credentials
+# Verify .env.server exists in PROJECT ROOT (not in packages/server/)
 cat .env.server
 
 # Required fields:
@@ -1075,13 +1081,26 @@ cat .env.server
 # SAP_CLIENT=100
 ```
 
-**Solution 3: Verify credentials**
+**Solution 3: Verify file location and credentials**
 
 ```bash
-# Test authentication manually
+# 1. Check if .env.server is in project root
+ls -la .env.server
+# Should exist in: /path/to/sap-mcp/.env.server
+
+# 2. Ensure Gemini CLI settings.json has "cwd" parameter
+cat ~/.gemini/settings.json
+# Must include: "cwd": "/path/to/sap-mcp"
+
+# 3. Test authentication manually
 source .venv/bin/activate
 python -c "from sap_mcp_server.config.settings import get_connection_config; print(get_connection_config())"
 ```
+
+**Common Issue**: If authentication fails with "Field required" errors, it usually means `.env.server` is not being loaded. Verify:
+- File exists in project root: `/path/to/sap-mcp/.env.server`
+- Gemini CLI `settings.json` has correct `cwd` parameter
+- File has proper permissions: `chmod 600 .env.server`
 
 ---
 
@@ -1721,6 +1740,14 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - Updated module paths
 - Enhanced error handling
 - Improved security validation
+
+**Configuration Changes**:
+- ⚠️ **BREAKING**: `.env.server` file location consolidated to **project root only**
+  - Previous location `packages/server/.env.server` is no longer supported
+  - Improved file discovery logic with priority-based search
+  - Enhanced logging for configuration file location
+- Gemini CLI integration now requires `cwd` parameter in `settings.json`
+- Updated README with detailed troubleshooting for configuration issues
 
 ### v0.1.0 (Initial) - 2024-12-01
 
