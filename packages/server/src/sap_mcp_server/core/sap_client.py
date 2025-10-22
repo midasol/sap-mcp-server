@@ -164,6 +164,12 @@ class SAPClient:
             data = json.dumps(data)
             request_headers["Content-Type"] = "application/json"
 
+        # Ensure sap-client parameter is always included
+        if params is None:
+            params = {}
+        if "sap-client" not in params:
+            params["sap-client"] = self.config.client
+
         try:
             async with session.request(
                 method=method,

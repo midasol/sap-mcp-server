@@ -119,9 +119,9 @@ class SAPAuthenticator:
         """Get CSRF token from SAP Gateway"""
         # Use configured endpoint for CSRF token retrieval
         csrf_path = self._get_csrf_endpoint_path()
-        url = f"{self.base_url}{csrf_path}"
+        url = f"{self.base_url}{csrf_path}?sap-client={self.config.client}"
 
-        logger.info(f"Getting CSRF token from: {csrf_path}")
+        logger.info(f"Getting CSRF token from: {csrf_path}?sap-client={self.config.client}")
 
         headers = {
             "X-CSRF-Token": "Fetch",
@@ -165,9 +165,9 @@ class SAPAuthenticator:
 
         # Use configured authentication validation endpoint
         auth_path = self._get_auth_validation_path()
-        url = f"{self.base_url}{auth_path}"
+        url = f"{self.base_url}{auth_path}?sap-client={self.config.client}"
 
-        logger.info(f"Validating authentication with: {auth_path}")
+        logger.info(f"Validating authentication with: {auth_path}?sap-client={self.config.client}")
 
         headers = {
             "X-CSRF-Token": csrf_token,
