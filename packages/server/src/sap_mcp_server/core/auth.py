@@ -4,12 +4,15 @@ import asyncio
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional
 
 import aiohttp
 
 from sap_mcp_server.config.settings import SAPConnectionConfig
 from sap_mcp_server.core.exceptions import SAPAuthenticationError, SAPConnectionError
+
+if TYPE_CHECKING:
+    from sap_mcp_server.config.schemas import AuthEndpointConfig, ServicesYAMLConfig
 
 logger = logging.getLogger(__name__)
 
@@ -37,8 +40,15 @@ class AuthToken:
 class SAPAuthenticator:
     """Handles SAP Gateway authentication with CSRF tokens"""
 
-    def __init__(self, config: SAPConnectionConfig):
+    def __init__(
+        self,
+        config: SAPConnectionConfig,
+        auth_endpoint: Optional["AuthEndpointConfig"] = None,
+        services_config: Optional["ServicesYAMLConfig"] = None,
+    ):
         self.config = config
+        self.auth_endpoint = auth_endpoint
+        self.services_config = services_config
         self._current_token: Optional[AuthToken] = None
         self._auth_lock = asyncio.Lock()
 
@@ -87,12 +97,31 @@ class SAPAuthenticator:
                 csrf_token=csrf_token, cookies=cookies, expires_at=expires_at
             )
 
+    def _get_csrf_endpoint_path(self) -> str:
+        """Get CSRF token endpoint path from configuration"""
+        if self.auth_endpoint:
+            return self.auth_endpoint.build_csrf_path(self.services_config)
+
+        # Fallback to catalog metadata (generic, doesn't require specific service)
+        return "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
+
+    def _get_auth_validation_path(self) -> str:
+        """Get authentication validation endpoint path from configuration"""
+        if self.auth_endpoint:
+            return self.auth_endpoint.build_auth_validation_path()
+
+        # Fallback to catalog metadata
+        return "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata"
+
     async def _get_csrf_token(
         self, session: aiohttp.ClientSession
     ) -> tuple[str, Dict[str, str]]:
         """Get CSRF token from SAP Gateway"""
-        # Use OData service endpoint to get CSRF token (matching gmail_process_script.py)
-        url = f"{self.base_url}/sap/opu/odata/SAP/Z_SALES_ORDER_GENAI_SRV/zsd004Set"
+        # Use configured endpoint for CSRF token retrieval
+        csrf_path = self._get_csrf_endpoint_path()
+        url = f"{self.base_url}{csrf_path}"
+
+        logger.info(f"Getting CSRF token from: {csrf_path}")
 
         headers = {
             "X-CSRF-Token": "Fetch",
@@ -134,9 +163,11 @@ class SAPAuthenticator:
     ) -> None:
         """Authenticate the session with user credentials"""
 
-        # For basic authentication, we'll use the service metadata endpoint
-        # This validates credentials without requiring a specific service call
-        url = f"{self.base_url}/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata"
+        # Use configured authentication validation endpoint
+        auth_path = self._get_auth_validation_path()
+        url = f"{self.base_url}{auth_path}"
+
+        logger.info(f"Validating authentication with: {auth_path}")
 
         headers = {
             "X-CSRF-Token": csrf_token,

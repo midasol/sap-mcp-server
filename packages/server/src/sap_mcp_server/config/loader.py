@@ -127,9 +127,9 @@ class ServicesConfigLoader:
         Load default configuration (fallback when YAML not available)
 
         Returns:
-            ServicesYAMLConfig: Default configuration
+            ServicesYAMLConfig: Default configuration with generic auth endpoint
         """
-        from .schemas import EntityConfig, GatewayConfig, ServiceConfig
+        from .schemas import AuthEndpointConfig, EntityConfig, GatewayConfig, ServiceConfig
 
         logger.info("Loading default service configuration")
 
@@ -138,6 +138,11 @@ class ServicesConfigLoader:
                 base_url_pattern="https://{host}:{port}/sap/opu/odata",
                 metadata_suffix="/$metadata",
                 service_catalog_path="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection",
+                auth_endpoint=AuthEndpointConfig(
+                    use_catalog_metadata=True,  # Use generic catalog for authentication
+                    service_id=None,
+                    entity_name=None,
+                ),
             ),
             services=[
                 ServiceConfig(

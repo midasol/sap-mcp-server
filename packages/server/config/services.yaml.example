@@ -14,6 +14,22 @@ gateway:
   # Service catalog path for listing available services
   service_catalog_path: "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
 
+  # Authentication endpoint configuration
+  # Controls which endpoint is used for CSRF token retrieval and authentication validation
+  auth_endpoint:
+    # Option 1 (RECOMMENDED): Use generic catalog metadata
+    # - Works without requiring specific services to be available
+    # - More flexible and portable across different SAP systems
+    # - Does not depend on any custom service being deployed
+    use_catalog_metadata: true
+
+    # Option 2: Use specific service for authentication
+    # - Uncomment the lines below if catalog service is not available
+    # - Or if you need to authenticate against a specific service
+    # use_catalog_metadata: false
+    # service_id: Z_SALES_ORDER_GENAI_SRV  # Must match a service ID defined below
+    # entity_name: zsd004Set                # Must be an entity in the specified service
+
 # SAP OData Services
 # Each service defines:
 # - id: Unique identifier used in MCP tool calls

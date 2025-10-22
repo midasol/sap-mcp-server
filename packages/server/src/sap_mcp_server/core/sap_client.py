@@ -32,16 +32,25 @@ class SAPClient:
         gateway_config: Optional[GatewayConfig] = None,
     ):
         self.config = config
-        self.authenticator = SAPAuthenticator(config)
         self._session: Optional[aiohttp.ClientSession] = None
         self._session_lock = asyncio.Lock()
 
         # Load gateway configuration
         if gateway_config is None:
-            services_config = get_services_config(get_services_config_path())
-            self.gateway_config = services_config.gateway
+            from sap_mcp_server.config.loader import get_services_config
+
+            self.services_config = get_services_config(get_services_config_path())
+            self.gateway_config = self.services_config.gateway
         else:
+            self.services_config = None
             self.gateway_config = gateway_config
+
+        # Initialize authenticator with auth endpoint configuration
+        self.authenticator = SAPAuthenticator(
+            config=config,
+            auth_endpoint=self.gateway_config.auth_endpoint,
+            services_config=self.services_config,
+        )
 
         # Build base URLs using gateway configuration
         self.base_url = f"https://{config.host}:{config.port}"

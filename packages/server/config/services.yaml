@@ -13,6 +13,15 @@ gateway:
   # Service catalog path for listing available services
   service_catalog_path: "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
 
+  # Authentication endpoint configuration
+  auth_endpoint:
+    # Use catalog metadata for authentication (recommended - works without specific service)
+    use_catalog_metadata: true
+
+    # Optional: Specify a specific service for authentication (not recommended for flexibility)
+    # service_id: Z_SALES_ORDER_GENAI_SRV
+    # entity_name: zsd004Set
+
 # SAP OData Services
 services:
   # Sales Order GenAI Service (example)

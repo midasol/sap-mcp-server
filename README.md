@@ -528,6 +528,12 @@ pip install -e ".[dev]"
 
 ### 2. Configuration
 
+The SAP MCP server requires two configuration files:
+1. **`.env.server`**: SAP connection credentials (one SAP system)
+2. **`services.yaml`**: SAP Gateway Services and authentication settings
+
+#### 2.1. SAP Connection Configuration (`.env.server`)
+
 ```bash
 # Copy environment template
 cp .env.server.example .env.server
@@ -538,14 +544,180 @@ vim .env.server
 
 **Required Environment Variables**:
 ```bash
-SAP_HOST=your-sap-host.com
-SAP_PORT=443
-SAP_USERNAME=your-username
-SAP_PASSWORD=your-password
-SAP_CLIENT=100
-SAP_VERIFY_SSL=true
-SAP_TIMEOUT=30
+# SAP System Connection (Single SAP System)
+SAP_HOST=your-sap-host.com          # SAP Gateway hostname
+SAP_PORT=443                         # HTTPS port (usually 443 or 8443)
+SAP_USERNAME=your-username           # SAP user ID
+SAP_PASSWORD=your-password           # SAP password
+SAP_CLIENT=100                       # SAP client number (e.g., 100, 800)
+
+# Security Settings
+SAP_VERIFY_SSL=true                  # Enable SSL certificate verification (recommended)
+SAP_TIMEOUT=30                       # Request timeout in seconds
+
+# Optional: Connection Pooling
+SAP_MAX_CONNECTIONS=10               # Maximum concurrent connections (optional)
+SAP_RETRY_ATTEMPTS=3                 # Number of retry attempts on failure (optional)
 ```
+
+**Security Best Practices**:
+- ✅ Never commit `.env.server` to version control (already in `.gitignore`)
+- ✅ Use strong, unique passwords
+- ✅ Enable SSL verification in production (`SAP_VERIFY_SSL=true`)
+- ✅ Restrict file permissions: `chmod 600 .env.server`
+
+#### 2.2. SAP Gateway Services Configuration (`services.yaml`)
+
+Configure SAP Gateway Services (OData services) that the MCP server can access.
+
+**Location**: `packages/server/config/services.yaml`
+
+```bash
+# Copy example configuration
+cp packages/server/config/services.yaml.example packages/server/config/services.yaml
+
+# Edit service configuration
+vim packages/server/config/services.yaml
+```
+
+**Basic Configuration Example**:
+
+```yaml
+# Gateway URL configuration
+gateway:
+  # Base URL pattern for OData services
+  base_url_pattern: "https://{host}:{port}/sap/opu/odata"
+
+  # Metadata endpoint suffix
+  metadata_suffix: "/$metadata"
+
+  # Service catalog path
+  service_catalog_path: "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
+
+  # Authentication endpoint configuration
+  auth_endpoint:
+    # RECOMMENDED: Use catalog metadata (works without specific service)
+    use_catalog_metadata: true
+
+    # Optional: Use specific service for authentication (if catalog unavailable)
+    # use_catalog_metadata: false
+    # service_id: Z_SALES_ORDER_GENAI_SRV
+    # entity_name: zsd004Set
+
+# SAP OData Services
+services:
+  # Example: Sales Order Service
+  - id: Z_SALES_ORDER_GENAI_SRV          # Unique service identifier
+    name: "Sales Order GenAI Service"     # Human-readable name
+    path: "/SAP/Z_SALES_ORDER_GENAI_SRV"  # Service path
+    version: v2                            # OData version (v2 or v4)
+    description: "Sales order management service"
+
+    # Entity sets in this service
+    entities:
+      - name: zsd004Set                    # Entity set name
+        key_field: Vbeln                   # Primary key field
+        description: "Sales orders"
+        default_select:                    # Default fields to select
+          - Vbeln      # Sales Order Number
+          - Erdat      # Creation Date
+          - Ernam      # Created By
+          - Netwr      # Net Value
+          - Waerk      # Currency
+
+    # Optional: Custom headers for this service
+    custom_headers: {}
+```
+
+**Adding Multiple Services**:
+
+```yaml
+services:
+  # Sales Order Service
+  - id: Z_SALES_ORDER_GENAI_SRV
+    name: "Sales Order Service"
+    path: "/SAP/Z_SALES_ORDER_GENAI_SRV"
+    version: v2
+    entities:
+      - name: zsd004Set
+        key_field: Vbeln
+        description: "Sales orders"
+
+  # Customer Master Service
+  - id: Z_CUSTOMER_SRV
+    name: "Customer Master Service"
+    path: "/SAP/Z_CUSTOMER_SRV"
+    version: v2
+    entities:
+      - name: CustomerSet
+        key_field: Kunnr
+        description: "Customer master records"
+        default_select:
+          - Kunnr      # Customer Number
+          - Name1      # Name
+          - Land1      # Country
+
+  # Material Master Service
+  - id: Z_MATERIAL_SRV
+    name: "Material Master Service"
+    path: "/SAP/Z_MATERIAL_SRV"
+    version: v2
+    entities:
+      - name: MaterialSet
+        key_field: Matnr
+        description: "Material master"
+```
+
+#### 2.3. Authentication Endpoint Options
+
+The `auth_endpoint` configuration controls how the MCP server authenticates with SAP.
+
+**Option 1: Catalog Metadata (Recommended)**
+
+```yaml
+gateway:
+  auth_endpoint:
+    use_catalog_metadata: true
+```
+
+**Advantages**:
+- ✅ Works without requiring specific SAP Gateway Services
+- ✅ More flexible and portable across SAP systems
+- ✅ Service-independent authentication
+- ✅ No dependency on custom service deployment
+
+**Authentication Flow**:
+- CSRF Token: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
+- Validation: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
+
+---
+
+**Option 2: Service-Specific Authentication**
+
+```yaml
+gateway:
+  auth_endpoint:
+    use_catalog_metadata: false
+    service_id: Z_SALES_ORDER_GENAI_SRV    # Must match a service ID below
+    entity_name: zsd004Set                  # Must be an entity in that service
+```
+
+**Advantages**:
+- ✅ Explicit service-based authentication
+- ✅ Works when catalog service is unavailable (rare)
+
+**Disadvantages**:
+- ❌ Requires the specified service to be deployed
+- ❌ Less flexible if service changes
+- ❌ Must update config if service name changes
+
+**Authentication Flow**:
+- CSRF Token: `/SAP/Z_SALES_ORDER_GENAI_SRV/zsd004Set`
+- Validation: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
+
+---
+
+**Recommendation**: Use **Option 1 (Catalog Metadata)** unless you have a specific reason to use a particular service for authentication.
 
 ### 3. Run Server
 
