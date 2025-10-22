@@ -499,7 +499,8 @@ sap-mcp/
 
 ### Prerequisites
 
-- Python 3.11 or higher
+- **Python 3.11 or higher**
+  - If you need to install Python, refer to the [Setting up a Python development environment](https://docs.cloud.google.com/python/docs/setup) guide from Google Cloud
 - SAP Gateway access credentials
 - Virtual environment (recommended)
 
