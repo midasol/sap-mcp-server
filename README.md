@@ -1141,7 +1141,7 @@ python -m pytest -m integration   # Integration tests only
 
 ## 🤖 Integration with Gemini CLI
 
-> **📖 Official Documentation**: For more information about Gemini CLI, visit [https://geminicli.com/](https://geminicli.com/)
+> **📖 Official Documentation**: For more information about Gemini CLI, visit <a href="https://geminicli.com/" target="_blank">https://geminicli.com/</a>
 
 ### Prerequisites
 
@@ -2083,7 +2083,19 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 📜 Version History
 
-### v0.2.1 (Current) - 2025-01-22
+### v0.2.2 (Current) - 2025-11-10
+
+**Documentation Updates**:
+- 📚 **Enhanced README**: Added comprehensive OS-specific (Windows, macOS, Linux) installation and configuration guides
+  - Added detailed Python installation instructions for each OS
+  - Added OS-specific virtual environment setup and activation commands
+  - Added OS-specific `.env.server` configuration guides with proper file permissions
+  - Added OS-specific server execution instructions
+  - Added Gemini CLI official documentation link
+- 🔧 **Improved Clarity**: Removed deprecated file path references
+- ✨ **Better User Experience**: Added collapsible sections for better documentation navigation
+
+### v0.2.1 - 2025-01-22
 
 **Bug Fixes**:
 - 🐛 **Critical Fix**: Added missing `sap-client` parameter to all SAP Gateway API requests
