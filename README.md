@@ -758,7 +758,6 @@ sap-mcp/
 ├── .env.server.example      ← Example template
 ├── packages/
 │   └── server/
-│       └── .env.server      ← ❌ NO LONGER USED (removed in v0.2.0)
 └── README.md
 ```
 
