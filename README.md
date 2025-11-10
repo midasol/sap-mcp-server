@@ -1141,6 +1141,8 @@ python -m pytest -m integration   # Integration tests only
 
 ## 🤖 Integration with Gemini CLI
 
+> **📖 Official Documentation**: For more information about Gemini CLI, visit [https://geminicli.com/](https://geminicli.com/)
+
 ### Prerequisites
 
 - Node.js 18+ and npm installed
