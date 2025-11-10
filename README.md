@@ -499,12 +499,167 @@ sap-mcp/
 
 ### Prerequisites
 
+#### System Requirements
+
 - **Python 3.11 or higher**
-  - If you need to install Python, refer to the [Setting up a Python development environment](https://docs.cloud.google.com/python/docs/setup) guide from Google Cloud
+- **pip** (Python package installer)
+- **Git** (for cloning repository)
 - SAP Gateway access credentials
-- Virtual environment (recommended)
+- Virtual environment support
+
+#### Installing Python
+
+<details>
+<summary><b>🪟 Windows</b></summary>
+
+**Option 1: Microsoft Store (Recommended for Windows 10/11)**
+```powershell
+# Search for "Python 3.11" or "Python 3.12" in Microsoft Store
+# Or download from python.org
+```
+
+**Option 2: Python.org Installer**
+1. Download from [python.org/downloads](https://www.python.org/downloads/)
+2. Run installer
+3. ✅ **Check "Add Python to PATH"**
+4. Click "Install Now"
+
+**Verify installation:**
+```powershell
+python --version
+# Should show: Python 3.11.x or higher
+
+pip --version
+# Should show: pip 23.x.x or higher
+```
+
+**Common Issues:**
+- If `python` command not found, use `python3` or `py`
+- If `pip` not found, install with: `python -m ensurepip --upgrade`
+
+</details>
+
+<details>
+<summary><b>🍎 macOS</b></summary>
+
+**Option 1: Homebrew (Recommended)**
+```bash
+# Install Homebrew if not installed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install Python
+brew install python@3.11
+# or
+brew install python@3.12
+```
+
+**Option 2: Python.org Installer**
+1. Download from [python.org/downloads/macos](https://www.python.org/downloads/macos/)
+2. Open the `.pkg` file
+3. Follow installation wizard
+
+**Verify installation:**
+```bash
+python3 --version
+# Should show: Python 3.11.x or higher
+
+pip3 --version
+# Should show: pip 23.x.x or higher
+```
+
+**Note:** macOS may have Python 2.7 pre-installed. Always use `python3` and `pip3` commands.
+
+</details>
+
+<details>
+<summary><b>🐧 Linux</b></summary>
+
+**Ubuntu/Debian:**
+```bash
+# Update package list
+sudo apt update
+
+# Install Python 3.11+
+sudo apt install python3.11 python3.11-venv python3-pip
+
+# Or for latest Python
+sudo apt install python3 python3-venv python3-pip
+```
+
+**Fedora/RHEL/CentOS:**
+```bash
+# Install Python 3.11+
+sudo dnf install python3.11 python3-pip
+
+# Or
+sudo yum install python3 python3-pip
+```
+
+**Arch Linux:**
+```bash
+sudo pacman -S python python-pip
+```
+
+**Verify installation:**
+```bash
+python3 --version
+# Should show: Python 3.11.x or higher
+
+pip3 --version
+# Should show: pip 23.x.x or higher
+```
+
+</details>
+
+---
 
 ### 1. Installation
+
+#### Step-by-Step Installation
+
+<details open>
+<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
+
+```powershell
+# Clone repository
+git clone <repository-url>
+cd sap-mcp
+
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+.venv\Scripts\activate
+# Or in PowerShell:
+# .venv\Scripts\Activate.ps1
+
+# If you get execution policy error in PowerShell:
+# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Verify activation (you should see (.venv) in prompt)
+# (.venv) PS C:\path\to\sap-mcp>
+
+# Install server package
+cd packages\server
+pip install -e .
+
+# Install development dependencies (optional)
+pip install -e ".[dev]"
+
+# Verify installation
+sap-mcp-server-stdio --help
+```
+
+**Common Windows Issues:**
+- **`python` not found**: Try `python3` or `py`
+- **Permission denied**: Run PowerShell as Administrator
+- **Execution policy**: Run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+- **Long path support**: Enable long paths in Windows (Settings > System > About > Advanced system settings)
+
+</details>
+
+<details>
+<summary><b>🍎 macOS (Terminal)</b></summary>
 
 ```bash
 # Clone repository
@@ -513,7 +668,12 @@ cd sap-mcp
 
 # Create virtual environment
 python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Activate virtual environment
+source .venv/bin/activate
+
+# Verify activation (you should see (.venv) in prompt)
+# (.venv) user@macbook sap-mcp %
 
 # Install server package
 cd packages/server
@@ -521,7 +681,64 @@ pip install -e .
 
 # Install development dependencies (optional)
 pip install -e ".[dev]"
+
+# Verify installation
+sap-mcp-server-stdio --help
+
+# Check installation path (useful for Gemini CLI setup)
+which sap-mcp-server-stdio
+# Example output: /Users/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
 ```
+
+**Common macOS Issues:**
+- **`python` not found**: Use `python3` instead
+- **`pip` not found**: Use `pip3` instead
+- **Permission denied**: Don't use `sudo` with virtual environments
+- **Command not found after install**: Ensure virtual environment is activated
+
+</details>
+
+<details>
+<summary><b>🐧 Linux (Bash/Zsh)</b></summary>
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd sap-mcp
+
+# Create virtual environment
+python3 -m venv .venv
+
+# Activate virtual environment
+source .venv/bin/activate
+
+# Verify activation (you should see (.venv) in prompt)
+# (.venv) user@linux:~/sap-mcp$
+
+# Install server package
+cd packages/server
+pip install -e .
+
+# Install development dependencies (optional)
+pip install -e ".[dev]"
+
+# Verify installation
+sap-mcp-server-stdio --help
+
+# Check installation path (useful for Gemini CLI setup)
+which sap-mcp-server-stdio
+# Example output: /home/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
+```
+
+**Common Linux Issues:**
+- **`python3-venv` not found**: Install with `sudo apt install python3-venv`
+- **Permission denied**: Don't use `sudo` with virtual environments
+- **SSL errors**: Install certificates: `sudo apt install ca-certificates`
+- **Build dependencies missing**: Install with `sudo apt install build-essential python3-dev`
+
+</details>
+
+---
 
 ### 2. Configuration
 
@@ -547,6 +764,39 @@ sap-mcp/
 
 **Setup Steps**:
 
+<details open>
+<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
+
+```powershell
+# Navigate to project root
+cd C:\path\to\sap-mcp
+
+# Copy environment template
+copy .env.server.example .env.server
+
+# Edit configuration with your SAP credentials using Notepad
+notepad .env.server
+
+# Or use your preferred editor:
+# code .env.server (VS Code)
+# notepad++ .env.server (Notepad++)
+
+# Note: File permissions are managed differently on Windows
+# Ensure the file is not in a public folder
+# Right-click .env.server > Properties > Security to restrict access
+```
+
+**Windows-Specific Notes:**
+- Use backslashes (`\`) for paths in Windows
+- PowerShell execution policies may block scripts (see installation section)
+- Store `.env.server` in a user folder with restricted access
+- Use Windows Defender exclusions if antivirus blocks the file
+
+</details>
+
+<details>
+<summary><b>🍎 macOS (Terminal)</b></summary>
+
 ```bash
 # Navigate to project root
 cd /path/to/sap-mcp
@@ -555,14 +805,65 @@ cd /path/to/sap-mcp
 cp .env.server.example .env.server
 
 # Edit configuration with your SAP credentials
-vim .env.server
+nano .env.server
 # Or use your preferred editor:
-# nano .env.server
-# code .env.server
+# vim .env.server
+# code .env.server (VS Code)
+# open -a TextEdit .env.server
 
 # Set proper permissions (recommended for security)
 chmod 600 .env.server
+
+# Verify permissions
+ls -la .env.server
+# Should show: -rw------- (only owner can read/write)
 ```
+
+**macOS-Specific Notes:**
+- File permissions are Unix-based (same as Linux)
+- `chmod 600` ensures only your user can read/write the file
+- macOS may have additional security prompts for first-time access
+- Store in your home directory for best security
+
+</details>
+
+<details>
+<summary><b>🐧 Linux (Bash/Zsh)</b></summary>
+
+```bash
+# Navigate to project root
+cd /path/to/sap-mcp
+
+# Copy environment template
+cp .env.server.example .env.server
+
+# Edit configuration with your SAP credentials
+nano .env.server
+# Or use your preferred editor:
+# vim .env.server
+# code .env.server (VS Code)
+# gedit .env.server (GNOME)
+
+# Set proper permissions (REQUIRED for security)
+chmod 600 .env.server
+
+# Verify permissions
+ls -la .env.server
+# Should show: -rw------- (only owner can read/write)
+
+# Optional: Verify file is not world-readable
+stat .env.server
+```
+
+**Linux-Specific Notes:**
+- `chmod 600` is critical for security (only owner can access)
+- SELinux/AppArmor may require additional configuration
+- File must be owned by the user running the server
+- Never use `sudo` to edit or run with this file
+
+</details>
+
+---
 
 **Required Environment Variables**:
 ```bash
@@ -743,6 +1044,36 @@ gateway:
 
 ### 3. Run Server
 
+<details open>
+<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
+
+```powershell
+# Activate virtual environment
+.venv\Scripts\activate
+# Or in PowerShell:
+# .venv\Scripts\Activate.ps1
+
+# Run stdio server (recommended)
+sap-mcp-server-stdio
+
+# Or directly with Python
+python -m sap_mcp_server.transports.stdio
+
+# To deactivate when done
+deactivate
+```
+
+**Windows-Specific Notes:**
+- Use backslash (`\`) for paths
+- PowerShell may require execution policy change
+- Server runs in current terminal window
+- Press `Ctrl+C` to stop the server
+
+</details>
+
+<details>
+<summary><b>🍎 macOS (Terminal)</b></summary>
+
 ```bash
 # Activate virtual environment
 source .venv/bin/activate
@@ -751,8 +1082,46 @@ source .venv/bin/activate
 sap-mcp-server-stdio
 
 # Or directly with Python
-python -m sap_mcp_server.transports.stdio
+python3 -m sap_mcp_server.transports.stdio
+
+# To deactivate when done
+deactivate
 ```
+
+**macOS-Specific Notes:**
+- Use `python3` instead of `python`
+- Server runs in current terminal session
+- Press `Cmd+C` or `Ctrl+C` to stop the server
+- Terminal must remain open while server runs
+
+</details>
+
+<details>
+<summary><b>🐧 Linux (Bash/Zsh)</b></summary>
+
+```bash
+# Activate virtual environment
+source .venv/bin/activate
+
+# Run stdio server (recommended)
+sap-mcp-server-stdio
+
+# Or directly with Python
+python3 -m sap_mcp_server.transports.stdio
+
+# To deactivate when done
+deactivate
+```
+
+**Linux-Specific Notes:**
+- Use `python3` instead of `python`
+- Server runs in current terminal session
+- Press `Ctrl+C` to stop the server
+- Can run in background with `nohup` or `systemd` service
+
+</details>
+
+---
 
 ### 4. Verify Installation
 
