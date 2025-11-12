@@ -3,6 +3,9 @@
 import logging
 from typing import Any, Dict
 
+from sap_mcp_server.config.loader import get_services_config
+from sap_mcp_server.config.settings import get_config
+from sap_mcp_server.core.sap_client import SAPClient
 from sap_mcp_server.tools.base import MCPTool
 
 logger = logging.getLogger(__name__)
@@ -52,27 +55,34 @@ class SAPQueryTool(MCPTool):
     async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Execute OData query"""
         try:
-            # Build query parameters
-            query_params = {}
-            if "filter" in params:
-                query_params["$filter"] = params["filter"]
-            if "select" in params:
-                query_params["$select"] = params["select"]
-            if "top" in params:
-                query_params["$top"] = params["top"]
-            if "skip" in params:
-                query_params["$skip"] = params["skip"]
+            # Get SAP connection configuration
+            config = get_config(require_sap=True)
+            sap_config = config.sap
+            services_config = get_services_config()
 
-            # For now, return a mock response
-            # TODO: Implement actual SAP Gateway query when client is ready
-            return {
-                "success": True,
-                "service": params["service"],
-                "entity_set": params["entity_set"],
-                "query_params": query_params,
-                "message": "Query would be executed (mock response)",
-                "note": "Actual SAP Gateway integration pending",
-            }
+            # Find service path
+            service_info = services_config.get_service(params["service"])
+            if not service_info:
+                raise ValueError(f"Service '{params['service']}' not found in configuration")
+            service_path = service_info.path
+
+            # Build query parameters
+            filters = {"$filter": params["filter"]} if "filter" in params else None
+            select_fields = params["select"].split(",") if "select" in params else None
+            top = params.get("top")
+            skip = params.get("skip")
+
+            # Execute query using SAPClient
+            async with SAPClient(config=sap_config) as client:
+                result = await client.query_entity_set(
+                    service_path=service_path,
+                    entity_set=params["entity_set"],
+                    filters=filters,
+                    select_fields=select_fields,
+                    top=top,
+                    skip=skip,
+                )
+            return result
 
         except Exception as e:
             logger.error(f"Query failed: {e}")

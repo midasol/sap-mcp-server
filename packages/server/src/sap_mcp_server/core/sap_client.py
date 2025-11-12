@@ -297,14 +297,17 @@ class SAPClient:
         params = {}
 
         if filters:
-            filter_expressions = []
-            for key, value in filters.items():
-                if isinstance(value, str):
-                    filter_expressions.append(f"{key} eq '{value}'")
-                else:
-                    filter_expressions.append(f"{key} eq {value}")
-            if filter_expressions:
-                params["$filter"] = " and ".join(filter_expressions)
+            if "$filter" in filters:
+                params["$filter"] = filters["$filter"]
+            else:
+                filter_expressions = []
+                for key, value in filters.items():
+                    if isinstance(value, str):
+                        filter_expressions.append(f"{key} eq '{value}'")
+                    else:
+                        filter_expressions.append(f"{key} eq {value}")
+                if filter_expressions:
+                    params["$filter"] = " and ".join(filter_expressions)
 
         if select_fields:
             params["$select"] = ",".join(select_fields)
