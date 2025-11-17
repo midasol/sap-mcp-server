@@ -9,8 +9,8 @@ The SFLIGHT dataset is a sample database provided by SAP that includes data for 
 This guide assumes you have an OData service exposing this dataset. The goal is to connect our SAP MCP server to this service and interact with it using AI agents or other clients.
 
 **Official SAP Documentation:**
-*   [SAP Documentation - Flight Model](https://help.sap.com/doc/saphelp_nw75/7.5.5/en-US/3c/a4923c05b32954e10000000a114084/frameset.htm)
-*   [SAP Help Portal - Flight Model](https://help.sap.com/viewer/BI_AN_ALL/AN_ALL/en-US/3ca4923c05b32954e10000000a114084.html)
+*   [SAP Documentation - Flight Model](https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm)
+*   [SAP Help Portal - Flight Model](https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html)
 
 ---
 
