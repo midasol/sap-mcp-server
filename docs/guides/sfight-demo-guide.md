@@ -20,58 +20,50 @@ This guide assumes you have an OData service exposing this dataset. The goal is 
 
 2.  **SFLIGHT OData Service**: An active OData service exposing the SFLIGHT dataset must be available on your SAP Gateway system.
     *   If you need to create this service, you can follow our detailed guide: [**OData Service Creation Guide: FLIGHT Demo Scenario**](./odata-service-creation-flight-demo.md).
-    *   For this guide, we will assume the service is named `Z_FLIGHT_DEMO_SRV`.
+    *   For this guide, we will assume the service is named `Z_TRAVEL_RECOMMENDATIONS_SRV` as created in the guide.
 
 ---
 
 ## ⚙️ Step 1: Configure the SFLIGHT Service
 
-First, we need to make the SAP MCP server aware of our new SFLIGHT OData service. We do this by adding its definition to the `services.yaml` file.
+First, we need to make the SAP MCP server aware of our SFLIGHT OData service. We do this by adding its definition to the `services.yaml` file.
 
 **1. Open the configuration file**:
 Navigate to and open `packages/server/config/services.yaml`.
 
 **2. Add the service definition**:
-Append the following YAML block to the `services` list. This configuration defines the service ID, its entities, and key fields based on the SFLIGHT model.
+Append the following YAML block to the `services` list. This configuration defines the service ID, its entities, and key fields based on the `Z_TRAVEL_RECOMMENDATIONS_SRV` service model.
 
 ```yaml
 # packages/server/config/services.yaml
 
 # ... (other services may be listed here)
 
-  # SFLIGHT Demo Service
-  - id: Z_FLIGHT_DEMO_SRV
-    name: "SFLIGHT Demo Service"
-    path: "/SAP/Z_FLIGHT_DEMO_SRV"  # IMPORTANT: Replace with your actual service path
+  # SFLIGHT Demo Service (Travel Recommendations)
+  - id: Z_TRAVEL_RECOMMENDATIONS_SRV
+    name: "Travel Recommendations Service (SFLIGHT)"
+    path: "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV"  # IMPORTANT: Replace with your actual service path if different
     version: v2
     description: "OData service for the SFLIGHT demo dataset."
     entities:
       - name: AirlineSet
         key_field: CARRID
         description: "Airlines (e.g., LH, AA)"
-        default_select:
-          - CARRID
-          - CARRNAME
-          - CURRCODE
-          - URL
+        default_select: ["CARRID", "CARRNAME", "CURRCODE", "URL"]
       - name: AirportSet
         key_field: ID
         description: "Airports (e.g., FRA, JFK)"
-        default_select:
-          - ID
-          - NAME
-          - CITY
-          - COUNTRY
+        default_select: ["ID", "NAME", "CITY", "COUNTRY"]
       - name: ConnectionSet
-        # Composite Key
+        # Composite Key Example
         key_field: "CARRID='{CARRID}',CONNID='{CONNID}'"
         description: "Flight connections between two airports"
       - name: FlightSet
-        # Composite Key
+        # Composite Key Example
         key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}'"
         description: "Specific flights on a given date"
       - name: BookingSet
-        # Composite Key
+        # Composite Key Example
         key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}',BOOKID='{BOOKID}'"
         description: "Individual flight bookings"
       - name: PassengerSet
@@ -79,7 +71,7 @@ Append the following YAML block to the `services` list. This configuration defin
         description: "Passengers (Customers)"
 ```
 
-**3. Save the file.** The server will now recognize `Z_FLIGHT_DEMO_SRV` and its associated entities.
+**3. Save the file.** The server will now recognize `Z_TRAVEL_RECOMMENDATIONS_SRV` and its associated entities.
 
 ---
 
@@ -100,12 +92,12 @@ First, let's verify that our new service is registered correctly.
 ```
 
 **Expected Response**:
-The output should now include the `Z_FLIGHT_DEMO_SRV`.
+The output should now include the `Z_TRAVEL_RECOMMENDATIONS_SRV`.
 ```json
 {
   "services": [
     {
-      "name": "Z_FLIGHT_DEMO_SRV",
+      "name": "Z_TRAVEL_RECOMMENDATIONS_SRV",
       "description": "OData service for the SFLIGHT demo dataset.",
       "entity_sets": ["AirlineSet", "AirportSet", "ConnectionSet", "FlightSet", "BookingSet", "PassengerSet"]
     }
@@ -124,7 +116,7 @@ Let's retrieve a list of all airlines.
 {
   "name": "sap_query",
   "arguments": {
-    "service": "Z_FLIGHT_DEMO_SRV",
+    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
     "entity_set": "AirlineSet"
   }
 }
@@ -139,7 +131,7 @@ Now, let's fetch the details for a single airport, for example, Frankfurt Airpor
 {
   "name": "sap_get_entity",
   "arguments": {
-    "service": "Z_FLIGHT_DEMO_SRV",
+    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
     "entity_set": "AirportSet",
     "entity_key": "'FRA'"
   }
@@ -156,7 +148,7 @@ Let's find all Lufthansa (`LH`) flights.
 {
   "name": "sap_query",
   "arguments": {
-    "service": "Z_FLIGHT_DEMO_SRV",
+    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
     "entity_set": "FlightSet",
     "filter": "CARRID eq 'LH'",
     "select": "CARRID,CONNID,FLDATE,PRICE",
@@ -181,11 +173,11 @@ If you have integrated the SAP MCP server with the Gemini CLI, you can now use n
     *   **"Authenticate with SAP."**
         *   *Gemini will call `sap_authenticate`.*
 
-    *   **"Using the SFLIGHT service, show me all airlines."**
-        *   *Gemini will call `sap_query` on the `AirlineSet`.*
+    *   **"Using the travel recommendations service, show me all airlines."**
+        *   *Gemini will call `sap_query` on the `AirlineSet` of the `Z_TRAVEL_RECOMMENDATIONS_SRV` service.*
 
-    *   **"Find details for Frankfurt airport in the SFLIGHT demo service."**
-        *   *Gemini will likely use `sap_query` with a filter: `sap_query(service="Z_FLIGHT_DEMO_SRV", entity_set="AirportSet", filter="ID eq 'FRA'")`.*
+    *   **"Find details for Frankfurt airport using the SFLIGHT service."**
+        *   *Gemini will likely use `sap_query` with a filter: `sap_query(service="Z_TRAVEL_RECOMMENDATIONS_SRV", entity_set="AirportSet", filter="ID eq 'FRA'")`.*
 
     *   **"List the first 5 Lufthansa flights available in the system."**
         *   *Gemini will call `sap_query` on `FlightSet` with a filter for `CARRID eq 'LH'` and `$top=5`.*
@@ -197,4 +189,4 @@ If you have integrated the SAP MCP server with the Gemini CLI, you can now use n
 
 ## Conclusion
 
-You have successfully configured the SAP MCP server to connect to an SFLIGHT OData service and have tested data retrieval using the available tools. This setup provides a powerful foundation for building AI-driven applications that can interact with real-world SAP data scenarios.
+You have successfully configured the SAP MCP server to connect to the SFLIGHT OData service (`Z_TRAVEL_RECOMMENDATIONS_SRV`) and have tested data retrieval using the available tools. This setup provides a powerful foundation for building AI-driven applications that can interact with real-world SAP data scenarios.
