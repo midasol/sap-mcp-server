@@ -9,17 +9,17 @@ The SFLIGHT dataset is a sample database provided by SAP that includes data for 
 This guide assumes you have an OData service exposing this dataset. The goal is to connect our SAP MCP server to this service and interact with it using AI agents or other clients.
 
 **Official SAP Documentation:**
-*   [SAP Documentation - Flight Model](https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm)
-*   [SAP Help Portal - Flight Model](https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html)
+*   <a href="https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm" target="_blank">SAP Documentation - Flight Model</a>
+*   <a href="https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html" target="_blank">SAP Help Portal - Flight Model</a>
 
 ---
 
 ## ✅ Prerequisites
 
-1.  **SAP MCP Server Installed**: You must have the SAP MCP server installed and a working Python environment. For full instructions, please see the [**Quick Start section in the main README.md**](../../../README.md#🚀-quick-start).
+1.  **SAP MCP Server Installed**: You must have the SAP MCP server installed and a working Python environment. For full instructions, please see the <a href="https://github.com/midasol/SAP-MCP-GCP/tree/main?tab=readme-ov-file#-quick-start" target="_blank">**Quick Start section in the main README.md**</a>.
 
 2.  **SFLIGHT OData Service**: An active OData service exposing the SFLIGHT dataset must be available on your SAP Gateway system.
-    *   If you need to create this service, you can follow our detailed guide: [**OData Service Creation Guide: FLIGHT Demo Scenario**](./odata-service-creation-flight-demo.md).
+    *   If you need to create this service, you can follow our detailed guide: <a href="./odata-service-creation-flight-demo.md" target="_blank">**OData Service Creation Guide: FLIGHT Demo Scenario**</a>.
     *   For this guide, we will assume the service is named `Z_TRAVEL_RECOMMENDATIONS_SRV` as created in the guide.
 
 ---
