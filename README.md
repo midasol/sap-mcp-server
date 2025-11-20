@@ -1214,7 +1214,7 @@ pwd
 
 **Replace `/Users/sanggyulee/my-project/python-project/sap-mcp` with your actual project path.**
 
-> **📝 Note**: The `cwd` (current working directory) parameter is **required** for `.env.server` file discovery. It ensures the server runs from the project root directory where the configuration file is located.
+> **📝 Note**: The `cwd` (current working directory) parameter is **ABSOLUTELY CRITICAL** for `.env.server` file discovery. You **MUST** set this to your project root directory (e.g., `/Users/username/projects/sap-mcp`). If omitted or incorrect, the server will fail to load your credentials.
 
 3. **Verify the path**:
 ```bash
@@ -1597,7 +1597,9 @@ Authenticate with SAP Gateway system using credentials from `.env.server`.
 {
   "success": true,
   "session_id": "abc123...",
-  "message": "Successfully authenticated with SAP"
+  "message": "Successfully authenticated with SAP Gateway",
+  "host": "example.sap.corp",
+  "client": "100"
 }
 ```
 
@@ -1625,19 +1627,16 @@ Query SAP entities with OData filters, selection, pagination.
 **Response**:
 ```json
 {
-  "data": {
-    "d": {
-      "results": [
-        {
-          "OrderID": "91000043",
-          "Bstnk": "PO-2024-001",
-          "Kunnr": "CUST001",
-          "Matnr": "MAT-12345"
-        }
-      ]
-    }
-  },
-  "count": 1
+  "d": {
+    "results": [
+      {
+        "OrderID": "91000043",
+        "Bstnk": "PO-2024-001",
+        "Kunnr": "CUST001",
+        "Matnr": "MAT-12345"
+      }
+    ]
+  }
 }
 ```
 
@@ -1662,6 +1661,11 @@ Retrieve a specific entity by key.
 **Response**:
 ```json
 {
+  "success": true,
+  "service": "Z_SALES_ORDER_GENAI_SRV",
+  "entity_set": "zsd004Set",
+  "entity_key": "91000043",
+  "key_field": "Vbeln",
   "data": {
     "d": {
       "OrderID": "91000043",
@@ -1692,14 +1696,25 @@ List all available SAP services from configuration.
 **Response**:
 ```json
 {
+  "success": true,
+  "count": 1,
   "services": [
     {
-      "name": "Z_SALES_ORDER_GENAI_SRV",
-      "description": "Sales Order Service for GenAI",
-      "entity_sets": ["zsd004Set", "OrderHeaderSet"]
+      "id": "Z_SALES_ORDER_GENAI_SRV",
+      "name": "Sales Order GenAI Service",
+      "path": "/SAP/Z_SALES_ORDER_GENAI_SRV",
+      "version": "v2",
+      "description": "Sales order management service",
+      "entities": [
+        {
+          "name": "zsd004Set",
+          "key_field": "Vbeln",
+          "description": "Sales orders"
+        }
+      ]
     }
   ],
-  "count": 1
+  "source": "services.yaml configuration"
 }
 ```
 
@@ -2083,36 +2098,19 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 📜 Version History
 
-### v0.2.2 (Current) - 2025-11-10
+### Unreleased
 
 **Documentation Updates**:
 - 📚 **Enhanced README**: Added comprehensive OS-specific (Windows, macOS, Linux) installation and configuration guides
-  - Added detailed Python installation instructions for each OS
-  - Added OS-specific virtual environment setup and activation commands
-  - Added OS-specific `.env.server` configuration guides with proper file permissions
-  - Added OS-specific server execution instructions
-  - Added Gemini CLI official documentation link
 - 🔧 **Improved Clarity**: Removed deprecated file path references
 - ✨ **Better User Experience**: Added collapsible sections for better documentation navigation
-
-### v0.2.1 - 2025-01-22
 
 **Bug Fixes**:
 - 🐛 **Critical Fix**: Added missing `sap-client` parameter to all SAP Gateway API requests
   - **Issue**: Authentication was failing with 401 Unauthorized errors
-  - **Root Cause**: SAP Gateway requires `sap-client` parameter to route requests to correct SAP client
-  - **Solution**:
-    - Modified `auth.py` to include `sap-client` in CSRF token and authentication URLs
-    - Modified `sap_client.py` to automatically inject `sap-client` parameter in all API requests
-  - **Impact**: All SAP Gateway operations now work correctly with proper client routing
+  - **Solution**: Automatically inject `sap-client` parameter in all API requests
 
-**Technical Details**:
-- Updated `SAPAuthenticator._get_csrf_token()` to append `?sap-client={client}` to URLs
-- Updated `SAPAuthenticator._authenticate_session()` to append `?sap-client={client}` to URLs
-- Updated `SAPClient._make_request()` to automatically add `sap-client` to request params
-- No configuration changes required - uses existing `SAP_CLIENT` from `.env.server`
-
-### v0.2.0 - 2025-01-15
+### v0.2.0 (Current) - 2025-01-15
 
 **Major Features**:
 - ✅ Complete modular architecture
