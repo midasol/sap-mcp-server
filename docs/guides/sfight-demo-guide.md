@@ -157,6 +157,7 @@ Let's find all Lufthansa (`LH`) flights.
 }
 ```
 
+
 ---
 
 ## 🤖 Step 3: Example Prompts for Gemini CLI
