@@ -923,71 +923,43 @@ gateway:
 
     # Optional: Use specific service for authentication (if catalog unavailable)
     # use_catalog_metadata: false
-    # service_id: Z_SALES_ORDER_GENAI_SRV
-    # entity_name: zsd004Set
+    # service_id: Z_TRAVEL_RECOMMENDATIONS_SRV
+    # entity_name: AirlineSet
 
 # SAP OData Services
 services:
-  # Example: Sales Order Service
-  - id: Z_SALES_ORDER_GENAI_SRV          # Unique service identifier
-    name: "Sales Order GenAI Service"     # Human-readable name
-    path: "/SAP/Z_SALES_ORDER_GENAI_SRV"  # Service path
-    version: v2                            # OData version (v2 or v4)
-    description: "Sales order management service"
-
-    # Entity sets in this service
+  # SFLIGHT Demo Service (Travel Recommendations)
+  - id: Z_TRAVEL_RECOMMENDATIONS_SRV
+    name: "Travel Recommendations Service (SFLIGHT)"
+    path: "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV"
+    version: v2
+    description: "OData service for the SFLIGHT demo dataset."
     entities:
-      - name: zsd004Set                    # Entity set name
-        key_field: Vbeln                   # Primary key field
-        description: "Sales orders"
-        default_select:                    # Default fields to select
-          - Vbeln      # Sales Order Number
-          - Erdat      # Creation Date
-          - Ernam      # Created By
-          - Netwr      # Net Value
-          - Waerk      # Currency
+      - name: AirlineSet
+        key_field: CARRID
+        description: "Airlines (e.g., LH, AA)"
+        default_select:
+          - CARRID
+          - CARRNAME
+          - CURRCODE
+          - URL
+      - name: AirportSet
+        key_field: ID
+        description: "Airports (e.g., FRA, JFK)"
+        default_select:
+          - ID
+          - NAME
+          - CITY
+          - COUNTRY
+      - name: FlightSet
+        key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}'"
+        description: "Specific flights on a given date"
+      - name: BookingSet
+        key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}',BOOKID='{BOOKID}'"
+        description: "Individual flight bookings"
 
     # Optional: Custom headers for this service
     custom_headers: {}
-```
-
-**Adding Multiple Services**:
-
-```yaml
-services:
-  # Sales Order Service
-  - id: Z_SALES_ORDER_GENAI_SRV
-    name: "Sales Order Service"
-    path: "/SAP/Z_SALES_ORDER_GENAI_SRV"
-    version: v2
-    entities:
-      - name: zsd004Set
-        key_field: Vbeln
-        description: "Sales orders"
-
-  # Customer Master Service
-  - id: Z_CUSTOMER_SRV
-    name: "Customer Master Service"
-    path: "/SAP/Z_CUSTOMER_SRV"
-    version: v2
-    entities:
-      - name: CustomerSet
-        key_field: Kunnr
-        description: "Customer master records"
-        default_select:
-          - Kunnr      # Customer Number
-          - Name1      # Name
-          - Land1      # Country
-
-  # Material Master Service
-  - id: Z_MATERIAL_SRV
-    name: "Material Master Service"
-    path: "/SAP/Z_MATERIAL_SRV"
-    version: v2
-    entities:
-      - name: MaterialSet
-        key_field: Matnr
-        description: "Material master"
 ```
 
 #### 2.3. Authentication Endpoint Options
@@ -1020,8 +992,8 @@ gateway:
 gateway:
   auth_endpoint:
     use_catalog_metadata: false
-    service_id: Z_SALES_ORDER_GENAI_SRV    # Must match a service ID below
-    entity_name: zsd004Set                  # Must be an entity in that service
+    service_id: Z_TRAVEL_RECOMMENDATIONS_SRV    # Must match a service ID below
+    entity_name: AirlineSet                     # Must be an entity in that service
 ```
 
 **Advantages**:
@@ -1034,7 +1006,7 @@ gateway:
 - ❌ Must update config if service name changes
 
 **Authentication Flow**:
-- CSRF Token: `/SAP/Z_SALES_ORDER_GENAI_SRV/zsd004Set`
+- CSRF Token: `/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV/AirlineSet`
 - Validation: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
 ---
@@ -1275,14 +1247,14 @@ gemini
 # View available SAP tools
 > /mcp desc
 
-# Example: Query SAP orders
-> Use the SAP tools to authenticate and query order number 91000043
+# Example: Query SAP airlines
+> Use the SAP tools to authenticate and show me all airlines
 
 # Example: List available SAP services
 > What SAP services are available?
 
-# Example: Get customer details
-> Retrieve details for customer CUST001 from SAP
+# Example: Get airport details
+> Retrieve details for Frankfurt airport (FRA)
 ```
 
 ### Advanced Configuration
@@ -1538,32 +1510,32 @@ Once registered, you can use these SAP tools through natural language:
 | Tool | Description | Example Prompt |
 |------|-------------|----------------|
 | **sap_authenticate** | Authenticate with SAP Gateway | "Authenticate with SAP" |
-| **sap_query** | Query SAP entities with OData filters | "Query all orders for customer CUST001" |
-| **sap_get_entity** | Retrieve specific entity by key | "Get details for order 91000043" |
+| **sap_query** | Query SAP entities with OData filters | "Show me all airlines using the travel recommendations service" |
+| **sap_get_entity** | Retrieve specific entity by key | "Get details for Frankfurt airport (FRA)" |
 | **sap_list_services** | List available SAP services | "What SAP services are available?" |
 
 ### Example Workflows
 
-**1. Order Inquiry Workflow**
+**1. Flight Inquiry Workflow**
 
 ```bash
 gemini
 
-> Connect to SAP and find all orders placed in the last week for customer CUST001
+> Connect to SAP and find all Lufthansa flights
 # Gemini will:
 # 1. Call sap_authenticate
-# 2. Call sap_query with appropriate filters
+# 2. Call sap_query on FlightSet with filter "CARRID eq 'LH'"
 # 3. Format and present the results
 ```
 
-**2. Customer Analysis**
+**2. Airport Analysis**
 
 ```bash
-> Analyze the top 5 customers by order volume using SAP data
+> Get details for Frankfurt airport and show me available connections
 # Gemini will:
 # 1. Authenticate
-# 2. Query customer orders
-# 3. Aggregate and analyze the data
+# 2. Call sap_get_entity for 'FRA' on AirportSet
+# 3. Call sap_query on ConnectionSet
 # 4. Present insights
 ```
 
@@ -1614,10 +1586,10 @@ Query SAP entities with OData filters, selection, pagination.
 {
   "name": "sap_query",
   "arguments": {
-    "service": "Z_SALES_ORDER_GENAI_SRV",
-    "entity_set": "zsd004Set",
-    "filter": "OrderID eq '91000043'",
-    "select": "OrderID,Bstnk,Kunnr,Matnr",
+    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+    "entity_set": "AirlineSet",
+    "filter": "CARRID eq 'LH'",
+    "select": "CARRID,CARRNAME,CURRCODE",
     "top": 10,
     "skip": 0
   }
@@ -1630,10 +1602,9 @@ Query SAP entities with OData filters, selection, pagination.
   "d": {
     "results": [
       {
-        "OrderID": "91000043",
-        "Bstnk": "PO-2024-001",
-        "Kunnr": "CUST001",
-        "Matnr": "MAT-12345"
+        "CARRID": "LH",
+        "CARRNAME": "Lufthansa",
+        "CURRCODE": "EUR"
       }
     ]
   }
@@ -1651,9 +1622,9 @@ Retrieve a specific entity by key.
 {
   "name": "sap_get_entity",
   "arguments": {
-    "service": "Z_SALES_ORDER_GENAI_SRV",
-    "entity_set": "zsd004Set",
-    "entity_key": "91000043"
+    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+    "entity_set": "AirportSet",
+    "entity_key": "'FRA'"
   }
 }
 ```
@@ -1662,18 +1633,17 @@ Retrieve a specific entity by key.
 ```json
 {
   "success": true,
-  "service": "Z_SALES_ORDER_GENAI_SRV",
-  "entity_set": "zsd004Set",
-  "entity_key": "91000043",
-  "key_field": "Vbeln",
+  "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+  "entity_set": "AirportSet",
+  "entity_key": "'FRA'",
+  "key_field": "ID",
   "data": {
     "d": {
-      "OrderID": "91000043",
-      "Bstnk": "PO-2024-001",
-      "Kunnr": "CUST001",
-      "Matnr": "MAT-12345",
-      "Wmeng": "100",
-      "Vkorg": "1000"
+      "ID": "FRA",
+      "NAME": "Frankfurt International",
+      "CITY": "Frankfurt",
+      "COUNTRY": "DE",
+      "TIME_ZONE": "CET"
     }
   }
 }
@@ -1700,16 +1670,21 @@ List all available SAP services from configuration.
   "count": 1,
   "services": [
     {
-      "id": "Z_SALES_ORDER_GENAI_SRV",
-      "name": "Sales Order GenAI Service",
-      "path": "/SAP/Z_SALES_ORDER_GENAI_SRV",
+      "id": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+      "name": "Travel Recommendations Service (SFLIGHT)",
+      "path": "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV",
       "version": "v2",
-      "description": "Sales order management service",
+      "description": "OData service for the SFLIGHT demo dataset.",
       "entities": [
         {
-          "name": "zsd004Set",
-          "key_field": "Vbeln",
-          "description": "Sales orders"
+          "name": "AirlineSet",
+          "key_field": "CARRID",
+          "description": "Airlines (e.g., LH, AA)"
+        },
+        {
+          "name": "AirportSet",
+          "key_field": "ID",
+          "description": "Airports (e.g., FRA, JFK)"
         }
       ]
     }
@@ -1764,13 +1739,13 @@ async def main():
             # Authenticate
             auth_result = await session.call_tool("sap_authenticate", {})
 
-            # Query orders
+            # Query airlines
             entity_result = await session.call_tool(
-                "sap_get_entity",
+                "sap_query",
                 {
-                    "service": "Z_SALES_ORDER_GENAI_SRV",
-                    "entity_set": "zsd004Set",
-                    "entity_key": "91000043"
+                    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+                    "entity_set": "AirlineSet",
+                    "filter": "CARRID eq 'LH'"
                 }
             )
             print(entity_result)
@@ -1803,7 +1778,7 @@ from sap_mcp_server.utils.validators import (
 )
 
 # Validate OData filter
-if validate_odata_filter("OrderID eq '12345'"):
+if validate_odata_filter("CARRID eq 'LH'"):
     # Safe to execute
     pass
 
