@@ -89,13 +89,13 @@ graph TB
     D1 -->|OData Protocol| F1
     F1 -->|Data Access| F2
 
-    classDef clientNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
+    classDef clientNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:20px
+    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:20px
     classDef futureNode fill:#E8E8E8,stroke:#999999,stroke-width:2px,stroke-dasharray:5 5
-    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px
-    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef sapNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
+    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:20px
+    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:20px
+    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:20px
+    classDef sapNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:20px
 
     class A1,A2,A3 clientNode
     class B1 transportNode
@@ -169,14 +169,14 @@ graph TB
     TO5 -.->|Implements| P1
     C3 -.->|Error Types| C1 & C2
 
-    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
+    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
     classDef futureNode fill:#E8E8E8,stroke:#999999,stroke-width:2px,stroke-dasharray:5 5
-    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px
-    classDef baseNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef configNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef protocolNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
+    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:18px
+    classDef baseNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef configNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef protocolNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:18px
 
     class T1 transportNode
     class TO1,TO2,TO3,TO4 toolNode
@@ -315,15 +315,15 @@ flowchart TD
 
     LogError --> End([❌ Error Response<br/><small>Return to client</small>])
 
-    classDef startNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef decisionNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px
-    classDef authNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
-    classDef processNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef sapNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef errorNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef logNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef successNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef endNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
+    classDef startNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef decisionNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:18px
+    classDef authNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:18px
+    classDef processNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef sapNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef errorNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef logNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef successNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef endNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
 
     class Start startNode
     class Validate,SAPCheck,AuthCheck decisionNode
@@ -344,42 +344,42 @@ flowchart TD
 <summary>🔒 Click to view Security Architecture Diagram</summary>
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'fontSize':'16px', 'fontFamily':'arial'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'fontSize':'14px', 'fontFamily':'arial'}}}%%
 graph TB
-    subgraph security["🛡️ Defense in Depth Security Architecture<br/>"]
+    subgraph security["🛡️ Defense in Depth Security Architecture"]
         direction TB
 
         subgraph layer1["Layer 1: Input Validation - Entry Point Security"]
             direction LR
-            L1A["🔍 OData Filter<br/>SQL injection prevention<br/>Syntax validation"]
-            L1B["🔑 Entity Key<br/>Format validation<br/>Type checking"]
-            L1C["🧹 Sanitization<br/>XSS prevention<br/>Input cleaning"]
+            L1A["🔍 OData Filter<br/><br/>SQL injection<br/>prevention<br/><br/>Syntax validation"]
+            L1B["🔑 Entity Key<br/><br/>Format<br/>validation<br/><br/>Type checking"]
+            L1C["🧹 Sanitization<br/><br/>XSS<br/>prevention<br/><br/>Input cleaning"]
         end
 
         subgraph layer2["Layer 2: Authentication - Identity Verification"]
             direction LR
-            L2A["✅ Credentials<br/>User validation<br/>Password checks"]
-            L2B["🎫 Sessions<br/>Session lifecycle<br/>Timeout handling"]
-            L2C["🔐 Tokens<br/>JWT/Bearer tokens<br/>Token rotation"]
+            L2A["✅ Credentials<br/><br/>User<br/>validation<br/><br/>Password checks"]
+            L2B["🎫 Sessions<br/><br/>Session<br/>lifecycle<br/><br/>Timeout handling"]
+            L2C["🔐 Tokens<br/><br/>JWT/Bearer<br/>tokens<br/><br/>Token rotation"]
         end
 
         subgraph layer3["Layer 3: Authorization - Access Control"]
             direction LR
-            L3A["🚦 Service Access<br/>Service-level RBAC<br/>Permission matrix"]
-            L3B["📋 Entity Permissions<br/>Data-level access<br/>Field filtering"]
+            L3A["🚦 Service Access<br/><br/>Service-level<br/>RBAC<br/><br/>Permission matrix"]
+            L3B["📋 Entity Permissions<br/><br/>Data-level<br/>access<br/><br/>Field filtering"]
         end
 
         subgraph layer4["Layer 4: Transport Security - Encryption Layer"]
             direction LR
-            L4A["🔒 SSL/TLS<br/>TLS 1.2+ only<br/>Perfect forward secrecy"]
-            L4B["📜 Certificates<br/>Chain validation<br/>Revocation check"]
+            L4A["🔒 SSL/TLS<br/><br/>TLS 1.2+ only<br/><br/>Perfect forward<br/>secrecy"]
+            L4B["📜 Certificates<br/><br/>Chain<br/>validation<br/><br/>Revocation check"]
         end
 
         subgraph layer5["Layer 5: Audit & Monitoring - Observability"]
             direction LR
-            L5A["📊 Structured Logs<br/>JSON logging<br/>PII exclusion"]
-            L5B["⚡ Performance<br/>Metrics tracking<br/>SLA monitoring"]
-            L5C["🚨 Error Tracking<br/>Exception logging<br/>Alert triggers"]
+            L5A["📊 Structured Logs<br/><br/>JSON logging<br/><br/>PII exclusion"]
+            L5B["⚡ Performance<br/><br/>Metrics<br/>tracking<br/><br/>SLA monitoring"]
+            L5C["🚨 Error Tracking<br/><br/>Exception<br/>logging<br/><br/>Alert triggers"]
         end
     end
 
@@ -390,11 +390,11 @@ graph TB
     L3A & L3B -->|Authorized| L4A & L4B
     L4A & L4B -->|Encrypted| L5A & L5B & L5C
 
-    classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:15px
-    classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:15px
-    classDef authzNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:15px
-    classDef transportNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:15px
-    classDef auditNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:15px
+    classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:3px,padding:25px
+    classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:3px,padding:25px
+    classDef authzNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:3px,padding:25px
+    classDef transportNode fill:#D6EAF8,stroke:#3498DB,stroke-width:3px,padding:25px
+    classDef auditNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:3px,padding:25px
 
     class L1A,L1B,L1C inputNode
     class L2A,L2B,L2C authNode
