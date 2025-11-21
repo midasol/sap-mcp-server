@@ -89,13 +89,13 @@ graph TB
     D1 -->|OData Protocol| F1
     F1 -->|Data Access| F2
 
-    classDef clientNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:30px
-    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:30px
+    classDef clientNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:20px
+    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:20px
     classDef futureNode fill:#E8E8E8,stroke:#999999,stroke-width:2px,stroke-dasharray:5 5
-    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:30px
-    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:30px
-    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:30px
-    classDef sapNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:30px
+    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:20px
+    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:20px
+    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:20px
+    classDef sapNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:20px
 
     class A1,A2,A3 clientNode
     class B1 transportNode
@@ -169,14 +169,14 @@ graph TB
     TO5 -.->|Implements| P1
     C3 -.->|Error Types| C1 & C2
 
-    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:30px
+    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
     classDef futureNode fill:#E8E8E8,stroke:#999999,stroke-width:2px,stroke-dasharray:5 5
-    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:30px
-    classDef baseNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:30px
-    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:30px
-    classDef configNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:30px
-    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:30px
-    classDef protocolNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:30px
+    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:18px
+    classDef baseNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef configNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef protocolNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:18px
 
     class T1 transportNode
     class TO1,TO2,TO3,TO4 toolNode
@@ -315,15 +315,15 @@ flowchart TD
 
     LogError --> End([❌ Error Response<br/><small>Return to client</small>])
 
-    classDef startNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:30px
-    classDef decisionNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:30px
-    classDef authNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:30px
-    classDef processNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:30px
-    classDef sapNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:30px
-    classDef errorNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:30px
-    classDef logNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:30px
-    classDef successNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:30px
-    classDef endNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:30px
+    classDef startNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef decisionNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:18px
+    classDef authNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:18px
+    classDef processNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef sapNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef errorNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef logNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef successNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef endNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
 
     class Start startNode
     class Validate,SAPCheck,AuthCheck decisionNode
@@ -390,11 +390,11 @@ graph TB
     L3A & L3B -->|Authorized| L4A & L4B
     L4A & L4B -->|Encrypted| L5A & L5B & L5C
 
-    classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:3px,padding:35px
-    classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:3px,padding:35px
-    classDef authzNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:3px,padding:35px
-    classDef transportNode fill:#D6EAF8,stroke:#3498DB,stroke-width:3px,padding:35px
-    classDef auditNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:3px,padding:35px
+    classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:3px,padding:25px
+    classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:3px,padding:25px
+    classDef authzNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:3px,padding:25px
+    classDef transportNode fill:#D6EAF8,stroke:#3498DB,stroke-width:3px,padding:25px
+    classDef auditNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:3px,padding:25px
 
     class L1A,L1B,L1C inputNode
     class L2A,L2B,L2C authNode
