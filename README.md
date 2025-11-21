@@ -474,16 +474,6 @@ sap-mcp/
 </tr>
 </table>
 
-### Quality & Testing
-
-| Metric | Value | Status |
-|--------|-------|--------|
-| **Test Coverage** | 56% | 🟡 Good |
-| **Tests Passing** | 44/45 (98%) | 🟢 Excellent |
-| **Test Speed** | <0.2s | 🟢 Fast |
-| **Fixtures** | 8 comprehensive | 🟢 Complete |
-| **Test Categories** | Unit + Integration | 🟢 Complete |
-
 ### Developer Experience
 
 - ✅ **Modular Architecture**: One tool per file
@@ -798,7 +788,7 @@ notepad .env.server
 
 ```bash
 # Navigate to project root
-cd /path/to/sap-mcp
+cd /path/to/your/sap-mcp
 
 # Copy environment template
 cp .env.server.example .env.server
@@ -831,7 +821,7 @@ ls -la .env.server
 
 ```bash
 # Navigate to project root
-cd /path/to/sap-mcp
+cd /path/to/your/sap-mcp
 
 # Copy environment template
 cp .env.server.example .env.server
@@ -1145,11 +1135,11 @@ If you installed the server in a virtual environment, use the absolute path to t
 1. **Find the absolute path**:
 ```bash
 # Navigate to your SAP MCP directory
-cd /path/to/sap-mcp
+cd /path/to/your/sap-mcp
 
 # Get the absolute path
 pwd
-# Example output: /Users/sanggyulee/my-project/python-project/sap-mcp
+# Example output: /path/to/your/sap-mcp
 ```
 
 2. **Edit `~/.gemini/settings.json`**:
@@ -1157,8 +1147,8 @@ pwd
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/Users/sanggyulee/my-project/python-project/sap-mcp/.venv/bin/sap-mcp-server-stdio",
-      "cwd": "/Users/sanggyulee/my-project/python-project/sap-mcp",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "cwd": "/path/to/your/sap-mcp",
       "description": "SAP Gateway MCP Server for OData integration",
       "timeout": 30000,
       "trust": false
@@ -1167,7 +1157,7 @@ pwd
 }
 ```
 
-**Replace `/Users/sanggyulee/my-project/python-project/sap-mcp` with your actual project path.**
+**Replace `/path/to/your/sap-mcp` with your actual project path.**
 
 > **📝 Note**: The `cwd` (current working directory) parameter is **ABSOLUTELY CRITICAL** for `.env.server` file discovery. You **MUST** set this to your project root directory (e.g., `/Users/username/projects/sap-mcp`). If omitted or incorrect, the server will fail to load your credentials.
 
@@ -1207,9 +1197,9 @@ Alternative approach using Python module:
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/python",
+      "command": "/path/to/your/sap-mcp/.venv/bin/python",
       "args": ["-m", "sap_mcp_server.transports.stdio"],
-      "cwd": "/path/to/sap-mcp/packages/server",
+      "cwd": "/path/to/your/sap-mcp/packages/server",
       "description": "SAP Gateway MCP Server",
       "timeout": 30000,
       "trust": false
@@ -1248,7 +1238,7 @@ gemini
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "trust": true,
       "timeout": 30000
     }
@@ -1266,7 +1256,7 @@ gemini
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "includeTools": ["sap_authenticate", "sap_query"],
       "excludeTools": ["sap_list_services"],
       "timeout": 30000
@@ -1288,7 +1278,7 @@ gemini
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "env": {
         "SAP_HOST": "${SAP_HOST}",
         "SAP_USERNAME": "${SAP_USERNAME}",
@@ -1310,7 +1300,7 @@ gemini
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "timeout": 60000,  // 60 seconds (default: 30000)
       "trust": false
     }
@@ -1342,7 +1332,7 @@ The command is likely in a virtual environment. Update `~/.gemini/settings.json`
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/full/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "description": "SAP Gateway MCP Server",
       "timeout": 30000,
       "trust": false
@@ -1354,11 +1344,11 @@ The command is likely in a virtual environment. Update `~/.gemini/settings.json`
 **Find your absolute path**:
 ```bash
 # Navigate to SAP MCP directory
-cd /path/to/sap-mcp
+cd /path/to/your/sap-mcp
 
 # Get full path
 pwd
-# Example: /Users/sanggyulee/my-project/python-project/sap-mcp
+# Example: /path/to/your/sap-mcp
 
 # Verify command exists
 ls -la .venv/bin/sap-mcp-server-stdio
@@ -1425,7 +1415,7 @@ python -c "from sap_mcp_server.config.settings import get_connection_config; pri
 **Common Issues**:
 
 1. **"Field required" errors**: `.env.server` is not being loaded. Verify:
-   - File exists in project root: `/path/to/sap-mcp/.env.server`
+   - File exists in project root: `/path/to/your/sap-mcp/.env.server`
    - Gemini CLI `settings.json` has correct `cwd` parameter
    - File has proper permissions: `chmod 600 .env.server`
 
