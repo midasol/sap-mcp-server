@@ -1094,23 +1094,6 @@ deactivate
 
 ---
 
-### 4. Verify Installation
-
-```bash
-# Run tests
-cd packages/server
-python -m pytest -v
-
-# With coverage report
-python -m pytest --cov=sap_mcp_server --cov-report=term-missing
-
-# Specific test categories
-python -m pytest -m unit          # Unit tests only
-python -m pytest -m integration   # Integration tests only
-```
-
----
-
 ## 🤖 Integration with Gemini CLI
 
 > **📖 Official Documentation**: For more information about Gemini CLI, visit <a href="https://geminicli.com/" target="_blank">https://geminicli.com/</a>
