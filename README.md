@@ -356,7 +356,7 @@ graph TB
             L1C["🧹 Sanitization<br/><br/>XSS<br/>prevention<br/><br/>Input cleaning"]
         end
 
-        subgraph layer2["Layer 2: Authentication - Identity Verification"]
+        subgraph layer2["Layer 2: Authentication - Identity Verification<br/>"]
             direction LR
             L2A["✅ Credentials<br/><br/>User<br/>validation<br/><br/>Password checks"]
             L2B["🎫 Sessions<br/><br/>Session<br/>lifecycle<br/><br/>Timeout handling"]
