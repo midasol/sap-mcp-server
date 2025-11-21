@@ -35,6 +35,9 @@ Production-ready MCP (Model Context Protocol) server that enables AI agents and 
 
 ### System Overview
 
+<details>
+<summary>📊 Click to view System Overview Diagram</summary>
+
 ```mermaid
 graph TB
     subgraph clients["🎯 Client Applications"]
@@ -102,7 +105,12 @@ graph TB
     class F1,F2 sapNode
 ```
 
+</details>
+
 ### Component Details
+
+<details>
+<summary>🔧 Click to view Component Details Diagram</summary>
 
 ```mermaid
 graph TB
@@ -179,7 +187,12 @@ graph TB
     class P1 protocolNode
 ```
 
+</details>
+
 ### Data Flow: Order Query Example
+
+<details>
+<summary>🔄 Click to view Data Flow Diagram</summary>
 
 ```mermaid
 sequenceDiagram
@@ -261,7 +274,12 @@ sequenceDiagram
     end
 ```
 
+</details>
+
 ### Tool Execution Flow
+
+<details>
+<summary>⚡ Click to view Tool Execution Flow Diagram</summary>
 
 ```mermaid
 flowchart TD
@@ -318,7 +336,12 @@ flowchart TD
     class End endNode
 ```
 
+</details>
+
 ### Security Architecture
+
+<details>
+<summary>🔒 Click to view Security Architecture Diagram</summary>
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize':'16px', 'fontFamily':'arial'}}}%%
@@ -379,6 +402,8 @@ graph TB
     class L4A,L4B transportNode
     class L5A,L5B,L5C auditNode
 ```
+
+</details>
 
 ---
 
