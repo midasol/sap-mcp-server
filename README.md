@@ -554,6 +554,8 @@ sap-mcp/
 
 ### Scenario Overview
 
+For convenience, this project is based on the SAP SFLIGHT Demo dataset.
+
 The SFLIGHT dataset is a sample database provided by SAP that includes data for flight schedules, airlines, airports, and bookings. It's an excellent resource for testing and demonstrating data modeling and service creation.
 
 This guide assumes you have an OData service exposing this dataset. The goal is to connect our SAP MCP server to this service and interact with it using AI agents or other clients.
