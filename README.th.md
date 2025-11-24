@@ -1,6 +1,6 @@
-# SAP MCP - การผสานรวม SAP Gateway ผ่าน Model Context Protocol
+# SAP MCP - การรวม SAP Gateway ผ่าน Model Context Protocol
 
-เซิร์ฟเวอร์ MCP ที่สมบูรณ์สำหรับการผสานรวม SAP Gateway ซึ่งมีเครื่องมือแบบโมดูลสำหรับการดำเนินการ SAP OData กับเอเจนต์ AI
+เซิร์ฟเวอร์ MCP ที่สมบูรณ์สำหรับการรวม SAP Gateway ให้เครื่องมือแบบแยกส่วนสำหรับการดำเนินการ SAP OData ด้วย AI agents
 
 <div align="center">
 
@@ -16,83 +16,86 @@
 
 ## 🎯 ภาพรวมโครงการ
 
-เซิร์ฟเวอร์ MCP (Model Context Protocol) ที่พร้อมใช้งานจริง ซึ่งช่วยให้เอเจนต์ AI และแอปพลิเคชันสามารถโต้ตอบกับระบบ SAP Gateway ผ่านสถาปัตยกรรมที่สะอาดและเป็นโมดูล สร้างขึ้นเพื่อความน่าเชื่อถือ ความปลอดภัย และประสบการณ์ของนักพัฒนา
+เซิร์ฟเวอร์ MCP (Model Context Protocol) ที่พร้อมใช้งานจริง ซึ่งช่วยให้ AI agents และแอปพลิเคชันสามารถโต้ตอบกับระบบ SAP Gateway ผ่านสถาปัตยกรรมที่สะอาดและเป็นโมดูล สร้างขึ้นเพื่อความน่าเชื่อถือ ความปลอดภัย และประสบการณ์ของนักพัฒนา
 
 **สถานะปัจจุบัน**: ✅ **พร้อมใช้งานจริง** (เสร็จสิ้นทั้ง 5 เฟส)
 
-### จุดเด่นที่สำคัญ
+### จุดเด่นสำคัญ
 
-- 🔐 **การผสานรวม SAP ที่ปลอดภัย**: การรับรองความถูกต้องระดับองค์กรและการสนับสนุน SSL/TLS
-- 🛠️ **เครื่องมือโมดูล 4 อย่าง**: การรับรองความถูกต้อง, การสืบค้น, การดึงข้อมูลเอนทิตี, การค้นหาบริการ
-- 🚀 **การขนส่ง Stdio**: เซิร์ฟเวอร์ MCP ที่พร้อมใช้งานจริง
-- 📊 **การบันทึกที่มีโครงสร้าง**: รูปแบบ JSON และคอนโซลพร้อมเมตริกประสิทธิภาพ
-- ✅ **อินพุตที่ตรวจสอบแล้ว**: การตรวจสอบ OData และความปลอดภัยที่ครอบคลุม
-- 🧪 **ทดสอบอย่างดี**: ครอบคลุม 56%, ผ่านการทดสอบ 44/45 (อัตราความสำเร็จ 98%)
+- 🔐 **การรวม SAP ที่ปลอดภัย**: การตรวจสอบสิทธิ์ระดับองค์กรและการรองรับ SSL/TLS
+- 🛠️ **4 เครื่องมือแบบโมดูล**: การตรวจสอบสิทธิ์, การสืบค้น, การดึงข้อมูลเอนทิตี, การค้นหาบริการ
+- 🚀 **Stdio Transport**: เซิร์ฟเวอร์ MCP ที่พร้อมใช้งานจริง
+- 📊 **การบันทึกแบบมีโครงสร้าง**: รูปแบบ JSON และคอนโซลพร้อมเมตริกประสิทธิภาพ
+- ✅ **การตรวจสอบความถูกต้อง**: การตรวจสอบ OData และความปลอดภัยที่ครอบคลุม
+- 🧪 **ทดสอบอย่างดี**: ความครอบคลุม 56%, ผ่านการทดสอบ 44/45 รายการ (อัตราความสำเร็จ 98%)
 
 ---
 
 ## 📐 สถาปัตยกรรม
 
-### ภาพรวมของระบบ
+### ภาพรวมระบบ
+
+<details>
+<summary>📊 คลิกเพื่อดูแผนภาพภาพรวมระบบ</summary>
 
 ```mermaid
 graph TB
-    subgraph clients["🎯 แอปพลิเคชันไคลเอ็นต์"]
+    subgraph clients["🎯 แอปพลิเคชันลูกค้า"]
         direction TB
-        A1["เอเจนต์ AI<br/><small>การผสานรวม LLM/GenAI</small>"]
-        A2["ไคลเอ็นต์ Python<br/><small>SDK & ไลบรารี</small>"]
-        A3["แชทบอทสั่งซื้อ<br/><small>แอปพลิเคชันตัวอย่าง</small>"]
+        A1["AI Agent<br/><small>LLM/GenAI Integration</small>"]
+        A2["Python Client<br/><small>SDK & Libraries</small>"]
+        A3["Order Chatbot<br/><small>ตัวอย่างแอปพลิเคชัน</small>"]
     end
 
     subgraph transport["🚀 เลเยอร์เซิร์ฟเวอร์ MCP"]
         direction TB
-        B1["การขนส่ง Stdio<br/><small>สตรีม stdin/stdout</small>"]
+        B1["Stdio Transport<br/><small>stdin/stdout Stream</small>"]
     end
 
-    subgraph registry["🛠️ การลงทะเบียนเครื่องมือ"]
+    subgraph registry["🛠️ ทะเบียนเครื่องมือ"]
         direction LR
-        C1["sap_authenticate<br/><small>การรับรองความถูกต้อง</small>"]
-        C2["sap_query<br/><small>การสืบค้น OData</small>"]
+        C1["sap_authenticate<br/><small>การตรวจสอบสิทธิ์</small>"]
+        C2["sap_query<br/><small>OData Queries</small>"]
         C3["sap_get_entity<br/><small>การดึงข้อมูลเอนทิตี</small>"]
         C4["sap_list_services<br/><small>การค้นหาบริการ</small>"]
     end
 
     subgraph core["⚡ เลเยอร์หลัก"]
         direction LR
-        D1["ไคลเอ็นต์ SAP<br/><small>ตัวจัดการ OData</small>"]
-        D2["ตัวจัดการการรับรองความถูกต้อง<br/><small>ข้อมูลประจำตัว</small>"]
-        D3["ตัวโหลดการกำหนดค่า<br/><small>YAML/ENV</small>"]
+        D1["SAP Client<br/><small>OData Handler</small>"]
+        D2["Auth Manager<br/><small>Credentials</small>"]
+        D3["Config Loader<br/><small>YAML/ENV</small>"]
     end
 
     subgraph utils["🔧 ยูทิลิตี้"]
         direction LR
-        E1["ตัวตรวจสอบ<br/><small>อินพุต/ความปลอดภัย</small>"]
-        E2["ตัวบันทึก<br/><small>บันทึกที่มีโครงสร้าง</small>"]
-        E3["ตัวจัดการข้อผิดพลาด<br/><small>เกรดการผลิต</small>"]
+        E1["Validators<br/><small>Input/Security</small>"]
+        E2["Logger<br/><small>Structured Logs</small>"]
+        E3["Error Handler<br/><small>Production Grade</small>"]
     end
 
     subgraph sap["🏢 SAP Gateway"]
         direction TB
-        F1["บริการ OData<br/><small>โปรโตคอล v2/v4</small>"]
-        F2["ข้อมูลธุรกิจ<br/><small>คำสั่งซื้อ/การขาย/สินค้าคงคลัง</small>"]
+        F1["OData Services<br/><small>v2/v4 Protocol</small>"]
+        F2["Business Data<br/><small>Orders/Sales/Inventory</small>"]
     end
 
-    A1 & A2 & A3 -->|การเชื่อมต่อที่ใช้งานอยู่| B1
-    B1 -->|การจัดส่งเครื่องมือ| C1 & C2 & C3 & C4
-    C1 & C2 & C3 & C4 -->|บริการหลัก| D1
-    C1 -->|โฟลว์การรับรองความถูกต้อง| D2
-    C2 & C3 & C4 -->|การเข้าถึงการกำหนดค่า| D3
-    D1 & D2 & D3 -->|การตรวจสอบ & การบันทึก| E1 & E2 & E3
-    D1 -->|โปรโตคอล OData| F1
-    F1 -->|การเข้าถึงข้อมูล| F2
+    A1 & A2 & A3 -->|Active Connection| B1
+    B1 -->|Tool Dispatch| C1 & C2 & C3 & C4
+    C1 & C2 & C3 & C4 -->|Core Services| D1
+    C1 -->|Auth Flow| D2
+    C2 & C3 & C4 -->|Config Access| D3
+    D1 & D2 & D3 -->|Validation & Logging| E1 & E2 & E3
+    D1 -->|OData Protocol| F1
+    F1 -->|Data Access| F2
 
-    classDef clientNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
+    classDef clientNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:20px
+    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:20px
     classDef futureNode fill:#E8E8E8,stroke:#999999,stroke-width:2px,stroke-dasharray:5 5
-    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px
-    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef sapNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
+    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:20px
+    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:20px
+    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:20px
+    classDef sapNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:20px
 
     class A1,A2,A3 clientNode
     class B1 transportNode
@@ -102,7 +105,12 @@ graph TB
     class F1,F2 sapNode
 ```
 
+</details>
+
 ### รายละเอียดส่วนประกอบ
+
+<details>
+<summary>🔧 คลิกเพื่อดูแผนภาพรายละเอียดส่วนประกอบ</summary>
 
 ```mermaid
 graph TB
@@ -111,64 +119,64 @@ graph TB
 
         subgraph trans["🚀 transports/"]
             direction LR
-            T1["stdio.py<br/><small>จุดเริ่มต้น CLI</small>"]
+            T1["stdio.py<br/><small>CLI Entry Point</small>"]
         end
 
         subgraph tools["🛠️ tools/"]
             direction TB
-            TO5["base.py<br/><small>คลาสพื้นฐานของเครื่องมือ</small>"]
+            TO5["base.py<br/><small>Tool Base Class</small>"]
 
-            subgraph toolImpl["การใช้งานเครื่องมือ"]
+            subgraph toolImpl["Tool Implementations"]
                 direction LR
-                TO1["auth_tool.py<br/><small>การรับรองความถูกต้อง</small>"]
-                TO2["query_tool.py<br/><small>การสืบค้น OData</small>"]
-                TO3["entity_tool.py<br/><small>เอนทิตีเดียว</small>"]
-                TO4["service_tool.py<br/><small>รายการบริการ</small>"]
+                TO1["auth_tool.py<br/><small>Authentication</small>"]
+                TO2["query_tool.py<br/><small>OData Query</small>"]
+                TO3["entity_tool.py<br/><small>Single Entity</small>"]
+                TO4["service_tool.py<br/><small>Service List</small>"]
             end
         end
 
         subgraph core["⚡ core/"]
             direction LR
-            C1["sap_client.py<br/><small>ไคลเอ็นต์ OData</small>"]
-            C2["auth.py<br/><small>ตัวจัดการการรับรองความถูกต้อง</small>"]
-            C3["exceptions.py<br/><small>ข้อผิดพลาดที่กำหนดเอง</small>"]
+            C1["sap_client.py<br/><small>OData Client</small>"]
+            C2["auth.py<br/><small>Auth Manager</small>"]
+            C3["exceptions.py<br/><small>Custom Errors</small>"]
         end
 
         subgraph config["⚙️ config/"]
             direction LR
-            CF1["settings.py<br/><small>การกำหนดค่าสภาพแวดล้อม</small>"]
-            CF2["loader.py<br/><small>ตัวโหลด YAML</small>"]
-            CF3["schemas.py<br/><small>โมเดล Pydantic</small>"]
+            CF1["settings.py<br/><small>Env Config</small>"]
+            CF2["loader.py<br/><small>YAML Loader</small>"]
+            CF3["schemas.py<br/><small>Pydantic Models</small>"]
         end
 
         subgraph utils["🔧 utils/"]
             direction LR
-            U1["logger.py<br/><small>บันทึกที่มีโครงสร้าง</small>"]
-            U2["validators.py<br/><small>การตรวจสอบอินพุต</small>"]
+            U1["logger.py<br/><small>Structured Logs</small>"]
+            U2["validators.py<br/><small>Input Validation</small>"]
         end
 
         subgraph protocol["📡 protocol/"]
-            P1["schemas.py<br/><small>คำขอ/การตอบกลับ MCP</small>"]
+            P1["schemas.py<br/><small>MCP Request/Response</small>"]
         end
     end
 
-    T1 -->|จัดส่งไปยัง| TO1 & TO2 & TO3 & TO4
-    TO1 & TO2 & TO3 & TO4 -.->|ขยาย| TO5
-    TO5 -->|ใช้| C1 & C2
-    C1 -->|โหลด| CF1 & CF2
-    C2 -->|อ่าน| CF1
-    C1 & C2 -->|ตรวจสอบ & บันทึก| U1 & U2
-    TO5 -.->|ใช้งาน| P1
-    C3 -.->|ประเภทข้อผิดพลาด| C1 & C2
+    T1 -->|Dispatches to| TO1 & TO2 & TO3 & TO4
+    TO1 & TO2 & TO3 & TO4 -.->|Extends| TO5
+    TO5 -->|Uses| C1 & C2
+    C1 -->|Loads| CF1 & CF2
+    C2 -->|Reads| CF1
+    C1 & C2 -->|Validates & Logs| U1 & U2
+    TO5 -.->|Implements| P1
+    C3 -.->|Error Types| C1 & C2
 
-    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
+    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
     classDef futureNode fill:#E8E8E8,stroke:#999999,stroke-width:2px,stroke-dasharray:5 5
-    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px
-    classDef baseNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef configNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef protocolNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
+    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:18px
+    classDef baseNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef configNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef protocolNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:18px
 
     class T1 transportNode
     class TO1,TO2,TO3,TO4 toolNode
@@ -179,133 +187,143 @@ graph TB
     class P1 protocolNode
 ```
 
-### โฟลว์ข้อมูล: ตัวอย่างการสืบค้นคำสั่งซื้อ
+</details>
+
+### การไหลของข้อมูล: ตัวอย่างการสอบถามคำสั่งซื้อ
+
+<details>
+<summary>🔄 คลิกเพื่อดูแผนภาพการไหลของข้อมูล</summary>
 
 ```mermaid
 sequenceDiagram
     autonumber
-    box rgba(214, 234, 248, 0.3) เลเยอร์ไคลเอ็นต์
-        participant Client as 🤖<br/>เอเจนต์ AI/ไคลเอ็นต์
+    box rgba(214, 234, 248, 0.3) Client Layer
+        participant Client as 🤖<br/>AI Agent/Client
     end
-    box rgba(213, 245, 227, 0.3) เลเยอร์การขนส่ง
-        participant Transport as 📡<br/>การขนส่ง Stdio
-        participant Registry as 📋<br/>การลงทะเบียนเครื่องมือ
+    box rgba(213, 245, 227, 0.3) Transport Layer
+        participant Transport as 📡<br/>Stdio Transport
+        participant Registry as 📋<br/>Tool Registry
     end
-    box rgba(252, 243, 207, 0.3) เลเยอร์เครื่องมือ
-        participant AuthTool as 🔐<br/>เครื่องมือการรับรองความถูกต้อง
-        participant QueryTool as 🔍<br/>เครื่องมือการสืบค้น
+    box rgba(252, 243, 207, 0.3) Tool Layer
+        participant AuthTool as 🔐<br/>Auth Tool
+        participant QueryTool as 🔍<br/>Query Tool
     end
-    box rgba(250, 219, 216, 0.3) เลเยอร์หลัก
-        participant SAPClient as 🔧<br/>ไคลเอ็นต์ SAP
+    box rgba(250, 219, 216, 0.3) Core Layer
+        participant SAPClient as 🔧<br/>SAP Client
     end
-    box rgba(213, 245, 227, 0.3) เลเยอร์สนับสนุน
-        participant Validator as ✅<br/>ตัวตรวจสอบ
-        participant Logger as 📊<br/>ตัวบันทึก
+    box rgba(213, 245, 227, 0.3) Support Layer
+        participant Validator as ✅<br/>Validator
+        participant Logger as 📊<br/>Logger
     end
-    box rgba(235, 222, 240, 0.3) ภายนอก
+    box rgba(235, 222, 240, 0.3) External
         participant SAP as 🏢<br/>SAP Gateway
     end
 
     rect rgba(214, 234, 248, 0.15)
-        Note over Client,Registry: ⚡ เฟส 1: การเริ่มต้นเซสชัน
-        Client->>+Transport: เชื่อมต่อผ่านสตรีม stdio
-        Transport->>+Registry: เริ่มต้นการลงทะเบียนเครื่องมือ
-        Registry-->>-Transport: ✅ ลงทะเบียนเครื่องมือ 4 อย่างแล้ว
-        Transport-->>-Client: สร้างการเชื่อมต่อแล้ว
+        Note over Client,Registry: ⚡ Phase 1: Session Initialization
+        Client->>+Transport: Connect via stdio stream
+        Transport->>+Registry: Initialize tool registry
+        Registry-->>-Transport: ✅ 4 tools registered
+        Transport-->>-Client: Connection established
     end
 
     rect rgba(213, 245, 227, 0.15)
-        Note over Client,SAP: 🔐 เฟส 2: การรับรองความถูกต้อง
+        Note over Client,SAP: 🔐 Phase 2: Authentication
         Client->>+Transport: call_tool(sap_authenticate, {})
-        Transport->>+Registry: รับเครื่องมือ: sap_authenticate
-        Registry->>+AuthTool: ดำเนินการรับรองความถูกต้อง
-        AuthTool->>+Validator: ตรวจสอบข้อมูลประจำตัว
-        Validator-->>-AuthTool: ✅ ข้อมูลประจำตัวถูกต้อง
-        AuthTool->>+Logger: บันทึกความพยายามในการรับรองความถูกต้อง
-        Logger-->>-AuthTool: บันทึกแล้ว
-        AuthTool->>+SAPClient: รับรองความถูกต้องกับ SAP
+        Transport->>+Registry: Get tool: sap_authenticate
+        Registry->>+AuthTool: Execute authentication
+        AuthTool->>+Validator: Validate credentials
+        Validator-->>-AuthTool: ✅ Credentials valid
+        AuthTool->>+Logger: Log authentication attempt
+        Logger-->>-AuthTool: Logged
+        AuthTool->>+SAPClient: Authenticate with SAP
         SAPClient->>+SAP: POST /sap/opu/odata/auth
-        SAP-->>-SAPClient: 200 OK + โทเค็นเซสชัน
-        SAPClient-->>-AuthTool: ✅ รับรองความถูกต้องสำเร็จ
-        AuthTool-->>-Registry: การตอบกลับสำเร็จ
-        Registry-->>-Transport: โทเค็นการรับรองความถูกต้อง + ID เซสชัน
-        Transport-->>-Client: ✅ การรับรองความถูกต้องเสร็จสมบูรณ์
+        SAP-->>-SAPClient: 200 OK + Session token
+        SAPClient-->>-AuthTool: ✅ Authenticated successfully
+        AuthTool-->>-Registry: Success response
+        Registry-->>-Transport: Auth token + session ID
+        Transport-->>-Client: ✅ Authentication complete
     end
 
     rect rgba(252, 243, 207, 0.15)
-        Note over Client,SAP: 🔍 เฟส 3: การดำเนินการสืบค้น
+        Note over Client,SAP: 🔍 Phase 3: Query Execution
         Client->>+Transport: call_tool(sap_query, {filter: "OrderID eq '91000043'"})
-        Transport->>+Registry: รับเครื่องมือ: sap_query
-        Registry->>+QueryTool: ดำเนินการด้วยพารามิเตอร์
-        QueryTool->>+Validator: ตรวจสอบไวยากรณ์ตัวกรอง OData
-        Validator-->>-QueryTool: ✅ ตัวกรองปลอดภัย
-        QueryTool->>+Logger: บันทึกการเริ่มต้นการสืบค้น
-        Logger-->>-QueryTool: บันทึกแล้ว
-        QueryTool->>+SAPClient: ดำเนินการสืบค้น OData
+        Transport->>+Registry: Get tool: sap_query
+        Registry->>+QueryTool: Execute with parameters
+        QueryTool->>+Validator: Validate OData filter syntax
+        Validator-->>-QueryTool: ✅ Filter is safe
+        QueryTool->>+Logger: Log query start
+        Logger-->>-QueryTool: Logged
+        QueryTool->>+SAPClient: Execute OData query
         SAPClient->>+SAP: GET /OrderSet?$filter=OrderID eq '91000043'
-        SAP-->>-SAPClient: 200 OK + ข้อมูลคำสั่งซื้อ (JSON)
-        SAPClient->>SAPClient: แยกวิเคราะห์ & แปลงการตอบกลับ
-        SAPClient-->>-QueryTool: ✅ แยกวิเคราะห์ข้อมูลคำสั่งซื้อแล้ว
-        QueryTool->>+Logger: บันทึกความสำเร็จของการสืบค้น + เมตริก
-        Logger-->>-QueryTool: บันทึกแล้ว
-        QueryTool-->>-Registry: รายละเอียดคำสั่งซื้อ
-        Registry-->>-Transport: การตอบกลับที่จัดรูปแบบ
-        Transport-->>-Client: ✅ การสืบค้นเสร็จสมบูรณ์
+        SAP-->>-SAPClient: 200 OK + Order data (JSON)
+        SAPClient->>SAPClient: Parse & transform response
+        SAPClient-->>-QueryTool: ✅ Parsed order data
+        QueryTool->>+Logger: Log query success + metrics
+        Logger-->>-QueryTool: Logged
+        QueryTool-->>-Registry: Order details
+        Registry-->>-Transport: Formatted response
+        Transport-->>-Client: ✅ Query complete
     end
 
     rect rgba(213, 245, 227, 0.15)
-        Note over Logger: 📊 เฟส 4: การติดตามประสิทธิภาพ
-        Logger->>Logger: คำนวณเมตริกการดำเนินการ
-        Logger->>Logger: เขียนบันทึก JSON ที่มีโครงสร้าง
-        Logger->>Logger: อัปเดตตัวนับประสิทธิภาพ
+        Note over Logger: 📊 Phase 4: Performance Tracking
+        Logger->>Logger: Calculate execution metrics
+        Logger->>Logger: Write structured JSON log
+        Logger->>Logger: Update performance counters
     end
 ```
 
-### โฟลว์การดำเนินการเครื่องมือ
+</details>
+
+### การไหลของการดำเนินการเครื่องมือ
+
+<details>
+<summary>⚡ คลิกเพื่อดูแผนภาพการไหลของการดำเนินการเครื่องมือ</summary>
 
 ```mermaid
 flowchart TD
-    Start([🚀 คำขอไคลเอ็นต์<br/><small>การเรียกใช้เครื่องมือ</small>])
+    Start([🚀 Client Request<br/><small>Tool invocation</small>])
 
-    Start --> Validate{🔍 ตรวจสอบอินพุต<br/><small>การตรวจสอบสคีมา</small><br/><small>การสแกนความปลอดภัย</small>}
+    Start --> Validate{🔍 Validate Input<br/><small>Schema check</small><br/><small>Security scan</small>}
 
-    Validate -->|❌ ไม่ถูกต้อง| Error1[🚫 ข้อผิดพลาดในการตรวจสอบ<br/><small>ส่งคืนรายละเอียดข้อผิดพลาด</small>]
-    Validate -->|✅ ถูกต้อง| Auth{🔐 ได้รับการรับรองความถูกต้องหรือไม่<br/><small>การตรวจสอบเซสชัน</small>}
+    Validate -->|❌ Invalid| Error1[🚫 Validation Error<br/><small>Return error details</small>]
+    Validate -->|✅ Valid| Auth{🔐 Authenticated?<br/><small>Session check</small>}
 
-    Auth -->|ไม่| DoAuth[🔑 ดำเนินการรับรองความถูกต้อง<br/><small>การตรวจสอบข้อมูลประจำตัว</small><br/><small>การจับมือกับ SAP</small>]
-    DoAuth --> AuthCheck{✅ การรับรองความถูกต้องสำเร็จหรือไม่<br/><small>ได้รับโทเค็น</small>}
+    Auth -->|No| DoAuth[🔑 Execute Auth<br/><small>Credential validation</small><br/><small>SAP handshake</small>]
+    DoAuth --> AuthCheck{✅ Auth Success?<br/><small>Token received</small>}
 
-    AuthCheck -->|❌ ล้มเหลว| Error2[🚫 ข้อผิดพลาดในการรับรองความถูกต้อง<br/><small>ข้อมูลประจำตัวไม่ถูกต้อง</small>]
-    AuthCheck -->|✅ สำเร็จ| Execute
+    AuthCheck -->|❌ Failed| Error2[🚫 Auth Error<br/><small>Invalid credentials</small>]
+    AuthCheck -->|✅ Success| Execute
 
-    Auth -->|ใช่| Execute[⚡ ดำเนินการเครื่องมือ<br/><small>ตรรกะทางธุรกิจ</small><br/><small>การประมวลผลพารามิเตอร์</small>]
+    Auth -->|Yes| Execute[⚡ Execute Tool<br/><small>Business logic</small><br/><small>Parameter processing</small>]
 
-    Execute --> SAPCall[🌐 การเรียก OData ของ SAP<br/><small>คำขอ HTTP</small><br/><small>เข้ารหัส SSL/TLS</small>]
+    Execute --> SAPCall[🌐 SAP OData Call<br/><small>HTTP request</small><br/><small>SSL/TLS encrypted</small>]
 
-    SAPCall --> SAPCheck{📡 การตอบกลับของ SAP<br/><small>การตรวจสอบสถานะ</small>}
+    SAPCall --> SAPCheck{📡 SAP Response<br/><small>Status check</small>}
 
-    SAPCheck -->|❌ ข้อผิดพลาด| Error3[🚫 ข้อผิดพลาดของ SAP<br/><small>บริการไม่พร้อมใช้งาน</small><br/><small>หรือข้อผิดพลาดข้อมูล</small>]
-    SAPCheck -->|✅ 200 OK| Parse[📊 แยกวิเคราะห์การตอบกลับ<br/><small>การแยกวิเคราะห์ XML/JSON</small><br/><small>การดึงข้อมูล</small>]
+    SAPCheck -->|❌ Error| Error3[🚫 SAP Error<br/><small>Service unavailable</small><br/><small>or data error</small>]
+    SAPCheck -->|✅ 200 OK| Parse[📊 Parse Response<br/><small>XML/JSON parsing</small><br/><small>Data extraction</small>]
 
-    Parse --> Transform[🔄 แปลงข้อมูล<br/><small>รูปแบบ MCP</small><br/><small>การแมปสคีมา</small>]
+    Parse --> Transform[🔄 Transform Data<br/><small>MCP format</small><br/><small>Schema mapping</small>]
 
-    Transform --> Log[📝 บันทึกเมตริก<br/><small>ข้อมูลประสิทธิภาพ</small><br/><small>การตรวจสอบ</small>]
+    Transform --> Log[📝 Log Metrics<br/><small>Performance data</small><br/><small>Audit trail</small>]
 
-    Log --> Success([✅ การตอบกลับสำเร็จ<br/><small>ส่งคืนไปยังไคลเอ็นต์</small>])
+    Log --> Success([✅ Success Response<br/><small>Return to client</small>])
 
-    Error1 & Error2 & Error3 --> LogError[📝 บันทึกข้อผิดพลาด<br/><small>บริบทข้อผิดพลาด</small><br/><small>การติดตามสแต็ก</small>]
+    Error1 & Error2 & Error3 --> LogError[📝 Log Error<br/><small>Error context</small><br/><small>Stack trace</small>]
 
-    LogError --> End([❌ การตอบกลับข้อผิดพลาด<br/><small>ส่งคืนไปยังไคลเอ็นต์</small>])
+    LogError --> End([❌ Error Response<br/><small>Return to client</small>])
 
-    classDef startNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef decisionNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px
-    classDef authNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
-    classDef processNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef sapNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef errorNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef logNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef successNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef endNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
+    classDef startNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef decisionNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:18px
+    classDef authNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:18px
+    classDef processNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef sapNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef errorNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef logNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef successNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef endNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
 
     class Start startNode
     class Validate,SAPCheck,AuthCheck decisionNode
@@ -318,60 +336,65 @@ flowchart TD
     class End endNode
 ```
 
+</details>
+
 ### สถาปัตยกรรมความปลอดภัย
 
+<details>
+<summary>🔒 คลิกเพื่อดูแผนภาพสถาปัตยกรรมความปลอดภัย</summary>
+
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'fontSize':'16px', 'fontFamily':'arial'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'fontSize':'14px', 'fontFamily':'arial'}}}%%
 graph TB
-    subgraph security["🛡️ สถาปัตยกรรมความปลอดภัยแบบ Defense in Depth<br/>"]
+    subgraph security["🛡️ Defense in Depth Security Architecture"]
         direction TB
 
-        subgraph layer1["เลเยอร์ 1: การตรวจสอบอินพุต - ความปลอดภัยที่จุดเริ่มต้น"]
+        subgraph layer1["Layer 1: Input Validation - Entry Point Security"]
             direction LR
-            L1A["🔍 ตัวกรอง OData<br/>การป้องกัน SQL injection<br/>การตรวจสอบไวยากรณ์"]
-            L1B["🔑 คีย์เอนทิตี<br/>การตรวจสอบรูปแบบ<br/>การตรวจสอบประเภท"]
-            L1C["🧹 การทำความสะอาด<br/>การป้องกัน XSS<br/>การทำความสะอาดอินพุต"]
+            L1A["🔍 OData Filter<br/><br/>SQL injection<br/>prevention<br/><br/>Syntax validation"]
+            L1B["🔑 Entity Key<br/><br/>Format<br/>validation<br/><br/>Type checking"]
+            L1C["🧹 Sanitization<br/><br/>XSS<br/>prevention<br/><br/>Input cleaning"]
         end
 
-        subgraph layer2["เลเยอร์ 2: การรับรองความถูกต้อง - การยืนยันตัวตน"]
+        subgraph layer2["Layer 2: Authentication - Identity Verification"]
             direction LR
-            L2A["✅ ข้อมูลประจำตัว<br/>การตรวจสอบผู้ใช้<br/>การตรวจสอบรหัสผ่าน"]
-            L2B["🎫 เซสชัน<br/>วงจรชีวิตเซสชัน<br/>การจัดการการหมดเวลา"]
-            L2C["🔐 โทเค็น<br/>โทเค็น JWT/Bearer<br/>การหมุนเวียนโทเค็น"]
+            L2A["✅ Credentials<br/><br/>User<br/>validation<br/><br/>Password checks"]
+            L2B["🎫 Sessions<br/><br/>Session<br/>lifecycle<br/><br/>Timeout handling"]
+            L2C["🔐 Tokens<br/><br/>JWT/Bearer<br/>tokens<br/><br/>Token rotation"]
         end
 
-        subgraph layer3["เลเยอร์ 3: การอนุญาต - การควบคุมการเข้าถึง"]
+        subgraph layer3["Layer 3: Authorization - Access Control"]
             direction LR
-            L3A["🚦 การเข้าถึงบริการ<br/>RBAC ระดับบริการ<br/>เมทริกซ์สิทธิ์"]
-            L3B["📋 สิทธิ์เอนทิตี<br/>การเข้าถึงระดับข้อมูล<br/>การกรองฟิลด์"]
+            L3A["🚦 Service Access<br/><br/>Service-level<br/>RBAC<br/><br/>Permission matrix"]
+            L3B["📋 Entity Permissions<br/><br/>Data-level<br/>access<br/><br/>Field filtering"]
         end
 
-        subgraph layer4["เลเยอร์ 4: ความปลอดภัยในการขนส่ง - เลเยอร์การเข้ารหัส"]
+        subgraph layer4["Layer 4: Transport Security - Encryption Layer"]
             direction LR
-            L4A["🔒 SSL/TLS<br/>เฉพาะ TLS 1.2+<br/>Perfect forward secrecy"]
-            L4B["📜 ใบรับรอง<br/>การตรวจสอบเชน<br/>การตรวจสอบการเพิกถอน"]
+            L4A["🔒 SSL/TLS<br/><br/>TLS 1.2+ only<br/><br/>Perfect forward<br/>secrecy"]
+            L4B["📜 Certificates<br/><br/>Chain<br/>validation<br/><br/>Revocation check"]
         end
 
-        subgraph layer5["เลเยอร์ 5: การตรวจสอบ & การเฝ้าระวัง - การสังเกตการณ์"]
+        subgraph layer5["Layer 5: Audit & Monitoring - Observability"]
             direction LR
-            L5A["📊 บันทึกที่มีโครงสร้าง<br/>การบันทึก JSON<br/>การยกเว้น PII"]
-            L5B["⚡ ประสิทธิภาพ<br/>การติดตามเมตริก<br/>การเฝ้าระวัง SLA"]
-            L5C["🚨 การติดตามข้อผิดพลาด<br/>การบันทึกข้อยกเว้น<br/>ทริกเกอร์การแจ้งเตือน"]
+            L5A["📊 Structured Logs<br/><br/>JSON logging<br/><br/>PII exclusion"]
+            L5B["⚡ Performance<br/><br/>Metrics<br/>tracking<br/><br/>SLA monitoring"]
+            L5C["🚨 Error Tracking<br/><br/>Exception<br/>logging<br/><br/>Alert triggers"]
         end
     end
 
-    L1A & L1B & L1C -->|อินพุตที่ตรวจสอบแล้ว| L2A
-    L2A -->|ยืนยันตัวตนแล้ว| L2B
-    L2B -->|เซสชันที่ใช้งานอยู่| L2C
-    L2C -->|รับรองความถูกต้องแล้ว| L3A & L3B
-    L3A & L3B -->|ได้รับอนุญาต| L4A & L4B
-    L4A & L4B -->|เข้ารหัส| L5A & L5B & L5C
+    L1A & L1B & L1C -->|Validated Input| L2A
+    L2A -->|Identity Verified| L2B
+    L2B -->|Session Active| L2C
+    L2C -->|Authenticated| L3A & L3B
+    L3A & L3B -->|Authorized| L4A & L4B
+    L4A & L4B -->|Encrypted| L5A & L5B & L5C
 
-    classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:15px
-    classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:15px
-    classDef authzNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:15px
-    classDef transportNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:15px
-    classDef auditNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:15px
+    classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:3px,padding:25px
+    classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:3px,padding:25px
+    classDef authzNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:3px,padding:25px
+    classDef transportNode fill:#D6EAF8,stroke:#3498DB,stroke-width:3px,padding:25px
+    classDef auditNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:3px,padding:25px
 
     class L1A,L1B,L1C inputNode
     class L2A,L2B,L2C authNode
@@ -380,52 +403,95 @@ graph TB
     class L5A,L5B,L5C auditNode
 ```
 
+</details>
+
 ---
 
-## 📦 โครงสร้างที่เก็บ
+## 📦 โครงสร้างที่เก็บข้อมูล
 
 ```
 sap-mcp/
 ├── packages/
-│   └── server/                          ✅ เซิร์ฟเวอร์ MCP ที่พร้อมใช้งานจริง
+│   └── server/                          ✅ Production-Ready MCP Server
 │       ├── src/sap_mcp_server/
-│       │   ├── core/                    # ไคลเอ็นต์ SAP & การรับรองความถูกต้อง (3 ไฟล์)
-│       │   │   ├── sap_client.py        # การดำเนินการ OData
-│       │   │   ├── auth.py              # การจัดการข้อมูลประจำตัว
-│       │   │   └── exceptions.py        # ข้อยกเว้นที่กำหนดเอง
-│       │   ├── config/                  # การกำหนดค่า (4 ไฟล์)
-│       │   │   ├── settings.py          # การกำหนดค่าสภาพแวดล้อม
-│       │   │   ├── loader.py            # ตัวโหลด YAML
-│       │   │   └── schemas.py           # โมเดล Pydantic
-│       │   ├── protocol/                # โปรโตคอล MCP (2 ไฟล์)
-│       │   │   └── schemas.py           # สคีมาคำขอ/การตอบกลับ
-│       │   ├── tools/                   # เครื่องมือ SAP แบบโมดูล 4 อย่าง
-│       │   │   ├── base.py              # คลาสพื้นฐานของเครื่องมือ
-│       │   │   ├── auth_tool.py         # การรับรองความถูกต้อง
-│       │   │   ├── query_tool.py        # การสืบค้น OData
-│       │   │   ├── entity_tool.py       # การดึงข้อมูลเอนทิตี
-│       │   │   └── service_tool.py      # การค้นหาบริการ
-│       │   ├── transports/              # เลเยอร์การขนส่ง
-│       │   │   └── stdio.py             # การขนส่ง Stdio ✅
-│       │   └── utils/                   # ยูทิลิตี้ (3 ไฟล์)
-│       │       ├── logger.py            # การบันทึกที่มีโครงสร้าง
-│       │       └── validators.py        # การตรวจสอบอินพุต
-│       ├── config/                      # การกำหนดค่าเซิร์ฟเวอร์
-│       │   ├── services.yaml            # การกำหนดค่าบริการ SAP
-│       │   └── services.yaml.example    # เทมเพลตการกำหนดค่า
-│       ├── tests/                       # 45 การทดสอบ (ครอบคลุม 56%)
-│       │   ├── conftest.py              # 8 ฟิกซ์เจอร์
-│       │   ├── unit/                    # การทดสอบแบบแยกส่วนที่รวดเร็ว
-│       │   └── integration/             # การทดสอบการผสานรวม
-│       └── pyproject.toml               # การกำหนดค่าแพ็คเกจ
+│       │   ├── core/                    # SAP client & auth (4 files)
+│       │   │   ├── __init__.py          # Module initialization
+│       │   │   ├── sap_client.py        # OData operations
+│       │   │   ├── auth.py              # Credential management
+│       │   │   └── exceptions.py        # Custom exceptions
+│       │   ├── config/                  # Configuration (4 files)
+│       │   │   ├── __init__.py          # Module initialization
+│       │   │   ├── settings.py          # Environment config
+│       │   │   ├── loader.py            # YAML loader
+│       │   │   └── schemas.py           # Pydantic models
+│       │   ├── protocol/                # MCP protocol (2 files)
+│       │   │   ├── __init__.py          # Module initialization
+│       │   │   └── schemas.py           # Request/Response schemas
+│       │   ├── tools/                   # 4 modular SAP tools (6 files)
+│       │   │   ├── __init__.py          # Tool registry
+│       │   │   ├── base.py              # Tool base class
+│       │   │   ├── auth_tool.py         # Authentication
+│       │   │   ├── query_tool.py        # OData queries
+│       │   │   ├── entity_tool.py       # Entity retrieval
+│       │   │   └── service_tool.py      # Service discovery
+│       │   ├── transports/              # Transport layer (2 files)
+│       │   │   ├── __init__.py          # Module initialization
+│       │   │   └── stdio.py             # Stdio transport ✅
+│       │   ├── utils/                   # Utilities (3 files)
+│       │   │   ├── __init__.py          # Module initialization
+│       │   │   ├── logger.py            # Structured logging
+│       │   │   └── validators.py        # Input validation
+│       │   └── __init__.py              # Package initialization
+│       ├── config/                      # Server configuration
+│       │   ├── services.yaml            # SAP services config
+│       │   └── services.yaml.example    # Configuration template
+│       ├── tests/                       # Test suite (7 files, 56% coverage)
+│       │   ├── __init__.py              # Test package initialization
+│       │   ├── conftest.py              # Pytest fixtures
+│       │   ├── unit/                    # Unit tests
+│       │   │   ├── __init__.py          # Unit test package
+│       │   │   ├── test_base.py         # Base tool tests
+│       │   │   └── test_validators.py   # Validator tests
+│       │   └── integration/             # Integration tests
+│       │       ├── __init__.py          # Integration test package
+│       │       └── test_tool_integration.py  # Tool integration tests
+│       ├── pyproject.toml               # Package configuration
+│       └── README.md                    # Server package documentation
 │
-├── docs/                                # เอกสาร
-│   ├── guides/                          # คู่มือผู้ใช้
-│   └── api/                             # การอ้างอิง API
-├── scripts/                             # สคริปต์การพัฒนา
-├── .env.server                          # การกำหนดค่าเซิร์ฟเวอร์
-├── .env.server.example                  # เทมเพลตการกำหนดค่า
-└── README.md                            # ไฟล์นี้
+├── docs/                                # Documentation
+│   ├── architecture/                    # Architecture documentation
+│   │   └── server.md                    # Server architecture
+│   └── guides/                          # User guides
+│       ├── configuration.md             # Configuration guide
+│       ├── deployment.md                # Deployment guide
+│       ├── troubleshooting.md           # Troubleshooting guide
+│       ├── odata-service-creation-flight-demo.md  # OData service creation
+│       └── sfight-demo-guide.md         # SFLIGHT demo guide
+│
+├── examples/                            # Example applications
+│   ├── basic/                           # Basic examples
+│   │   └── stdio_client.py              # Stdio client example
+│   ├── chatbot/                         # Chatbot examples
+│   │   └── order_inquiry_chatbot.py     # Order inquiry chatbot
+│   └── README.md                        # Examples documentation
+│
+├── scripts/                             # Development scripts
+│   ├── create_structure.sh              # Project structure creation
+│   ├── migrate_code.sh                  # Code migration script
+│   └── update_imports.py                # Import update script
+│
+├── .claude/                             # Claude Code configuration
+│   └── settings.local.json              # Local settings
+│
+├── .env.server.example                  # Environment template
+├── .gitignore                           # Git ignore rules
+├── README.md                            # Main documentation (English)
+├── README.ja.md                         # Japanese documentation
+├── README.ko.md                         # Korean documentation
+├── README.th.md                         # Thai documentation
+├── README.zh-TW.md                      # Traditional Chinese documentation
+├── README.old.md                        # Previous README version
+└── REFACTORING_SUMMARY.md               # Refactoring history
 ```
 
 ---
@@ -439,7 +505,7 @@ sap-mcp/
 <td width="50%">
 
 #### 🛠️ เครื่องมือ
-- ✅ **sap_authenticate**: การรับรองความถูกต้องของ SAP ที่ปลอดภัย
+- ✅ **sap_authenticate**: การตรวจสอบสิทธิ์ SAP ที่ปลอดภัย
 - ✅ **sap_query**: การสืบค้น OData พร้อมตัวกรอง
 - ✅ **sap_get_entity**: การดึงข้อมูลเอนทิตีเดียว
 - ✅ **sap_list_services**: การค้นหาบริการ
@@ -455,42 +521,32 @@ sap-mcp/
 <tr>
 <td>
 
-#### 📊 การบันทึก & การเฝ้าระวัง
-- ✅ **การบันทึกที่มีโครงสร้าง**: JSON + คอนโซล
-- ✅ **เมตริกประสิทธิภาพ**: การจับเวลาคำขอ
+#### 📊 การบันทึกและการตรวจสอบ
+- ✅ **การบันทึกแบบมีโครงสร้าง**: JSON + คอนโซล
+- ✅ **เมตริกประสิทธิภาพ**: เวลาในการร้องขอ
 - ✅ **การติดตามข้อผิดพลาด**: บริบทเต็มรูปแบบ
-- ✅ **การตรวจสอบ**: เหตุการณ์ความปลอดภัย
+- ✅ **เส้นทางการตรวจสอบ**: เหตุการณ์ความปลอดภัย
 
 </td>
 <td>
 
 #### 🔒 ความปลอดภัย
-- ✅ **การตรวจสอบอินพุต**: OData & ความปลอดภัย
-- ✅ **การสนับสนุน SSL/TLS**: การเชื่อมต่อที่ปลอดภัย
+- ✅ **การตรวจสอบข้อมูลเข้า**: OData & ความปลอดภัย
+- ✅ **การรองรับ SSL/TLS**: การเชื่อมต่อที่ปลอดภัย
 - ✅ **การจัดการข้อมูลประจำตัว**: .env.server
-- ✅ **การจัดการข้อผิดพลาด**: เกรดการผลิต
+- ✅ **การจัดการข้อผิดพลาด**: ระดับการผลิต
 
 </td>
 </tr>
 </table>
 
-### คุณภาพ & การทดสอบ
-
-| เมตริก | ค่า | สถานะ |
-|--------|-------|--------|
-| **ความครอบคลุมของการทดสอบ** | 56% | 🟡 ดี |
-| **การทดสอบที่ผ่าน** | 44/45 (98%) | 🟢 ยอดเยี่ยม |
-| **ความเร็วในการทดสอบ** | <0.2s | 🟢 เร็ว |
-| **ฟิกซ์เจอร์** | 8 อย่างครอบคลุม | 🟢 สมบูรณ์ |
-| **หมวดหมู่การทดสอบ** | หน่วย + การผสานรวม | 🟢 สมบูรณ์ |
-
 ### ประสบการณ์ของนักพัฒนา
 
 - ✅ **สถาปัตยกรรมแบบโมดูล**: หนึ่งเครื่องมือต่อไฟล์
 - ✅ **ความปลอดภัยของประเภท**: คำแนะนำประเภทเต็มรูปแบบ
-- ✅ **เอกสาร**: คู่มือที่ครอบคลุม
-- ✅ **การตั้งค่าง่าย**: `pip install -e .`
-- ✅ **การโหลดซ้ำแบบร้อน**: โหมดการพัฒนา
+- ✅ **เอกสารประกอบ**: คู่มือที่ครอบคลุม
+- ✅ **ติดตั้งง่าย**: `pip install -e .`
+- ✅ **Hot Reload**: โหมดการพัฒนา
 - ✅ **แอปตัวอย่าง**: 3 ตัวอย่างที่ใช้งานได้
 
 ---
@@ -503,9 +559,9 @@ sap-mcp/
 
 - **Python 3.11 หรือสูงกว่า**
 - **pip** (ตัวติดตั้งแพ็คเกจ Python)
-- **Git** (สำหรับโคลนที่เก็บ)
+- **Git** (สำหรับการโคลนที่เก็บข้อมูล)
 - ข้อมูลประจำตัวการเข้าถึง SAP Gateway
-- การสนับสนุนสภาพแวดล้อมเสมือน
+- การรองรับสภาพแวดล้อมเสมือน
 
 #### การติดตั้ง Python
 
@@ -518,22 +574,22 @@ sap-mcp/
 # หรือดาวน์โหลดจาก python.org
 ```
 
-**ตัวเลือกที่ 2: ตัวติดตั้งจาก Python.org**
+**ตัวเลือกที่ 2: ตัวติดตั้ง Python.org**
 1. ดาวน์โหลดจาก [python.org/downloads](https://www.python.org/downloads/)
-2. เรียกใช้ตัวติดตั้ง
-3. ✅ **เลือก "Add Python to PATH"**
+2. รันตัวติดตั้ง
+3. ✅ **ตรวจสอบ "Add Python to PATH"**
 4. คลิก "Install Now"
 
 **ตรวจสอบการติดตั้ง:**
 ```powershell
 python --version
-# ควรแสดง: Python 3.11.x หรือสูงกว่า
+# ควรแสดง: Python 3.11.x or higher
 
 pip --version
-# ควรแสดง: pip 23.x.x หรือสูงกว่า
+# ควรแสดง: pip 23.x.x or higher
 ```
 
-**ปัญหาที่พบบ่อย:**
+**ปัญหาทั่วไป:**
 - หากไม่พบคำสั่ง `python` ให้ใช้ `python3` หรือ `py`
 - หากไม่พบ `pip` ให้ติดตั้งด้วย: `python -m ensurepip --upgrade`
 
@@ -553,18 +609,18 @@ brew install python@3.11
 brew install python@3.12
 ```
 
-**ตัวเลือกที่ 2: ตัวติดตั้งจาก Python.org**
+**ตัวเลือกที่ 2: ตัวติดตั้ง Python.org**
 1. ดาวน์โหลดจาก [python.org/downloads/macos](https://www.python.org/downloads/macos/)
 2. เปิดไฟล์ `.pkg`
-3. ทำตามวิซาร์ดการติดตั้ง
+3. ทำตามตัวช่วยสร้างการติดตั้ง
 
 **ตรวจสอบการติดตั้ง:**
 ```bash
 python3 --version
-# ควรแสดง: Python 3.11.x หรือสูงกว่า
+# ควรแสดง: Python 3.11.x or higher
 
 pip3 --version
-# ควรแสดง: pip 23.x.x หรือสูงกว่า
+# ควรแสดง: pip 23.x.x or higher
 ```
 
 **หมายเหตุ:** macOS อาจมี Python 2.7 ติดตั้งไว้ล่วงหน้า ใช้คำสั่ง `python3` และ `pip3` เสมอ
@@ -603,10 +659,10 @@ sudo pacman -S python python-pip
 **ตรวจสอบการติดตั้ง:**
 ```bash
 python3 --version
-# ควรแสดง: Python 3.11.x หรือสูงกว่า
+# ควรแสดง: Python 3.11.x or higher
 
 pip3 --version
-# ควรแสดง: pip 23.x.x หรือสูงกว่า
+# ควรแสดง: pip 23.x.x or higher
 ```
 
 </details>
@@ -621,7 +677,7 @@ pip3 --version
 <summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
 
 ```powershell
-# โคลนที่เก็บ
+# โคลนที่เก็บข้อมูล
 git clone <repository-url>
 cd sap-mcp
 
@@ -633,7 +689,7 @@ python -m venv .venv
 # หรือใน PowerShell:
 # .venv\Scripts\Activate.ps1
 
-# หากคุณได้รับข้อผิดพลาดเกี่ยวกับนโยบายการดำเนินการใน PowerShell:
+# หากคุณได้รับข้อผิดพลาดนโยบายการดำเนินการใน PowerShell:
 # Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # ตรวจสอบการเปิดใช้งาน (คุณควรเห็น (.venv) ในพรอมต์)
@@ -650,11 +706,11 @@ pip install -e ".[dev]"
 sap-mcp-server-stdio --help
 ```
 
-**ปัญหาที่พบบ่อยใน Windows:**
+**ปัญหาทั่วไปของ Windows:**
 - **ไม่พบ `python`**: ลอง `python3` หรือ `py`
-- **การอนุญาตถูกปฏิเสธ**: เรียกใช้ PowerShell ในฐานะผู้ดูแลระบบ
-- **นโยบายการดำเนินการ**: เรียกใช้ `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
-- **การสนับสนุนเส้นทางยาว**: เปิดใช้งานเส้นทางยาวใน Windows (Settings > System > About > Advanced system settings)
+- **ถูกปฏิเสธการเข้าถึง**: รัน PowerShell ในฐานะผู้ดูแลระบบ
+- **นโยบายการดำเนินการ**: รัน `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+- **การรองรับเส้นทางยาว**: เปิดใช้งานเส้นทางยาวใน Windows (Settings > System > About > Advanced system settings)
 
 </details>
 
@@ -662,7 +718,7 @@ sap-mcp-server-stdio --help
 <summary><b>🍎 macOS (Terminal)</b></summary>
 
 ```bash
-# โคลนที่เก็บ
+# โคลนที่เก็บข้อมูล
 git clone <repository-url>
 cd sap-mcp
 
@@ -687,14 +743,14 @@ sap-mcp-server-stdio --help
 
 # ตรวจสอบเส้นทางการติดตั้ง (มีประโยชน์สำหรับการตั้งค่า Gemini CLI)
 which sap-mcp-server-stdio
-# ผลลัพธ์ตัวอย่าง: /Users/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
+# ตัวอย่างผลลัพธ์: /Users/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
 ```
 
-**ปัญหาที่พบบ่อยใน macOS:**
+**ปัญหาทั่วไปของ macOS:**
 - **ไม่พบ `python`**: ใช้ `python3` แทน
 - **ไม่พบ `pip`**: ใช้ `pip3` แทน
-- **การอนุญาตถูกปฏิเสธ**: อย่าใช้ `sudo` กับสภาพแวดล้อมเสมือน
-- **ไม่พบคำสั่งหลังการติดตั้ง**: ตรวจสอบให้แน่ใจว่าสภาพแวดล้อมเสมือนเปิดใช้งานอยู่
+- **ถูกปฏิเสธการเข้าถึง**: อย่าใช้ `sudo` กับสภาพแวดล้อมเสมือน
+- **ไม่พบคำสั่งหลังการติดตั้ง**: ตรวจสอบให้แน่ใจว่าเปิดใช้งานสภาพแวดล้อมเสมือนแล้ว
 
 </details>
 
@@ -702,7 +758,7 @@ which sap-mcp-server-stdio
 <summary><b>🐧 Linux (Bash/Zsh)</b></summary>
 
 ```bash
-# โคลนที่เก็บ
+# โคลนที่เก็บข้อมูล
 git clone <repository-url>
 cd sap-mcp
 
@@ -727,14 +783,14 @@ sap-mcp-server-stdio --help
 
 # ตรวจสอบเส้นทางการติดตั้ง (มีประโยชน์สำหรับการตั้งค่า Gemini CLI)
 which sap-mcp-server-stdio
-# ผลลัพธ์ตัวอย่าง: /home/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
+# ตัวอย่างผลลัพธ์: /home/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
 ```
 
-**ปัญหาที่พบบ่อยใน Linux:**
+**ปัญหาทั่วไปของ Linux:**
 - **ไม่พบ `python3-venv`**: ติดตั้งด้วย `sudo apt install python3-venv`
-- **การอนุญาตถูกปฏิเสธ**: อย่าใช้ `sudo` กับสภาพแวดล้อมเสมือน
+- **ถูกปฏิเสธการเข้าถึง**: อย่าใช้ `sudo` กับสภาพแวดล้อมเสมือน
 - **ข้อผิดพลาด SSL**: ติดตั้งใบรับรอง: `sudo apt install ca-certificates`
-- **การพึ่งพาการสร้างที่ขาดหายไป**: ติดตั้งด้วย `sudo apt install build-essential python3-dev`
+- **ขาดการพึ่งพาการสร้าง**: ติดตั้งด้วย `sudo apt install build-essential python3-dev`
 
 </details>
 
@@ -743,12 +799,12 @@ which sap-mcp-server-stdio
 ### 2. การกำหนดค่า
 
 เซิร์ฟเวอร์ SAP MCP ต้องการไฟล์การกำหนดค่าสองไฟล์:
-1. **`.env.server`**: ข้อมูลประจำตัวการเชื่อมต่อ SAP (หนึ่งระบบ SAP)
-2. **`services.yaml`**: บริการ SAP Gateway และการตั้งค่าการรับรองความถูกต้อง
+1. **`.env.server`**: ข้อมูลประจำตัวการเชื่อมต่อ SAP (ระบบ SAP เดียว)
+2. **`services.yaml`**: การตั้งค่า SAP Gateway Services และการตรวจสอบสิทธิ์
 
 #### 2.1. การกำหนดค่าการเชื่อมต่อ SAP (`.env.server`)
 
-> **⚠️ สำคัญ**: ณ v0.2.0, `.env.server` ได้ถูกรวมไว้ที่ **ไดเรกทอรีรากของโครงการเท่านั้น** ไม่รองรับตำแหน่ง `packages/server/.env.server` ก่อนหน้านี้อีกต่อไป
+> **⚠️ สำคัญ**: ณ v0.2.0, `.env.server` ได้ถูกรวมไว้ที่ **ไดเรกทอรีรากของโครงการเท่านั้น** ตำแหน่ง `packages/server/.env.server` ก่อนหน้านี้ไม่ได้รับการสนับสนุนอีกต่อไป
 
 **ตำแหน่งไฟล์**: `.env.server` ต้องอยู่ใน **ไดเรกทอรีรากของโครงการ**
 
@@ -767,7 +823,7 @@ sap-mcp/
 <summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
 
 ```powershell
-# นำทางไปยังรากของโครงการ
+# ไปที่รากของโครงการ
 cd C:\path\to\sap-mcp
 
 # คัดลอกเทมเพลตสภาพแวดล้อม
@@ -780,16 +836,16 @@ notepad .env.server
 # code .env.server (VS Code)
 # notepad++ .env.server (Notepad++)
 
-# หมายเหตุ: การอนุญาตไฟล์บน Windows จัดการแตกต่างกัน
+# หมายเหตุ: สิทธิ์ของไฟล์ได้รับการจัดการแตกต่างกันใน Windows
 # ตรวจสอบให้แน่ใจว่าไฟล์ไม่ได้อยู่ในโฟลเดอร์สาธารณะ
-# คลิกขวาที่ .env.server > Properties > Security เพื่อจำกัดการเข้าถึง
+# คลิกขวา .env.server > Properties > Security เพื่อจำกัดการเข้าถึง
 ```
 
-**หมายเหตุเฉพาะสำหรับ Windows:**
-- ใช้แบ็กสแลช (`\`) สำหรับเส้นทางใน Windows
+**หมายเหตุเฉพาะของ Windows:**
+- ใช้ backslashes (`\`) สำหรับเส้นทางใน Windows
 - นโยบายการดำเนินการของ PowerShell อาจบล็อกสคริปต์ (ดูส่วนการติดตั้ง)
-- จัดเก็บ `.env.server` ในโฟลเดอร์ผู้ใช้ที่มีการเข้าถึงที่จำกัด
-- ใช้การยกเว้นของ Windows Defender หากโปรแกรมป้องกันไวรัสบล็อกไฟล์
+- เก็บ `.env.server` ในโฟลเดอร์ผู้ใช้ที่มีการจำกัดการเข้าถึง
+- ใช้ข้อยกเว้น Windows Defender หากโปรแกรมป้องกันไวรัสบล็อกไฟล์
 
 </details>
 
@@ -797,8 +853,8 @@ notepad .env.server
 <summary><b>🍎 macOS (Terminal)</b></summary>
 
 ```bash
-# นำทางไปยังรากของโครงการ
-cd /path/to/sap-mcp
+# ไปที่รากของโครงการ
+cd /path/to/your/sap-mcp
 
 # คัดลอกเทมเพลตสภาพแวดล้อม
 cp .env.server.example .env.server
@@ -810,19 +866,19 @@ nano .env.server
 # code .env.server (VS Code)
 # open -a TextEdit .env.server
 
-# ตั้งค่าการอนุญาตที่เหมาะสม (แนะนำเพื่อความปลอดภัย)
+# ตั้งค่าสิทธิ์ที่เหมาะสม (แนะนำเพื่อความปลอดภัย)
 chmod 600 .env.server
 
-# ตรวจสอบการอนุญาต
+# ตรวจสอบสิทธิ์
 ls -la .env.server
 # ควรแสดง: -rw------- (เจ้าของเท่านั้นที่สามารถอ่าน/เขียนได้)
 ```
 
-**หมายเหตุเฉพาะสำหรับ macOS:**
-- การอนุญาตไฟล์เป็นแบบ Unix (เหมือนกับ Linux)
-- `chmod 600` ทำให้แน่ใจว่ามีเพียงผู้ใช้ของคุณเท่านั้นที่สามารถอ่าน/เขียนไฟล์ได้
+**หมายเหตุเฉพาะของ macOS:**
+- สิทธิ์ของไฟล์เป็นแบบ Unix (เหมือนกับ Linux)
+- `chmod 600` ช่วยให้มั่นใจว่ามีเพียงผู้ใช้ของคุณเท่านั้นที่สามารถอ่าน/เขียนไฟล์ได้
 - macOS อาจมีพรอมต์ความปลอดภัยเพิ่มเติมสำหรับการเข้าถึงครั้งแรก
-- จัดเก็บในไดเรกทอรีโฮมของคุณเพื่อความปลอดภัยสูงสุด
+- เก็บไว้ในโฮมไดเรกทอรีของคุณเพื่อความปลอดภัยสูงสุด
 
 </details>
 
@@ -830,8 +886,8 @@ ls -la .env.server
 <summary><b>🐧 Linux (Bash/Zsh)</b></summary>
 
 ```bash
-# นำทางไปยังรากของโครงการ
-cd /path/to/sap-mcp
+# ไปที่รากของโครงการ
+cd /path/to/your/sap-mcp
 
 # คัดลอกเทมเพลตสภาพแวดล้อม
 cp .env.server.example .env.server
@@ -843,22 +899,22 @@ nano .env.server
 # code .env.server (VS Code)
 # gedit .env.server (GNOME)
 
-# ตั้งค่าการอนุญาตที่เหมาะสม (จำเป็นเพื่อความปลอดภัย)
+# ตั้งค่าสิทธิ์ที่เหมาะสม (จำเป็นเพื่อความปลอดภัย)
 chmod 600 .env.server
 
-# ตรวจสอบการอนุญาต
+# ตรวจสอบสิทธิ์
 ls -la .env.server
 # ควรแสดง: -rw------- (เจ้าของเท่านั้นที่สามารถอ่าน/เขียนได้)
 
-# ทางเลือก: ตรวจสอบว่าไฟล์ไม่สามารถอ่านได้ทั่วโลก
+# ทางเลือก: ตรวจสอบว่าไฟล์ไม่สามารถอ่านได้โดยทุกคน
 stat .env.server
 ```
 
-**หมายเหตุเฉพาะสำหรับ Linux:**
-- `chmod 600` มีความสำคัญต่อความปลอดภัย (เจ้าของเท่านั้นที่สามารถเข้าถึงได้)
+**หมายเหตุเฉพาะของ Linux:**
+- `chmod 600` มีความสำคัญต่อความปลอดภัย (เจ้าของเท่านั้นที่เข้าถึงได้)
 - SELinux/AppArmor อาจต้องการการกำหนดค่าเพิ่มเติม
-- ไฟล์ต้องเป็นของผู้ใช้ที่เรียกใช้เซิร์ฟเวอร์
-- อย่าใช้ `sudo` เพื่อแก้ไขหรือเรียกใช้ด้วยไฟล์นี้
+- ไฟล์ต้องเป็นของผู้ใช้ที่รันเซิร์ฟเวอร์
+- ห้ามใช้ `sudo` เพื่อแก้ไขหรือรันด้วยไฟล์นี้
 
 </details>
 
@@ -866,31 +922,31 @@ stat .env.server
 
 **ตัวแปรสภาพแวดล้อมที่จำเป็น**:
 ```bash
-# การเชื่อมต่อระบบ SAP (ระบบ SAP เดียว)
-SAP_HOST=your-sap-host.com          # ชื่อโฮสต์ SAP Gateway
-SAP_PORT=443                         # พอร์ต HTTPS (ปกติคือ 443 หรือ 8443)
-SAP_USERNAME=your-username           # ID ผู้ใช้ SAP
-SAP_PASSWORD=your-password           # รหัสผ่าน SAP
-SAP_CLIENT=100                       # หมายเลขไคลเอ็นต์ SAP (เช่น 100, 800)
+# SAP System Connection (Single SAP System)
+SAP_HOST=your-sap-host.com          # SAP Gateway hostname
+SAP_PORT=443                         # HTTPS port (usually 443 or 8443)
+SAP_USERNAME=your-username           # SAP user ID
+SAP_PASSWORD=your-password           # SAP password
+SAP_CLIENT=100                       # SAP client number (e.g., 100, 800)
 
-# การตั้งค่าความปลอดภัย
-SAP_VERIFY_SSL=true                  # เปิดใช้งานการตรวจสอบใบรับรอง SSL (แนะนำ)
-SAP_TIMEOUT=30                       # เวลาหมดเวลาของคำขอเป็นวินาที
+# Security Settings
+SAP_VERIFY_SSL=true                  # Enable SSL certificate verification (recommended)
+SAP_TIMEOUT=30                       # Request timeout in seconds
 
-# ทางเลือก: การรวมการเชื่อมต่อ
-SAP_MAX_CONNECTIONS=10               # จำนวนการเชื่อมต่อพร้อมกันสูงสุด (ทางเลือก)
-SAP_RETRY_ATTEMPTS=3                 # จำนวนครั้งที่พยายามใหม่เมื่อล้มเหลว (ทางเลือก)
+# Optional: Connection Pooling
+SAP_MAX_CONNECTIONS=10               # Maximum concurrent connections (optional)
+SAP_RETRY_ATTEMPTS=3                 # Number of retry attempts on failure (optional)
 ```
 
 **แนวทางปฏิบัติที่ดีที่สุดด้านความปลอดภัย**:
-- ✅ อย่าคอมมิต `.env.server` ไปยังการควบคุมเวอร์ชัน (มีอยู่แล้วใน `.gitignore`)
+- ✅ ห้าม commit `.env.server` ลงใน version control (มีอยู่ใน `.gitignore` แล้ว)
 - ✅ ใช้รหัสผ่านที่รัดกุมและไม่ซ้ำกัน
 - ✅ เปิดใช้งานการตรวจสอบ SSL ในการผลิต (`SAP_VERIFY_SSL=true`)
-- ✅ จำกัดการอนุญาตไฟล์: `chmod 600 .env.server`
+- ✅ จำกัดสิทธิ์ของไฟล์: `chmod 600 .env.server`
 
-#### 2.2. การกำหนดค่าบริการ SAP Gateway (`services.yaml`)
+#### 2.2. การกำหนดค่า SAP Gateway Services (`services.yaml`)
 
-กำหนดค่าบริการ SAP Gateway (บริการ OData) ที่เซิร์ฟเวอร์ MCP สามารถเข้าถึงได้
+กำหนดค่า SAP Gateway Services (OData services) ที่เซิร์ฟเวอร์ MCP สามารถเข้าถึงได้
 
 **ตำแหน่ง**: `packages/server/config/services.yaml`
 
@@ -905,96 +961,68 @@ vim packages/server/config/services.yaml
 **ตัวอย่างการกำหนดค่าพื้นฐาน**:
 
 ```yaml
-# การกำหนดค่า URL ของ Gateway
+# Gateway URL configuration
 gateway:
-  # รูปแบบ URL พื้นฐานสำหรับบริการ OData
+  # Base URL pattern for OData services
   base_url_pattern: "https://{host}:{port}/sap/opu/odata"
 
-  # ส่วนต่อท้ายของจุดสิ้นสุดเมตาดาต้า
+  # Metadata endpoint suffix
   metadata_suffix: "/$metadata"
 
-  # เส้นทางแคตตาล็อกบริการ
+  # Service catalog path
   service_catalog_path: "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
 
-  # การกำหนดค่าจุดสิ้นสุดการรับรองความถูกต้อง
+  # Authentication endpoint configuration
   auth_endpoint:
-    # แนะนำ: ใช้เมตาดาต้าของแคตตาล็อก (ทำงานได้โดยไม่ต้องมีบริการเฉพาะ)
+    # RECOMMENDED: Use catalog metadata (works without specific service)
     use_catalog_metadata: true
 
-    # ทางเลือก: ใช้บริการเฉพาะสำหรับการรับรองความถูกต้อง (หากแคตตาล็อกไม่พร้อมใช้งาน)
+    # Optional: Use specific service for authentication (if catalog unavailable)
     # use_catalog_metadata: false
-    # service_id: Z_SALES_ORDER_GENAI_SRV
-    # entity_name: zsd004Set
+    # service_id: Z_TRAVEL_RECOMMENDATIONS_SRV
+    # entity_name: AirlineSet
 
-# บริการ SAP OData
+# SAP OData Services
 services:
-  # ตัวอย่าง: บริการใบสั่งขาย
-  - id: Z_SALES_ORDER_GENAI_SRV          # ตัวระบุบริการที่ไม่ซ้ำกัน
-    name: "Sales Order GenAI Service"     # ชื่อที่มนุษย์อ่านได้
-    path: "/SAP/Z_SALES_ORDER_GENAI_SRV"  # เส้นทางบริการ
-    version: v2                            # เวอร์ชัน OData (v2 หรือ v4)
-    description: "บริการจัดการใบสั่งขาย"
-
-    # ชุดเอนทิตีในบริการนี้
+  # SFLIGHT Demo Service (Travel Recommendations)
+  - id: Z_TRAVEL_RECOMMENDATIONS_SRV
+    name: "Travel Recommendations Service (SFLIGHT)"
+    path: "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV"
+    version: v2
+    description: "OData service for the SFLIGHT demo dataset."
     entities:
-      - name: zsd004Set                    # ชื่อชุดเอนทิตี
-        key_field: Vbeln                   # ฟิลด์คีย์หลัก
-        description: "ใบสั่งขาย"
-        default_select:                    # ฟิลด์เริ่มต้นที่จะเลือก
-          - Vbeln      # หมายเลขใบสั่งขาย
-          - Erdat      # วันที่สร้าง
-          - Ernam      # สร้างโดย
-          - Netwr      # มูลค่าสุทธิ
-          - Waerk      # สกุลเงิน
+      - name: AirlineSet
+        key_field: CARRID
+        description: "Airlines (e.g., LH, AA)"
+        default_select:
+          - CARRID
+          - CARRNAME
+          - CURRCODE
+          - URL
+      - name: AirportSet
+        key_field: ID
+        description: "Airports (e.g., FRA, JFK)"
+        default_select:
+          - ID
+          - NAME
+          - CITY
+          - COUNTRY
+      - name: FlightSet
+        key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}'"
+        description: "Specific flights on a given date"
+      - name: BookingSet
+        key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}',BOOKID='{BOOKID}'"
+        description: "Individual flight bookings"
 
-    # ทางเลือก: ส่วนหัวที่กำหนดเองสำหรับบริการนี้
+    # Optional: Custom headers for this service
     custom_headers: {}
 ```
 
-**การเพิ่มบริการหลายรายการ**:
+#### 2.3. ตัวเลือกจุดสิ้นสุดการตรวจสอบสิทธิ์
 
-```yaml
-services:
-  # บริการใบสั่งขาย
-  - id: Z_SALES_ORDER_GENAI_SRV
-    name: "Sales Order Service"
-    path: "/SAP/Z_SALES_ORDER_GENAI_SRV"
-    version: v2
-    entities:
-      - name: zsd004Set
-        key_field: Vbeln
-        description: "ใบสั่งขาย"
+การกำหนดค่า `auth_endpoint` ควบคุมวิธีที่เซิร์ฟเวอร์ MCP ตรวจสอบสิทธิ์กับ SAP
 
-  # บริการข้อมูลหลักของลูกค้า
-  - id: Z_CUSTOMER_SRV
-    name: "Customer Master Service"
-    path: "/SAP/Z_CUSTOMER_SRV"
-    version: v2
-    entities:
-      - name: CustomerSet
-        key_field: Kunnr
-        description: "บันทึกข้อมูลหลักของลูกค้า"
-        default_select:
-          - Kunnr      # หมายเลขลูกค้า
-          - Name1      # ชื่อ
-          - Land1      # ประเทศ
-
-  # บริการข้อมูลหลักของวัสดุ
-  - id: Z_MATERIAL_SRV
-    name: "Material Master Service"
-    path: "/SAP/Z_MATERIAL_SRV"
-    version: v2
-    entities:
-      - name: MaterialSet
-        key_field: Matnr
-        description: "ข้อมูลหลักของวัสดุ"
-```
-
-#### 2.3. ตัวเลือกจุดสิ้นสุดการรับรองความถูกต้อง
-
-การกำหนดค่า `auth_endpoint` ควบคุมวิธีที่เซิร์ฟเวอร์ MCP รับรองความถูกต้องกับ SAP
-
-**ตัวเลือกที่ 1: เมตาดาต้าของแคตตาล็อก (แนะนำ)**
+**ตัวเลือกที่ 1: Catalog Metadata (แนะนำ)**
 
 ```yaml
 gateway:
@@ -1003,45 +1031,45 @@ gateway:
 ```
 
 **ข้อดี**:
-- ✅ ทำงานได้โดยไม่ต้องการบริการ SAP Gateway ที่เฉพาะเจาะจง
-- ✅ มีความยืดหยุ่นและสามารถพกพาได้มากขึ้นในระบบ SAP ต่างๆ
-- ✅ การรับรองความถูกต้องที่ไม่ขึ้นกับบริการ
-- ✅ ไม่มีการพึ่งพาการปรับใช้บริการที่กำหนดเอง
+- ✅ ทำงานโดยไม่ต้องใช้ SAP Gateway Services เฉพาะ
+- ✅ ยืดหยุ่นและพกพาได้มากขึ้นในระบบ SAP ต่างๆ
+- ✅ การตรวจสอบสิทธิ์ที่ไม่ขึ้นกับบริการ
+- ✅ ไม่ต้องพึ่งพาการปรับใช้บริการที่กำหนดเอง
 
-**โฟลว์การรับรองความถูกต้อง**:
-- โทเค็น CSRF: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
-- การตรวจสอบ: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
+**ขั้นตอนการตรวจสอบสิทธิ์**:
+- CSRF Token: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
+- Validation: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
 ---
 
-**ตัวเลือกที่ 2: การรับรองความถูกต้องเฉพาะบริการ**
+**ตัวเลือกที่ 2: การตรวจสอบสิทธิ์เฉพาะบริการ**
 
 ```yaml
 gateway:
   auth_endpoint:
     use_catalog_metadata: false
-    service_id: Z_SALES_ORDER_GENAI_SRV    # ต้องตรงกับ ID บริการด้านล่าง
-    entity_name: zsd004Set                  # ต้องเป็นเอนทิตีในบริการนั้น
+    service_id: Z_TRAVEL_RECOMMENDATIONS_SRV    # ต้องตรงกับ ID บริการด้านล่าง
+    entity_name: AirlineSet                     # ต้องเป็นเอนทิตีในบริการนั้น
 ```
 
 **ข้อดี**:
-- ✅ การรับรองความถูกต้องตามบริการที่ชัดเจน
-- ✅ ทำงานได้เมื่อบริการแคตตาล็อกไม่พร้อมใช้งาน (หายาก)
+- ✅ การตรวจสอบสิทธิ์ตามบริการที่ชัดเจน
+- ✅ ทำงานเมื่อบริการแคตตาล็อกไม่พร้อมใช้งาน (หายาก)
 
 **ข้อเสีย**:
-- ❌ ต้องการให้ปรับใช้บริการที่ระบุ
-- ❌ มีความยืดหยุ่นน้อยลงหากบริการเปลี่ยนแปลง
+- ❌ ต้องการให้บริการที่ระบุถูกปรับใช้
+- ❌ ยืดหยุ่นน้อยลงหากบริการเปลี่ยนแปลง
 - ❌ ต้องอัปเดตการกำหนดค่าหากชื่อบริการเปลี่ยนแปลง
 
-**โฟลว์การรับรองความถูกต้อง**:
-- โทเค็น CSRF: `/SAP/Z_SALES_ORDER_GENAI_SRV/zsd004Set`
-- การตรวจสอบ: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
+**ขั้นตอนการตรวจสอบสิทธิ์**:
+- CSRF Token: `/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV/AirlineSet`
+- Validation: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
 ---
 
-**คำแนะนำ**: ใช้ **ตัวเลือกที่ 1 (เมตาดาต้าของแคตตาล็อก)** เว้นแต่คุณมีเหตุผลเฉพาะที่จะใช้บริการเฉพาะสำหรับการรับรองความถูกต้อง
+**คำแนะนำ**: ใช้ **ตัวเลือกที่ 1 (Catalog Metadata)** เว้นแต่คุณจะมีเหตุผลเฉพาะในการใช้บริการใดบริการหนึ่งสำหรับการตรวจสอบสิทธิ์
 
-### 3. เรียกใช้เซิร์ฟเวอร์
+### 3. รันเซิร์ฟเวอร์
 
 <details open>
 <summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
@@ -1052,19 +1080,19 @@ gateway:
 # หรือใน PowerShell:
 # .venv\Scripts\Activate.ps1
 
-# เรียกใช้เซิร์ฟเวอร์ stdio (แนะนำ)
+# รันเซิร์ฟเวอร์ stdio (แนะนำ)
 sap-mcp-server-stdio
 
 # หรือโดยตรงด้วย Python
 python -m sap_mcp_server.transports.stdio
 
-# เพื่อปิดใช้งานเมื่อเสร็จสิ้น
+# หากต้องการปิดใช้งานเมื่อเสร็จสิ้น
 deactivate
 ```
 
-**หมายเหตุเฉพาะสำหรับ Windows:**
-- ใช้แบ็กสแลช (`\`) สำหรับเส้นทาง
-- PowerShell อาจต้องการการเปลี่ยนแปลงนโยบายการดำเนินการ
+**หมายเหตุเฉพาะของ Windows:**
+- ใช้ backslash (`\`) สำหรับเส้นทาง
+- PowerShell อาจต้องมีการเปลี่ยนแปลงนโยบายการดำเนินการ
 - เซิร์ฟเวอร์ทำงานในหน้าต่างเทอร์มินัลปัจจุบัน
 - กด `Ctrl+C` เพื่อหยุดเซิร์ฟเวอร์
 
@@ -1077,17 +1105,17 @@ deactivate
 # เปิดใช้งานสภาพแวดล้อมเสมือน
 source .venv/bin/activate
 
-# เรียกใช้เซิร์ฟเวอร์ stdio (แนะนำ)
+# รันเซิร์ฟเวอร์ stdio (แนะนำ)
 sap-mcp-server-stdio
 
 # หรือโดยตรงด้วย Python
 python3 -m sap_mcp_server.transports.stdio
 
-# เพื่อปิดใช้งานเมื่อเสร็จสิ้น
+# หากต้องการปิดใช้งานเมื่อเสร็จสิ้น
 deactivate
 ```
 
-**หมายเหตุเฉพาะสำหรับ macOS:**
+**หมายเหตุเฉพาะของ macOS:**
 - ใช้ `python3` แทน `python`
 - เซิร์ฟเวอร์ทำงานในเซสชันเทอร์มินัลปัจจุบัน
 - กด `Cmd+C` หรือ `Ctrl+C` เพื่อหยุดเซิร์ฟเวอร์
@@ -1102,51 +1130,34 @@ deactivate
 # เปิดใช้งานสภาพแวดล้อมเสมือน
 source .venv/bin/activate
 
-# เรียกใช้เซิร์ฟเวอร์ stdio (แนะนำ)
+# รันเซิร์ฟเวอร์ stdio (แนะนำ)
 sap-mcp-server-stdio
 
 # หรือโดยตรงด้วย Python
 python3 -m sap_mcp_server.transports.stdio
 
-# เพื่อปิดใช้งานเมื่อเสร็จสิ้น
+# หากต้องการปิดใช้งานเมื่อเสร็จสิ้น
 deactivate
 ```
 
-**หมายเหตุเฉพาะสำหรับ Linux:**
+**หมายเหตุเฉพาะของ Linux:**
 - ใช้ `python3` แทน `python`
 - เซิร์ฟเวอร์ทำงานในเซสชันเทอร์มินัลปัจจุบัน
 - กด `Ctrl+C` เพื่อหยุดเซิร์ฟเวอร์
-- สามารถทำงานในพื้นหลังด้วยบริการ `nohup` หรือ `systemd`
+- สามารถรันในพื้นหลังด้วย `nohup` หรือบริการ `systemd`
 
 </details>
 
 ---
 
-### 4. ตรวจสอบการติดตั้ง
-
-```bash
-# เรียกใช้การทดสอบ
-cd packages/server
-python -m pytest -v
-
-# พร้อมรายงานความครอบคลุม
-python -m pytest --cov=sap_mcp_server --cov-report=term-missing
-
-# หมวดหมู่การทดสอบเฉพาะ
-python -m pytest -m unit          # การทดสอบหน่วยเท่านั้น
-python -m pytest -m integration   # การทดสอบการผสานรวมเท่านั้น
-```
-
----
-
-## 🤖 การผสานรวมกับ Gemini CLI
+## 🤖 การรวมกับ Gemini CLI
 
 > **📖 เอกสารอย่างเป็นทางการ**: สำหรับข้อมูลเพิ่มเติมเกี่ยวกับ Gemini CLI โปรดไปที่ <a href="https://geminicli.com/" target="_blank">https://geminicli.com/</a>
 
 ### ข้อกำหนดเบื้องต้น
 
-- ติดตั้ง Node.js 18+ และ npm
-- ติดตั้ง SAP MCP Server (ดูเริ่มต้นอย่างรวดเร็วด้านบน)
+- ติดตั้ง Node.js 18+ และ npm แล้ว
+- ติดตั้ง SAP MCP Server แล้ว (ดู Quick Start ด้านบน)
 - บัญชี Google สำหรับการเข้าถึง Gemini API
 
 ### 1. ติดตั้ง Gemini CLI
@@ -1159,11 +1170,11 @@ npm install -g @google/gemini-cli
 gemini --version
 ```
 
-### 2. รับรองความถูกต้องของ Gemini CLI
+### 2. ตรวจสอบสิทธิ์ Gemini CLI
 
-**ตัวเลือก A: การใช้คีย์ Gemini API (แนะนำสำหรับการเริ่มต้น)**
+**ตัวเลือก A: การใช้ Gemini API Key (แนะนำสำหรับการเริ่มต้น)**
 
-1. รับคีย์ API ของคุณจาก [Google AI Studio](https://aistudio.google.com/apikey)
+1. รับ API key ของคุณจาก [Google AI Studio](https://aistudio.google.com/apikey)
 2. ตั้งค่าตัวแปรสภาพแวดล้อม:
 
 ```bash
@@ -1181,20 +1192,20 @@ export GOOGLE_CLOUD_PROJECT="your-project-id"
 export GOOGLE_CLOUD_LOCATION="us-central1"
 ```
 
-### 3. ลงทะเบียนเซิร์ฟเวอร์ SAP MCP
+### 3. ลงทะเบียน SAP MCP Server
 
 **วิธี A: การใช้เส้นทางสัมบูรณ์ (แนะนำสำหรับสภาพแวดล้อมเสมือน)**
 
-หากคุณติดตั้งเซิร์ฟเวอร์ในสภาพแวดล้อมเสมือน ให้ใช้เส้นทางสัมบูรณ์ไปยังไฟล์ปฏิบัติการ:
+หากคุณติดตั้งเซิร์ฟเวอร์ในสภาพแวดล้อมเสมือน ให้ใช้เส้นทางสัมบูรณ์ไปยังไฟล์เรียกทำงาน:
 
 1. **ค้นหาเส้นทางสัมบูรณ์**:
 ```bash
-# นำทางไปยังไดเรกทอรี SAP MCP ของคุณ
-cd /path/to/sap-mcp
+# ไปที่ไดเรกทอรี SAP MCP ของคุณ
+cd /path/to/your/sap-mcp
 
-# รับเส้นทางสัมบูรณ์
+# รับเส้นทางเต็ม
 pwd
-# ผลลัพธ์ตัวอย่าง: /Users/sanggyulee/my-project/python-project/sap-mcp
+# ตัวอย่างผลลัพธ์: /path/to/your/sap-mcp
 ```
 
 2. **แก้ไข `~/.gemini/settings.json`**:
@@ -1202,9 +1213,9 @@ pwd
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/Users/sanggyulee/my-project/python-project/sap-mcp/.venv/bin/sap-mcp-server-stdio",
-      "cwd": "/Users/sanggyulee/my-project/python-project/sap-mcp",
-      "description": "เซิร์ฟเวอร์ SAP Gateway MCP สำหรับการผสานรวม OData",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "cwd": "/path/to/your/sap-mcp",
+      "description": "SAP Gateway MCP Server for OData integration",
       "timeout": 30000,
       "trust": false
     }
@@ -1212,9 +1223,9 @@ pwd
 }
 ```
 
-**แทนที่ `/Users/sanggyulee/my-project/python-project/sap-mcp` ด้วยเส้นทางโครงการจริงของคุณ**
+**แทนที่ `/path/to/your/sap-mcp` ด้วยเส้นทางโครงการจริงของคุณ**
 
-> **📝 หมายเหตุ**: พารามิเตอร์ `cwd` (ไดเรกทอรีการทำงานปัจจุบัน) **จำเป็น** สำหรับการค้นหาไฟล์ `.env.server` ทำให้แน่ใจว่าเซิร์ฟเวอร์ทำงานจากไดเรกทอรีรากของโครงการซึ่งเป็นที่ตั้งของไฟล์การกำหนดค่า
+> **📝 หมายเหตุ**: พารามิเตอร์ `cwd` (ไดเรกทอรีการทำงานปัจจุบัน) มีความสำคัญ **อย่างยิ่ง** สำหรับการค้นหาไฟล์ `.env.server` คุณ **ต้อง** ตั้งค่านี้เป็นไดเรกทอรีรากของโครงการของคุณ (เช่น `/Users/username/projects/sap-mcp`) หากละเว้นหรือไม่ถูกต้อง เซิร์ฟเวอร์จะไม่สามารถโหลดข้อมูลประจำตัวของคุณได้
 
 3. **ตรวจสอบเส้นทาง**:
 ```bash
@@ -1223,7 +1234,7 @@ pwd
 
 # ตรวจสอบการลงทะเบียน
 gemini mcp list
-# คาดว่า: ✓ sap-server: ... (stdio) - เชื่อมต่อแล้ว
+# คาดหวัง: ✓ sap-server: ... (stdio) - Connected
 ```
 
 ---
@@ -1246,16 +1257,16 @@ gemini mcp list
 
 **วิธี C: การใช้เส้นทางโมดูล Python**
 
-วิธีทางเลือกโดยใช้โมดูล Python:
+แนวทางทางเลือกโดยใช้โมดูล Python:
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/python",
+      "command": "/path/to/your/sap-mcp/.venv/bin/python",
       "args": ["-m", "sap_mcp_server.transports.stdio"],
-      "cwd": "/path/to/sap-mcp/packages/server",
-      "description": "เซิร์ฟเวอร์ SAP Gateway MCP",
+      "cwd": "/path/to/your/sap-mcp/packages/server",
+      "description": "SAP Gateway MCP Server",
       "timeout": 30000,
       "trust": false
     }
@@ -1275,14 +1286,14 @@ gemini
 # ดูเครื่องมือ SAP ที่มีอยู่
 > /mcp desc
 
-# ตัวอย่าง: การสืบค้นคำสั่งซื้อ SAP
-> ใช้เครื่องมือ SAP เพื่อรับรองความถูกต้องและสืบค้นหมายเลขคำสั่งซื้อ 91000043
+# ตัวอย่าง: สืบค้นสายการบิน SAP
+> ใช้เครื่องมือ SAP เพื่อตรวจสอบสิทธิ์และแสดงสายการบินทั้งหมดให้ฉันดู
 
-# ตัวอย่าง: การแสดงรายการบริการ SAP ที่มีอยู่
-> มีบริการ SAP ใดบ้างที่พร้อมใช้งาน
+# ตัวอย่าง: รายการบริการ SAP ที่มีอยู่
+> มีบริการ SAP อะไรบ้าง?
 
-# ตัวอย่าง: การรับรายละเอียดลูกค้า
-> ดึงรายละเอียดสำหรับลูกค้า CUST001 จาก SAP
+# ตัวอย่าง: รับรายละเอียดสนามบิน
+> ดึงรายละเอียดสำหรับสนามบินแฟรงค์เฟิร์ต (FRA)
 ```
 
 ### การกำหนดค่าขั้นสูง
@@ -1293,7 +1304,7 @@ gemini
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "trust": true,
       "timeout": 30000
     }
@@ -1311,7 +1322,7 @@ gemini
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "includeTools": ["sap_authenticate", "sap_query"],
       "excludeTools": ["sap_list_services"],
       "timeout": 30000
@@ -1321,8 +1332,8 @@ gemini
 ```
 
 **กรณีการใช้งาน**:
-- `includeTools`: อนุญาตเฉพาะเครื่องมือที่ระบุ (รายการที่อนุญาต)
-- `excludeTools`: บล็อกเครื่องมือที่ระบุ (รายการที่ไม่อนุญาต)
+- `includeTools`: อนุญาตเฉพาะเครื่องมือที่ระบุ (whitelist)
+- `excludeTools`: บล็อกเครื่องมือที่ระบุ (blacklist)
 - ไม่สามารถใช้ทั้งสองอย่างพร้อมกันได้
 
 ---
@@ -1333,7 +1344,7 @@ gemini
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "env": {
         "SAP_HOST": "${SAP_HOST}",
         "SAP_USERNAME": "${SAP_USERNAME}",
@@ -1345,17 +1356,17 @@ gemini
 }
 ```
 
-**หมายเหตุ**: ตัวแปรสภาพแวดล้อมใน `settings.json` จะแทนที่ค่าจาก `.env.server` ไม่แนะนำด้วยเหตุผลด้านความปลอดภัย - ควรใช้ไฟล์ `.env.server` แทน
+**หมายเหตุ**: ตัวแปรสภาพแวดล้อมใน `settings.json` จะแทนที่ค่าจาก `.env.server` ไม่แนะนำด้วยเหตุผลด้านความปลอดภัย - แนะนำให้ใช้ไฟล์ `.env.server` แทน
 
 ---
 
-**เพิ่มเวลาหมดเวลาสำหรับเครือข่ายที่ช้า**
+**เพิ่ม Timeout สำหรับเครือข่ายช้า**
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "timeout": 60000,  // 60 วินาที (ค่าเริ่มต้น: 30000)
       "trust": false
     }
@@ -1364,31 +1375,31 @@ gemini
 ```
 
 **เมื่อใดควรเพิ่ม**:
-- การเชื่อมต่อเครือข่ายที่ช้า
+- การเชื่อมต่อเครือข่ายช้า
 - การสืบค้นข้อมูลขนาดใหญ่
 - การดำเนินการ SAP ที่ซับซ้อน
-- ข้อผิดพลาดหมดเวลาบ่อยครั้ง
+- ข้อผิดพลาด timeout บ่อยครั้ง
 
 ### การแก้ไขปัญหา
 
-**ปัญหา: เซิร์ฟเวอร์แสดงสถานะ "ตัดการเชื่อมต่อ"**
+**ปัญหา: เซิร์ฟเวอร์แสดงสถานะ "Disconnected"**
 
 ```bash
 # ตรวจสอบสถานะเซิร์ฟเวอร์ MCP
 gemini mcp list
-# หากคุณเห็น: ✗ sap-server: sap-mcp-server-stdio (stdio) - ตัดการเชื่อมต่อ
+# หากคุณเห็น: ✗ sap-server: sap-mcp-server-stdio (stdio) - Disconnected
 ```
 
-**วิธีแก้ไข 1: ใช้เส้นทางสัมบูรณ์ (พบบ่อยที่สุด)**
+**วิธีแก้ปัญหา 1: ใช้เส้นทางสัมบูรณ์ (พบบ่อยที่สุด)**
 
-คำสั่งน่าจะอยู่ในสภาพแวดล้อมเสมือน อัปเดต `~/.gemini/settings.json`:
+คำสั่งอาจอยู่ในสภาพแวดล้อมเสมือน อัปเดต `~/.gemini/settings.json`:
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/full/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
-      "description": "เซิร์ฟเวอร์ SAP Gateway MCP",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "description": "SAP Gateway MCP Server",
       "timeout": 30000,
       "trust": false
     }
@@ -1398,12 +1409,12 @@ gemini mcp list
 
 **ค้นหาเส้นทางสัมบูรณ์ของคุณ**:
 ```bash
-# นำทางไปยังไดเรกทอรี SAP MCP
-cd /path/to/sap-mcp
+# ไปที่ไดเรกทอรี SAP MCP
+cd /path/to/your/sap-mcp
 
 # รับเส้นทางเต็ม
 pwd
-# ตัวอย่าง: /Users/sanggyulee/my-project/python-project/sap-mcp
+# ตัวอย่าง: /path/to/your/sap-mcp
 
 # ตรวจสอบว่าคำสั่งมีอยู่
 ls -la .venv/bin/sap-mcp-server-stdio
@@ -1416,31 +1427,31 @@ ls -la .venv/bin/sap-mcp-server-stdio
 ```bash
 # ทดสอบเซิร์ฟเวอร์โดยตรง
 sap-mcp-server-stdio
-# ข้อผิดพลาด: ไม่พบคำสั่ง
+# ข้อผิดพลาด: command not found
 
-# ตรวจสอบว่าคำสั่งมีอยู่
+# ตรวจสอบว่าคำสั่งมีอยู่หรือไม่
 which sap-mcp-server-stdio
-# ส่งคืน: ไม่พบคำสั่ง
+# ส่งคืน: command not found
 ```
 
-**วิธีแก้ไข 2: ตรวจสอบสภาพแวดล้อมเสมือน**
+**วิธีแก้ปัญหา 2: ตรวจสอบสภาพแวดล้อมเสมือน**
 
 ```bash
-# ตรวจสอบว่าสภาพแวดล้อมเสมือนมีอยู่
+# ตรวจสอบว่าสภาพแวดล้อมเสมือนมีอยู่หรือไม่
 ls -la .venv/bin/sap-mcp-server-stdio
 
-# หากมีอยู่ ให้ใช้เส้นทางสัมบูรณ์ใน settings.json
-# หากไม่มีอยู่ ให้ติดตั้งใหม่:
+# หากมี ให้ใช้เส้นทางสัมบูรณ์ใน settings.json
+# หากไม่มี ให้ติดตั้งใหม่:
 cd packages/server
 pip install -e .
 ```
 
 ---
 
-**ปัญหา: ข้อผิดพลาดในการรับรองความถูกต้องหรือไม่พบ `.env.server`**
+**ปัญหา: ข้อผิดพลาดการตรวจสอบสิทธิ์หรือหา `.env.server` ไม่พบ**
 
 ```bash
-# ตรวจสอบว่า .env.server มีอยู่ใน PROJECT ROOT (ไม่ได้อยู่ใน packages/server/)
+# ตรวจสอบว่า .env.server มีอยู่ใน PROJECT ROOT (ไม่ใช่ใน packages/server/)
 cat .env.server
 
 # ฟิลด์ที่จำเป็น:
@@ -1451,38 +1462,38 @@ cat .env.server
 # SAP_CLIENT=100
 ```
 
-**วิธีแก้ไข 3: ตรวจสอบตำแหน่งไฟล์และข้อมูลประจำตัว**
+**วิธีแก้ปัญหา 3: ตรวจสอบตำแหน่งไฟล์และข้อมูลประจำตัว**
 
 ```bash
-# 1. ตรวจสอบว่า .env.server อยู่ในรากของโครงการ
+# 1. ตรวจสอบว่า .env.server อยู่ในรากของโครงการหรือไม่
 ls -la .env.server
 # ควรมีอยู่ใน: /path/to/sap-mcp/.env.server
 
-# 2. ตรวจสอบให้แน่ใจว่า settings.json ของ Gemini CLI มีพารามิเตอร์ "cwd"
+# 2. ตรวจสอบว่า Gemini CLI settings.json มีพารามิเตอร์ "cwd" หรือไม่
 cat ~/.gemini/settings.json
-# ต้องมี: "cwd": "/path/to/sap-mcp"
+# ต้องรวม: "cwd": "/path/to/sap-mcp"
 
-# 3. ทดสอบการรับรองความถูกต้องด้วยตนเอง
+# 3. ทดสอบการตรวจสอบสิทธิ์ด้วยตนเอง
 source .venv/bin/activate
 python -c "from sap_mcp_server.config.settings import get_connection_config; print(get_connection_config())"
 ```
 
-**ปัญหาที่พบบ่อย**:
+**ปัญหาทั่วไป**:
 
-1. **ข้อผิดพลาด "ฟิลด์ที่จำเป็น"**: ไม่ได้โหลด `.env.server` ตรวจสอบ:
-   - ไฟล์มีอยู่ในรากของโครงการ: `/path/to/sap-mcp/.env.server`
-   - `settings.json` ของ Gemini CLI มีพารามิเตอร์ `cwd` ที่ถูกต้อง
+1. **ข้อผิดพลาด "Field required"**: `.env.server` ไม่ถูกโหลด ตรวจสอบ:
+   - ไฟล์มีอยู่ในรากของโครงการ: `/path/to/your/sap-mcp/.env.server`
+   - Gemini CLI `settings.json` มีพารามิเตอร์ `cwd` ที่ถูกต้อง
    - ไฟล์มีสิทธิ์ที่เหมาะสม: `chmod 600 .env.server`
 
-2. **ข้อผิดพลาด 401 Unauthorized**: แก้ไขใน v0.2.1 (2025-01-22)
+2. **ข้อผิดพลาด 401 Unauthorized**: แก้ไขแล้วใน v0.2.1 (2025-01-22)
    - **ปัญหาก่อนหน้า**: SAP Gateway ปฏิเสธคำขอที่ไม่มีพารามิเตอร์ `sap-client`
-   - **สถานะปัจจุบัน**: จัดการโดยอัตโนมัติ - คำขอทั้งหมดมีพารามิเตอร์ `sap-client`
+   - **สถานะปัจจุบัน**: จัดการโดยอัตโนมัติ - คำขอทั้งหมดรวมพารามิเตอร์ `sap-client`
    - **การตรวจสอบ**: ตรวจสอบให้แน่ใจว่าคุณได้อัปเดตเป็น v0.2.1 หรือใหม่กว่า
-   - **การตรวจสอบด้วยตนเอง**: การรับรองความถูกต้องควรจะสำเร็จด้วยข้อมูลประจำตัวที่ถูกต้อง
+   - **ตรวจสอบด้วยตนเอง**: การตรวจสอบสิทธิ์ควรสำเร็จด้วยข้อมูลประจำตัวที่ถูกต้อง
 
 ---
 
-**ปัญหา: ต้องลงทะเบียนเซิร์ฟเวอร์ใหม่**
+**ปัญหา: จำเป็นต้องลงทะเบียนเซิร์ฟเวอร์ใหม่**
 
 ```bash
 # ลบการกำหนดค่าเซิร์ฟเวอร์ที่มีอยู่
@@ -1491,24 +1502,24 @@ rm ~/.gemini/settings.json
 # หรือแก้ไขด้วยตนเองเพื่อลบรายการ sap-server
 ```
 
-**วิธีแก้ไข 4: การลงทะเบียนใหม่ที่สะอาด**
+**วิธีแก้ปัญหา 4: การลงทะเบียนใหม่ทั้งหมด**
 
 ```bash
-# วิธีที่ 1: แก้ไขการตั้งค่าโดยตรง
+# วิธี 1: แก้ไขการตั้งค่าโดยตรง
 vim ~/.gemini/settings.json
 
-# วิธีที่ 2: ใช้เส้นทางสัมบูรณ์ (แนะนำ)
+# วิธี 2: ใช้เส้นทางสัมบูรณ์ (แนะนำ)
 # ทำตาม "วิธี A: การใช้เส้นทางสัมบูรณ์" ในส่วนที่ 3 ด้านบน
 ```
 
 ---
 
-**ขั้นตอนการวินิจฉัยอย่างรวดเร็ว**
+**ขั้นตอนการวินิจฉัยด่วน**
 
-1. **ตรวจสอบไฟล์ปฏิบัติการของเซิร์ฟเวอร์**:
+1. **ตรวจสอบไฟล์เรียกทำงานของเซิร์ฟเวอร์**:
 ```bash
 /path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio --help
-# ควรแสดงข้อความเริ่มต้นของเซิร์ฟเวอร์
+# ควรแสดงข้อความเริ่มต้นเซิร์ฟเวอร์
 ```
 
 2. **ตรวจสอบการตั้งค่า Gemini CLI**:
@@ -1520,7 +1531,7 @@ cat ~/.gemini/settings.json | grep -A 5 "sap-server"
 3. **ทดสอบการเชื่อมต่อ**:
 ```bash
 gemini mcp list
-# ควรแสดง: ✓ sap-server: ... - เชื่อมต่อแล้ว
+# ควรแสดง: ✓ sap-server: ... - Connected
 ```
 
 4. **ทดสอบใน Gemini CLI**:
@@ -1535,42 +1546,42 @@ gemini
 
 เมื่อลงทะเบียนแล้ว คุณสามารถใช้เครื่องมือ SAP เหล่านี้ผ่านภาษาธรรมชาติ:
 
-| เครื่องมือ | คำอธิบาย | พรอมต์ตัวอย่าง |
+| เครื่องมือ | คำอธิบาย | ตัวอย่างพรอมต์ |
 |------|-------------|----------------|
-| **sap_authenticate** | รับรองความถูกต้องกับ SAP Gateway | "รับรองความถูกต้องกับ SAP" |
-| **sap_query** | สืบค้นเอนทิตี SAP ด้วยตัวกรอง OData | "สืบค้นคำสั่งซื้อทั้งหมดสำหรับลูกค้า CUST001" |
-| **sap_get_entity** | ดึงข้อมูลเอนทิตีเฉพาะตามคีย์ | "รับรายละเอียดสำหรับคำสั่งซื้อ 91000043" |
-| **sap_list_services** | แสดงรายการบริการ SAP ที่มีอยู่ | "มีบริการ SAP ใดบ้างที่พร้อมใช้งาน" |
+| **sap_authenticate** | ตรวจสอบสิทธิ์กับ SAP Gateway | "ตรวจสอบสิทธิ์กับ SAP" |
+| **sap_query** | สืบค้นเอนทิตี SAP ด้วยตัวกรอง OData | "แสดงสายการบินทั้งหมดโดยใช้บริการแนะนำการเดินทาง" |
+| **sap_get_entity** | ดึงข้อมูลเอนทิตีเฉพาะด้วยคีย์ | "รับรายละเอียดสำหรับสนามบินแฟรงค์เฟิร์ต (FRA)" |
+| **sap_list_services** | รายการบริการ SAP ที่มีอยู่ | "มีบริการ SAP อะไรบ้าง?" |
 
-### เวิร์กโฟลว์ตัวอย่าง
+### ตัวอย่างเวิร์กโฟลว์
 
-**1. เวิร์กโฟลว์การสอบถามคำสั่งซื้อ**
+**1. เวิร์กโฟลว์การสอบถามเที่ยวบิน**
 
 ```bash
 gemini
 
-> เชื่อมต่อกับ SAP และค้นหาคำสั่งซื้อทั้งหมดที่สั่งในสัปดาห์ที่แล้วสำหรับลูกค้า CUST001
+> เชื่อมต่อกับ SAP และค้นหาเที่ยวบิน Lufthansa ทั้งหมด
 # Gemini จะ:
 # 1. เรียก sap_authenticate
-# 2. เรียก sap_query พร้อมตัวกรองที่เหมาะสม
+# 2. เรียก sap_query บน FlightSet ด้วยตัวกรอง "CARRID eq 'LH'"
 # 3. จัดรูปแบบและนำเสนอผลลัพธ์
 ```
 
-**2. การวิเคราะห์ลูกค้า**
+**2. การวิเคราะห์สนามบิน**
 
 ```bash
-> วิเคราะห์ลูกค้ายอดนิยม 5 อันดับแรกตามปริมาณการสั่งซื้อโดยใช้ข้อมูล SAP
+> รับรายละเอียดสำหรับสนามบินแฟรงค์เฟิร์ตและแสดงการเชื่อมต่อที่มีอยู่ให้ฉันดู
 # Gemini จะ:
-# 1. รับรองความถูกต้อง
-# 2. สืบค้นคำสั่งซื้อของลูกค้า
-# 3. รวบรวมและวิเคราะห์ข้อมูล
+# 1. ตรวจสอบสิทธิ์
+# 2. เรียก sap_get_entity สำหรับ 'FRA' บน AirportSet
+# 3. เรียก sap_query บน ConnectionSet
 # 4. นำเสนอข้อมูลเชิงลึก
 ```
 
 **3. การค้นหาบริการ**
 
 ```bash
-> มีบริการและชุดเอนทิตี SAP ใดบ้างที่พร้อมใช้งานในระบบ
+> บริการ SAP และชุดเอนทิตีใดบ้างที่มีอยู่ในระบบ?
 # Gemini จะ:
 # 1. เรียก sap_list_services
 # 2. จัดรูปแบบแคตตาล็อกบริการ
@@ -1582,7 +1593,7 @@ gemini
 
 ### 1. SAP Authenticate
 
-รับรองความถูกต้องกับระบบ SAP Gateway โดยใช้ข้อมูลประจำตัวจาก `.env.server`
+ตรวจสอบสิทธิ์กับระบบ SAP Gateway โดยใช้ข้อมูลประจำตัวจาก `.env.server`
 
 **คำขอ**:
 ```json
@@ -1597,7 +1608,9 @@ gemini
 {
   "success": true,
   "session_id": "abc123...",
-  "message": "รับรองความถูกต้องกับ SAP สำเร็จ"
+  "message": "Successfully authenticated with SAP Gateway",
+  "host": "example.sap.corp",
+  "client": "100"
 }
 ```
 
@@ -1612,10 +1625,10 @@ gemini
 {
   "name": "sap_query",
   "arguments": {
-    "service": "Z_SALES_ORDER_GENAI_SRV",
-    "entity_set": "zsd004Set",
-    "filter": "OrderID eq '91000043'",
-    "select": "OrderID,Bstnk,Kunnr,Matnr",
+    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+    "entity_set": "AirlineSet",
+    "filter": "CARRID eq 'LH'",
+    "select": "CARRID,CARRNAME,CURRCODE",
     "top": 10,
     "skip": 0
   }
@@ -1625,19 +1638,15 @@ gemini
 **การตอบกลับ**:
 ```json
 {
-  "data": {
-    "d": {
-      "results": [
-        {
-          "OrderID": "91000043",
-          "Bstnk": "PO-2024-001",
-          "Kunnr": "CUST001",
-          "Matnr": "MAT-12345"
-        }
-      ]
-    }
-  },
-  "count": 1
+  "d": {
+    "results": [
+      {
+        "CARRID": "LH",
+        "CARRNAME": "Lufthansa",
+        "CURRCODE": "EUR"
+      }
+    ]
+  }
 }
 ```
 
@@ -1645,16 +1654,16 @@ gemini
 
 ### 3. SAP Get Entity
 
-ดึงข้อมูลเอนทิตีเฉพาะตามคีย์
+ดึงข้อมูลเอนทิตีเฉพาะด้วยคีย์
 
 **คำขอ**:
 ```json
 {
   "name": "sap_get_entity",
   "arguments": {
-    "service": "Z_SALES_ORDER_GENAI_SRV",
-    "entity_set": "zsd004Set",
-    "entity_key": "91000043"
+    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+    "entity_set": "AirportSet",
+    "entity_key": "'FRA'"
   }
 }
 ```
@@ -1662,14 +1671,18 @@ gemini
 **การตอบกลับ**:
 ```json
 {
+  "success": true,
+  "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+  "entity_set": "AirportSet",
+  "entity_key": "'FRA'",
+  "key_field": "ID",
   "data": {
     "d": {
-      "OrderID": "91000043",
-      "Bstnk": "PO-2024-001",
-      "Kunnr": "CUST001",
-      "Matnr": "MAT-12345",
-      "Wmeng": "100",
-      "Vkorg": "1000"
+      "ID": "FRA",
+      "NAME": "Frankfurt International",
+      "CITY": "Frankfurt",
+      "COUNTRY": "DE",
+      "TIME_ZONE": "CET"
     }
   }
 }
@@ -1679,7 +1692,7 @@ gemini
 
 ### 4. SAP List Services
 
-แสดงรายการบริการ SAP ที่มีอยู่ทั้งหมดจากการกำหนดค่า
+รายการบริการ SAP ที่มีอยู่ทั้งหมดจากการกำหนดค่า
 
 **คำขอ**:
 ```json
@@ -1692,14 +1705,30 @@ gemini
 **การตอบกลับ**:
 ```json
 {
+  "success": true,
+  "count": 1,
   "services": [
     {
-      "name": "Z_SALES_ORDER_GENAI_SRV",
-      "description": "บริการใบสั่งขายสำหรับ GenAI",
-      "entity_sets": ["zsd004Set", "OrderHeaderSet"]
+      "id": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+      "name": "Travel Recommendations Service (SFLIGHT)",
+      "path": "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV",
+      "version": "v2",
+      "description": "OData service for the SFLIGHT demo dataset.",
+      "entities": [
+        {
+          "name": "AirlineSet",
+          "key_field": "CARRID",
+          "description": "Airlines (e.g., LH, AA)"
+        },
+        {
+          "name": "AirportSet",
+          "key_field": "ID",
+          "description": "Airports (e.g., FRA, JFK)"
+        }
+      ]
     }
   ],
-  "count": 1
+  "source": "services.yaml configuration"
 }
 ```
 
@@ -1707,13 +1736,13 @@ gemini
 
 ## 📚 ตัวอย่างการใช้งาน
 
-### การใช้การลงทะเบียนเครื่องมือ
+### การใช้ Tool Registry
 
 ```python
 from sap_mcp_server.tools import tool_registry
 from sap_mcp_server.protocol.schemas import ToolCallRequest
 
-# แสดงรายการเครื่องมือที่มีอยู่
+# รายการเครื่องมือที่มีอยู่
 tools = tool_registry.list_tools()
 for tool in tools:
     print(f"- {tool.name}: {tool.description}")
@@ -1727,7 +1756,7 @@ result = await tool_registry.call_tool(request)
 print(result)
 ```
 
-### ตัวอย่างไคลเอ็นต์ MCP
+### ตัวอย่าง MCP Client
 
 ```python
 from mcp import StdioServerParameters
@@ -1746,39 +1775,39 @@ async def main():
             # เริ่มต้นเซสชัน
             await session.initialize()
 
-            # รับรองความถูกต้อง
+            # ตรวจสอบสิทธิ์
             auth_result = await session.call_tool("sap_authenticate", {})
 
-            # สืบค้นคำสั่งซื้อ
+            # สืบค้นสายการบิน
             entity_result = await session.call_tool(
-                "sap_get_entity",
+                "sap_query",
                 {
-                    "service": "Z_SALES_ORDER_GENAI_SRV",
-                    "entity_set": "zsd004Set",
-                    "entity_key": "91000043"
+                    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+                    "entity_set": "AirlineSet",
+                    "filter": "CARRID eq 'LH'"
                 }
             )
             print(entity_result)
 ```
 
-### การบันทึกที่มีโครงสร้าง
+### การบันทึกแบบมีโครงสร้าง
 
 ```python
 from sap_mcp_server.utils.logger import setup_logging, get_logger
 
-# การผลิต (บันทึก JSON)
+# การผลิต (JSON logs)
 setup_logging(level="INFO", json_logs=True)
 
-# การพัฒนา (คอนโซลสี)
+# การพัฒนา (colored console)
 setup_logging(level="DEBUG", json_logs=False)
 
-# ใช้ตัวบันทึก
+# ใช้ logger
 logger = get_logger(__name__)
-logger.info("เซิร์ฟเวอร์เริ่มต้น", port=8080, transport="stdio")
-logger.error("การสืบค้นล้มเหลว", error=str(e), query=params)
+logger.info("Server started", port=8080, transport="stdio")
+logger.error("Query failed", error=str(e), query=params)
 ```
 
-### การตรวจสอบอินพุต
+### การตรวจสอบข้อมูลเข้า
 
 ```python
 from sap_mcp_server.utils.validators import (
@@ -1788,11 +1817,11 @@ from sap_mcp_server.utils.validators import (
 )
 
 # ตรวจสอบตัวกรอง OData
-if validate_odata_filter("OrderID eq '12345'"):
-    # ปลอดภัยที่จะดำเนินการ
+if validate_odata_filter("CARRID eq 'LH'"):
+    # ปลอดภัยในการดำเนินการ
     pass
 
-# ทำความสะอาดอินพุตของผู้ใช้
+# ทำความสะอาดข้อมูลผู้ใช้
 safe_input = sanitize_input(user_data, max_length=1000)
 
 # ตรวจสอบคีย์เอนทิตี
@@ -1805,78 +1834,194 @@ if validate_entity_key(key):
 
 ## 🔒 ความปลอดภัย
 
-### Defense in Depth
+### การป้องกันเชิงลึก
 
-| เลเยอร์ | การใช้งาน | สถานะ |
+| เลเยอร์ | การดำเนินการ | สถานะ |
 |-------|---------------|--------|
-| **การตรวจสอบอินพุต** | ไวยากรณ์ OData, การป้องกัน SQL injection | ✅ |
-| **การรับรองความถูกต้อง** | การตรวจสอบข้อมูลประจำตัว, การจัดการเซสชัน | ✅ |
-| **การอนุญาต** | การควบคุมการเข้าถึงบริการ | ✅ |
-| **ความปลอดภัยในการขนส่ง** | SSL/TLS, การตรวจสอบใบรับรอง | ✅ |
-| **การบันทึกการตรวจสอบ** | บันทึกที่มีโครงสร้าง, ไม่มีข้อมูลที่ละเอียดอ่อน | ✅ |
+| **Input Validation** | ไวยากรณ์ OData, การป้องกัน SQL injection | ✅ |
+| **Authentication** | การตรวจสอบข้อมูลประจำตัว, การจัดการเซสชัน | ✅ |
+| **Authorization** | การควบคุมการเข้าถึงบริการ | ✅ |
+| **Transport Security** | SSL/TLS, การตรวจสอบใบรับรอง | ✅ |
+| **Audit Logging** | บันทึกแบบมีโครงสร้าง, ไม่มีข้อมูลที่ละเอียดอ่อน | ✅ |
 
 ### แนวทางปฏิบัติที่ดีที่สุด
 
-1. **ข้อมูลประจำตัว**: จัดเก็บใน `.env.server`, อย่าคอมมิตไปยัง git
+1. **Credentials**: เก็บใน `.env.server`, ห้าม commit ลง git
 2. **SSL/TLS**: เปิดใช้งานเสมอในการผลิต (`SAP_VERIFY_SSL=true`)
-3. **การตรวจสอบ**: อินพุตทั้งหมดจะถูกตรวจสอบก่อนการเรียก SAP
-4. **การบันทึก**: ข้อมูลที่ละเอียดอ่อนจะถูกยกเว้นจากบันทึก
-5. **การจัดการข้อผิดพลาด**: ข้อความแสดงข้อผิดพลาดทั่วไปไปยังไคลเอ็นต์
+3. **Validation**: ตรวจสอบข้อมูลเข้าทั้งหมดก่อนเรียก SAP
+4. **Logging**: ข้อมูลที่ละเอียดอ่อนถูกแยกออกจากบันทึก
+5. **Error Handling**: ข้อความแสดงข้อผิดพลาดทั่วไปสำหรับลูกค้า
 
 ---
 
-## 🧪 การทดสอบ
+## 🎓 สถานการณ์สาธิต SAP SFLIGHT
 
-### โครงสร้างการทดสอบ
+### ภาพรวมสถานการณ์
 
+ชุดข้อมูล SFLIGHT เป็นฐานข้อมูลตัวอย่างที่จัดทำโดย SAP ซึ่งรวมถึงข้อมูลสำหรับตารางการบิน สายการบิน สนามบิน และการจอง เป็นทรัพยากรที่ยอดเยี่ยมสำหรับการทดสอบและสาธิตการสร้างแบบจำลองข้อมูลและการสร้างบริการ
+
+คู่มือนี้ถือว่าคุณมีบริการ OData ที่เปิดเผยชุดข้อมูลนี้ เป้าหมายคือการเชื่อมต่อเซิร์ฟเวอร์ SAP MCP ของเรากับบริการนี้และโต้ตอบกับมันโดยใช้ AI agents หรือลูกค้าอื่นๆ
+
+**เอกสาร SAP อย่างเป็นทางการ:**
+- [SAP Documentation - Flight Model](https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm)
+- [SAP Help Portal - Flight Model](https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html)
+
+---
+
+### ข้อกำหนดเบื้องต้น
+
+1. **ติดตั้ง SAP MCP Server แล้ว**: คุณต้องติดตั้งเซิร์ฟเวอร์ SAP MCP และมีสภาพแวดล้อม Python ที่ใช้งานได้ สำหรับคำแนะนำฉบับสมบูรณ์ โปรดดูที่ [ส่วนเริ่มต้นอย่างรวดเร็ว](#-quick-start)
+
+2. **SFLIGHT OData Service**: บริการ OData ที่ใช้งานอยู่ที่เปิดเผยชุดข้อมูล SFLIGHT ต้องพร้อมใช้งานบนระบบ SAP Gateway ของคุณ
+   - หากคุณต้องการสร้างบริการนี้ คุณสามารถทำตามคำแนะนำโดยละเอียดของเรา: [OData Service Creation Guide: FLIGHT Demo Scenario](./docs/guides/odata-service-creation-flight-demo.md)
+   - สำหรับคู่มือนี้ เราจะถือว่าบริการชื่อ `Z_TRAVEL_RECOMMENDATIONS_SRV` ตามที่สร้างในคู่มือ
+
+---
+
+### คู่มือการสร้างบริการ OData
+
+คู่มือนี้ให้คำแนะนำทีละขั้นตอนสำหรับการสร้างบริการ OData ในระบบ SAP โดยใช้ SAP Gateway Service Builder (`SEGW`) เพื่อเปิดเผยข้อมูลสถานการณ์ Flight ที่มีอยู่ในเวอร์ชัน SAP S/4HANA Fully Activated Appliance (FAA)
+
+#### ภาพรวมสถานการณ์
+
+* **เป้าหมาย:** เปิดเผยตารางการบิน การจอง และข้อมูลหลักที่เกี่ยวข้องผ่านบริการ OData
+* **ความต้องการข้อมูลสถานการณ์:** ตารางการบิน, วันที่, เวลา, รายละเอียดสนามบิน, รายละเอียดสายการบิน, รายละเอียดผู้โดยสาร, ราคา ฯลฯ
+* **ตาราง SAP ที่เกี่ยวข้อง:** `SFLIGHT`, `SPFLI`, `SCARR`, `SAIRPORT`, `SBOOK`, `SCUSTOM`
+
+---
+
+#### ขั้นตอนในการสร้างบริการ OData ใน SEGW
+
+##### 1. เข้าถึง SAP Gateway Service Builder
+
+ไปที่รหัสธุรกรรม SAP `SEGW`
+
+##### 2. สร้างโครงการใหม่
+
+1. คลิกปุ่ม "Create Project"
+2. **Project Name:** กำหนดชื่อ (เช่น `Z_TRAVEL_RECOMMENDATIONS_SRV`)
+3. **Description:** ระบุคำอธิบายที่มีความหมาย
+4. **Package:** กำหนดให้กับแพ็คเกจ (เช่น `$TMP` สำหรับการพัฒนาในท้องถิ่นหรือแพ็คเกจที่ขนส่งได้)
+
+##### 3. นำเข้าแบบจำลองข้อมูลจากโครงสร้าง DDIC
+
+ขั้นตอนนี้กำหนดเอนทิตี OData ของคุณตามตาราง SAP พื้นฐาน
+
+1. คลิกขวาที่โฟลเดอร์ "Data Model" ภายในโครงการของคุณ
+2. เลือก **"Import" -> "DDIC Structure"**
+3. ทำซ้ำขั้นตอนการนำเข้าสำหรับแต่ละตารางที่ต้องการ โดยระบุ **Entity Type Name** และเลือกฟิลด์ที่จำเป็น
+
+***การดำเนินการที่จำเป็น:*** ตรวจสอบให้แน่ใจว่าฟิลด์คีย์ถูกทำเครื่องหมายอย่างถูกต้องในระหว่างกระบวนการนำเข้า
+
+| โครงสร้าง DDIC | ชื่อประเภทเอนทิตี | ฟิลด์คีย์ที่แนะนำ | ฟิลด์ Payload ที่เกี่ยวข้อง (ตัวอย่าง) |
+| :---- | :---- | :---- | :---- |
+| `SFLIGHT` | **Flight** | `CARRID`, `CONNID`, `FLDATE` | `PRICE`, `CURRENCY`, `PLANETYPE`, `SEATSMAX`, `SEATSOCC` |
+| `SPFLI` | **Connection** | `CARRID`, `CONNID` | `COUNTRYFR`, `CITYFROM`, `AIRPFROM`, `COUNTRYTO`, `CITYTO`, `AIRPTO`, `DEPTIME`, `ARRTIME`, `DISTANCE` |
+| `SCARR` | **Airline** | `CARRID` | `CARRNAME`, `CURRCODE`, `URL` |
+| `SAIRPORT` | **Airport** | `ID` | `NAME`, `CITY`, `COUNTRY` |
+| `SBOOK` | **Booking** | `CARRID`, `CONNID`, `FLDATE`, `BOOKID` | `CUSTOMID`, `CUSTTYPE`, `SMOKER`, `LUGGWEIGHT`, `WUNIT`, `INVOICE`, `CLASS`, `FORCURAM`, `ORDER_DATE` |
+| `SCUSTOM` | **Passenger** | `ID` | `NAME`, `FORM`, `STREET`, `POSTCODE`, `CITY`, `COUNTRY`, `PHONE` |
+
+##### 4. กำหนด Associations และ Navigation Properties
+
+Associations เชื่อมโยงเอนทิตีตามฟิลด์คีย์ Navigation Properties ช่วยให้แอปพลิเคชันไคลเอนต์สามารถข้ามความสัมพันธ์เหล่านี้ได้อย่างง่ายดาย (เช่น การใช้ `$expand`)
+
+**ความสัมพันธ์เชิงตรรกะ:**
+
+* **1:N:** Airline <-> Flights, Airline <-> Connections, Connection <-> Flights, Flight <-> Bookings, Passenger <-> Bookings
+* **N:1:** Connection <-> Origin Airport, Connection <-> Destination Airport
+
+**ขั้นตอนในการสร้าง Association:**
+
+1. คลิกขวาที่ "Data Model" -> **"Create" -> "Association"**
+2. กำหนด **Association Name**, **Principal Entity** (ฝั่ง 'หนึ่ง'), **Dependent Entity** (ฝั่ง 'หลาย'), และ **Cardinality** (เช่น 1:N)
+3. ในหน้าจอถัดไป **Specify Key Mapping** โดยจับคู่ฟิลด์คีย์ระหว่าง Principal และ Dependent entities
+
+**Associations เฉพาะที่จะสร้าง:**
+
+| No. | ชื่อ Association | Principal:Dependent | Cardinality | Key Mapping |
+| :---- | :---- | :---- | :---- | :---- |
+| 1 | `Assoc_Airline_Flights` | `Airline` : `Flight` | 1:N | `Airline.CARRID` <-> `Flight.CARRID` |
+| 2 | `Assoc_Airline_Connections` | `Airline` : `Connection` | 1:N | `Airline.CARRID` <-> `Connection.CARRID` |
+| 3 | `Assoc_Connection_Flights` | `Connection` : `Flight` | 1:N | `CARRID` & `CONNID` (ทั้งสองทาง) |
+| 4 | `Assoc_Flight_Bookings` | `Flight` : `Booking` | 1:N | `CARRID`, `CONNID`, `FLDATE` (ทั้งสามทาง) |
+| 5 | `Assoc_Passenger_Bookings` | `Passenger` : `Booking` | 1:N | `Passenger.ID` <-> `Booking.CUSTOMID` |
+| 6 | `Assoc_Connection_OriginAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPFROM` <-> `Airport.ID` |
+| 7 | `Assoc_Connection_DestAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPTO` <-> `Airport.ID` |
+
+**Navigation Properties ที่จะสร้าง:**
+
+| เอนทิตี | ชื่อ Navigation Property | เอนทิตีเป้าหมาย | Association ที่ใช้ |
+| :---- | :---- | :---- | :---- |
+| **Airline** | `ToFlights`, `ToConnections` | `Flight`, `Connection` | `Assoc_Airline_Flights`, `Assoc_Airline_Connections` |
+| **Flight** | `ToAirline`, `ToConnection`, `ToBookings` | `Airline`, `Connection`, `Booking` | `Assoc_Airline_Flights`, `Assoc_Connection_Flights`, `Assoc_Flight_Bookings` |
+| **Connection** | `ToAirline`, `ToFlights`, `ToOriginAirport`, `ToDestinationAirport` | `Airline`, `Flight`, `Airport`, `Airport` | `Assoc_Airline_Connections`, `Assoc_Connection_Flights`, `Assoc_Connection_OriginAirport`, `Assoc_Connection_DestAirport` |
+| **Booking** | `ToFlight`, `ToPassenger` | `Flight`, `Passenger` | `Assoc_Flight_Bookings`, `Assoc_Passenger_Bookings` |
+| **Passenger** | `ToBookings` | `Booking` | `Assoc_Passenger_Bookings` |
+
+##### 5. สร้าง Runtime Objects
+
+1. คลิกปุ่ม **"Generate Runtime Objects"** (ไอคอนไม้กายสิทธิ์)
+2. สิ่งนี้จะสร้างคลาส ABAP: Model Provider Class (MPC) และ Data Provider Class (DPC)
+3. ยอมรับหรือปรับชื่อคลาสเริ่มต้น
+
+##### 6. ใช้เมธอด Data Provider Class (DPC)
+
+คลาสส่วนขยาย DPC ที่สร้างขึ้น (เช่น `ZCL_Z_TRAVEL_RECOM_DPC_EXT`) ใช้สำหรับตรรกะที่กำหนดเอง
+
+* หากการจับคู่ตารางโดยตรงเพียงพอ การใช้งานพื้นฐานอาจเพียงพอ
+* สำหรับการกรองที่กำหนดเอง การรวม การคำนวณ หรือการดำเนินการ Read/Create/Update/Delete (CRUD) ที่ซับซ้อน คุณต้องกำหนดเมธอดใหม่ เช่น `*_GET_ENTITY` (ระเบียนเดียว) และ `*_GET_ENTITYSET` (คอลเลกชัน) ในคลาสส่วนขยาย DPC
+
+นี่คือตัวอย่างของเมธอด AIRLINESET_GET_ENTITYSET:
+
+```abap
+METHOD airlineset_get_entityset.
+  DATA: lt_airlines TYPE TABLE OF scarr,
+        ls_airline TYPE scarr,
+        lv_filter_string TYPE string.
+
+  TRY.
+      lv_filter_string = io_tech_request_context->get_filter( )->get_filter_string( ).
+    CATCH cx_sy_itab_line_not_found.
+      CLEAR lv_filter_string.
+  ENDTRY.
+
+  " TODO: Apply filtering based on lv_filter_string"
+  IF lv_filter_string IS NOT INITIAL.
+    SELECT * FROM scarr INTO TABLE lt_airlines WHERE (lv_filter_string).
+  ELSE.
+    SELECT * FROM scarr INTO TABLE lt_airlines.
+  ENDIF.
+
+  LOOP AT lt_airlines INTO ls_airline.
+    APPEND ls_airline TO et_entityset.
+  ENDLOOP.
+ENDMETHOD.
 ```
-tests/
-├── conftest.py              # 8 ฟิกซ์เจอร์ที่ครอบคลุม
-├── unit/                    # การทดสอบแบบแยกส่วนที่รวดเร็ว (40 การทดสอบ)
-│   ├── test_base.py        # การลงทะเบียนเครื่องมือ (16 การทดสอบ)
-│   └── test_validators.py  # ตัวตรวจสอบ (24 การทดสอบ)
-└── integration/             # การทดสอบการผสานรวม (5 การทดสอบ)
-    └── test_tool_integration.py  # การทดสอบระบบเครื่องมือ
-```
 
-### การเรียกใช้การทดสอบ
+##### 7. ลงทะเบียนบริการ
 
-```bash
-# การทดสอบทั้งหมดพร้อมผลลัพธ์แบบละเอียด
-python -m pytest -v
+1. ไปที่ธุรกรรม `/IWFND/MAINT_SERVICE`
+2. คลิก **"Add Service"**
+3. ป้อน **System Alias** สำหรับระบบแบ็กเอนด์ของคุณ (เช่น `LOCAL`)
+4. ค้นหาบริการของคุณโดย **Technical Service Name** (เช่น `Z_TRAVEL_RECOMMENDATIONS_SRV`)
+5. เลือกบริการและคลิก **"Add Selected Services"**
+6. กำหนดแพ็คเกจและยืนยัน
 
-# พร้อมรายงานความครอบคลุม
-python -m pytest --cov=sap_mcp_server --cov-report=term-missing
+##### 8. เปิดใช้งานและทดสอบบริการ
 
-# รายงานความครอบคลุม HTML
-python -m pytest --cov=sap_mcp_server --cov-report=html
-open htmlcov/index.html
+1. ใน `/IWFND/MAINT_SERVICE` ค้นหาบริการที่ลงทะเบียนใหม่ของคุณ
+2. ตรวจสอบให้แน่ใจว่า **ICF node is active** (ไฟเขียว) หากไม่ ให้เลือกบริการ ไปที่ **"ICF Node" -> "Activate"**
+3. เลือกบริการและคลิกปุ่ม **"SAP Gateway Client"**
+4. **การทดสอบใน Gateway Client:**
+   * ทดสอบการดึงข้อมูลคอลเลกชันเอนทิตี: คลิก **"EntitySets"** เลือก EntitySet (เช่น `AirlineCollection`) และคลิก **"Execute"**
+   * ทดสอบคุณสมบัติ OData: ลองตัวเลือกการสืบค้นเช่น `$filter` และโดยเฉพาะ **`$expand`** เพื่อตรวจสอบว่าคุณสมบัติการนำทางทำงานอยู่ (เช่น `/FlightSet(key)?$expand=ToAirline`)
 
-# หมวดหมู่การทดสอบเฉพาะ
-python -m pytest -m unit          # การทดสอบหน่วยเท่านั้น
-python -m pytest -m integration   # การทดสอบการผสานรวมเท่านั้น
-python -m pytest -m sap           # การทดสอบการผสานรวม SAP
+##### 9. จดบันทึก URL ของบริการ
 
-# ไฟล์ทดสอบเฉพาะ
-python -m pytest tests/unit/test_validators.py -v
+URL บริการ OData สุดท้ายจะปรากฏใน Gateway Client โดยทั่วไปจะเป็นไปตามโครงสร้าง:
 
-# โหมดเฝ้าระวัง (ต้องการ pytest-watch)
-ptw -- -v
-```
-
-### รายงานความครอบคลุม
-
-**ปัจจุบัน: 56%** (เป้าหมาย: 70%+)
-
-| โมดูล | ความครอบคลุม | สถานะ |
-|--------|----------|--------|
-| `tools/base.py` | 100% | 🟢 ยอดเยี่ยม |
-| `protocol/schemas.py` | 100% | 🟢 ยอดเยี่ยม |
-| `tools/service_tool.py` | 88% | 🟢 ดี |
-| `config/settings.py` | 82% | 🟢 ดี |
-| `utils/validators.py` | 80% | 🟢 ดี |
-| `core/sap_client.py` | 45% | 🟡 ต้องการการปรับปรุง |
-| `transports/stdio.py` | 30% | 🟡 ต้องการการปรับปรุง |
+`/sap/opu/odata/sap/Z_TRAVEL_RECOMMENDATIONS_SRV/.` URL นี้คือสิ่งที่แอปพลิเคชันไคลเอนต์ (เช่น Fiori หรือแอปมือถือที่กำหนดเอง) จะใช้เพื่อใช้ข้อมูล SFLIGHT
 
 ---
 
@@ -1912,7 +2057,7 @@ class MyNewTool(MCPTool):
 
     @property
     def description(self) -> str:
-        return "คำอธิบายของเครื่องมือใหม่ของฉัน"
+        return "Description of my new tool"
 
     @property
     def input_schema(self) -> dict:
@@ -1934,7 +2079,7 @@ class MyNewTool(MCPTool):
 ```python
 from .my_tool import MyNewTool
 
-# เพิ่มไปยังการลงทะเบียน
+# เพิ่มลงในรีจิสทรี
 tool_registry.register(MyNewTool())
 ```
 
@@ -1951,16 +2096,16 @@ async def test_my_tool():
     assert result["result"] == "success"
 ```
 
-### คุณภาพของโค้ด
+### คุณภาพโค้ด
 
 ```bash
 # จัดรูปแบบโค้ด
 black packages/server/src
 
-# จัดเรียงการนำเข้า
+# เรียงลำดับการนำเข้า
 isort packages/server/src
 
-# ตรวจสอบโค้ด
+# Lint
 flake8 packages/server/src
 
 # ตรวจสอบประเภท
@@ -1969,198 +2114,44 @@ mypy packages/server/src
 # สแกนความปลอดภัย
 bandit -r packages/server/src
 
-# การตรวจสอบคุณภาพทั้งหมด
+# ตรวจสอบคุณภาพทั้งหมด
 black . && isort . && flake8 . && mypy . && bandit -r src/
 ```
 
 ---
 
-## 🗺️ แผนงาน
+## 📖 เอกสารประกอบ
 
-### ✅ เสร็จสิ้น (v0.2.0)
-
-- [x] เฟส 1: โครงสร้างและการย้ายโค้ด
-- [x] เฟส 2: การแยกเครื่องมือ (4 เครื่องมือโมดูล)
-- [x] เฟส 3: เลเยอร์การขนส่ง (Stdio)
-- [x] เฟส 4: ยูทิลิตี้และการทดสอบ (ครอบคลุม 56%)
-- [x] เฟส 5: การทำความสะอาดและเอกสาร
-
-### 📝 วางแผน (v0.3.0)
-
-**ลำดับความสำคัญสูง**:
-- [ ] เพิ่มความครอบคลุมของการทดสอบเป็น 70%+
-- [ ] เกณฑ์มาตรฐานประสิทธิภาพ
-- [ ] เอกสาร API (Sphinx)
-
-**ลำดับความสำคัญปานกลาง**:
-- [ ] คู่มือการปรับใช้ Docker
-- [ ] รายการ Kubernetes
-- [ ] เมตริก Prometheus
-- [ ] การผสานรวม OpenTelemetry
-
-**ลำดับความสำคัญต่ำ**:
-- [ ] การจำกัดอัตรา
-- [ ] เลเยอร์การแคช
-- [ ] การสนับสนุน GraphQL
-- [ ] การขนส่ง WebSocket
-- [ ] การขนส่ง HTTP/REST
-
----
-
-## 🤝 การมีส่วนร่วม
-
-### การเริ่มต้น
-
-1. ฟอร์กที่เก็บ
-2. สร้างสาขาคุณสมบัติ (`git checkout -b feature/amazing-feature`)
-3. ทำการเปลี่ยนแปลงและเพิ่มการทดสอบ
-4. เรียกใช้การทดสอบ: `python -m pytest -v`
-5. เรียกใช้การตรวจสอบคุณภาพของโค้ด: `black . && isort . && flake8 .`
-6. คอมมิตการเปลี่ยนแปลง (`git commit -m 'เพิ่มคุณสมบัติที่น่าทึ่ง'`)
-7. พุชไปยังสาขา (`git push origin feature/amazing-feature`)
-8. เปิด Pull Request
-
-### มาตรฐานการเขียนโค้ด
-
-- **สไตล์**: ปฏิบัติตามคู่มือสไตล์ PEP 8
-- **ประเภท**: เพิ่มคำแนะนำประเภทให้กับฟังก์ชันทั้งหมด
-- **เอกสาร**: เขียน docstrings ที่ครอบคลุม
-- **การทดสอบ**: รักษาความครอบคลุมไว้ที่ 50% ขึ้นไป
-- **คอมมิต**: ใช้ข้อความคอมมิตแบบเดิม
-
-### รายการตรวจสอบ Pull Request
-
-- [ ] เพิ่ม/อัปเดตการทดสอบและผ่าน
-- [ ] อัปเดตเอกสาร
-- [ ] จัดรูปแบบโค้ดด้วย `black`
-- [ ] จัดเรียงการนำเข้าด้วย `isort`
-- [ ] เพิ่มคำแนะนำประเภท
-- [ ] รักษา/ปรับปรุงความครอบคลุม
-- [ ] อัปเดตบันทึกการเปลี่ยนแปลง
-
----
-
-## 📊 เมตริกโครงการ
-
-| เมตริก | ค่า |
-|--------|-------|
-| **บรรทัดของโค้ด** | 927 (โค้ดการผลิต) |
-| **ความครอบคลุมของการทดสอบ** | 56% |
-| **การทดสอบ** | 45 (ผ่าน 44, อัตราความสำเร็จ 98%) |
-| **โมดูล Python** | 24 |
-| **เครื่องมือ SAP** | 4 |
-| **เลเยอร์การขนส่ง** | 1 (Stdio) |
-| **เวลาในการพัฒนา** | ~3 ชั่วโมง (ทั้ง 5 เฟส) |
-| **เวอร์ชัน Python** | 3.11+ |
-| **การพึ่งพา** | 11 หลัก, 9 การพัฒนา |
-
----
-
-## 📖 เอกสาร
-
-- **[Server Package README](./packages/server/README.md)**: เอกสารเซิร์ฟเวอร์โดยละเอียด
+- **[Server Package README](./packages/server/README.md)**: เอกสารประกอบเซิร์ฟเวอร์โดยละเอียด
 - **[Configuration Guide](./docs/guides/configuration.md)**: การตั้งค่า YAML และสภาพแวดล้อม
-- **[Deployment Guide](./docs/guides/deployment.md)**: การปรับใช้ในการผลิต
-- **[Architecture Documentation](./docs/architecture/server.md)**: รายละเอียดสถาปัตยกรรมของระบบ
-- **[API Reference](./docs/api/)**: เอกสารเครื่องมือและโปรโตคอล
+- **[Deployment Guide](./docs/guides/deployment.md)**: การปรับใช้การผลิต
+- **[Architecture Documentation](./docs/architecture/server.md)**: รายละเอียดสถาปัตยกรรมระบบ
+- **[API Reference](./docs/api/)**: เอกสารประกอบเครื่องมือและโปรโตคอล
 
 ---
 
 ## 📝 ใบอนุญาต
 
-ใบอนุญาต MIT - ดูไฟล์ [LICENSE](LICENSE) สำหรับรายละเอียด
+MIT License - ดูไฟล์ [LICENSE](LICENSE) สำหรับรายละเอียด
 
 ---
 
-## 🆘 การสนับสนุน
+## 🙏 กิตติกรรมประกาศ
 
-- **ปัญหา**: [สร้างปัญหา](https://github.com/midasol/SAP-MCP-GCP/issues)
-- **เอกสาร**: ดูไดเรกทอรี `docs/`
-- **แพ็คเกจเซิร์ฟเวอร์**: ดู `packages/server/` สำหรับรายละเอียดการใช้งาน
-- **ชุมชน**: เข้าร่วมการสนทนาของเรา
-
----
-
-## 📜 ประวัติเวอร์ชัน
-
-### v0.2.2 (ปัจจุบัน) - 2025-11-10
-
-**การอัปเดตเอกสาร**:
-- 📚 **ปรับปรุง README**: เพิ่มคู่มือการติดตั้งและการกำหนดค่าเฉพาะระบบปฏิบัติการ (Windows, macOS, Linux) ที่ครอบคลุม
-  - เพิ่มคำแนะนำการติดตั้ง Python โดยละเอียดสำหรับแต่ละระบบปฏิบัติการ
-  - เพิ่มคำสั่งการตั้งค่าและการเปิดใช้งานสภาพแวดล้อมเสมือนเฉพาะระบบปฏิบัติการ
-  - เพิ่มคู่มือการกำหนดค่า `.env.server` เฉพาะระบบปฏิบัติการพร้อมการอนุญาตไฟล์ที่เหมาะสม
-  - เพิ่มคำแนะนำการดำเนินการเซิร์ฟเวอร์เฉพาะระบบปฏิบัติการ
-  - เพิ่มลิงก์เอกสารอย่างเป็นทางการของ Gemini CLI
-- 🔧 **ความชัดเจนที่ดีขึ้น**: ลบการอ้างอิงเส้นทางไฟล์ที่เลิกใช้แล้ว
-- ✨ **ประสบการณ์ผู้ใช้ที่ดีขึ้น**: เพิ่มส่วนที่ยุบได้เพื่อการนำทางเอกสารที่ดีขึ้น
-
-### v0.2.1 - 2025-01-22
-
-**การแก้ไขข้อบกพร่อง**:
-- 🐛 **การแก้ไขที่สำคัญ**: เพิ่มพารามิเตอร์ `sap-client` ที่ขาดหายไปในคำขอ API ของ SAP Gateway ทั้งหมด
-  - **ปัญหา**: การรับรองความถูกต้องล้มเหลวด้วยข้อผิดพลาด 401 Unauthorized
-  - **สาเหตุ**: SAP Gateway ต้องการพารามิเตอร์ `sap-client` เพื่อกำหนดเส้นทางคำขอไปยังไคลเอ็นต์ SAP ที่ถูกต้อง
-  - **วิธีแก้ไข**:
-    - แก้ไข `auth.py` เพื่อรวม `sap-client` ในโทเค็น CSRF และ URL การรับรองความถูกต้อง
-    - แก้ไข `sap_client.py` เพื่อแทรกพารามิเตอร์ `sap-client` โดยอัตโนมัติในคำขอ API ทั้งหมด
-  - **ผลกระทบ**: การดำเนินการ SAP Gateway ทั้งหมดทำงานได้อย่างถูกต้องกับการกำหนดเส้นทางไคลเอ็นต์ที่เหมาะสม
-
-**รายละเอียดทางเทคนิค**:
-- อัปเดต `SAPAuthenticator._get_csrf_token()` เพื่อต่อท้าย `?sap-client={client}` ไปยัง URL
-- อัปเดต `SAPAuthenticator._authenticate_session()` เพื่อต่อท้าย `?sap-client={client}` ไปยัง URL
-- อัปเดต `SAPClient._make_request()` เพื่อเพิ่ม `sap-client` โดยอัตโนมัติไปยังพารามิเตอร์คำขอ
-- ไม่จำเป็นต้องเปลี่ยนแปลงการกำหนดค่า - ใช้ `SAP_CLIENT` ที่มีอยู่จาก `.env.server`
-
-### v0.2.0 - 2025-01-15
-
-**คุณสมบัติหลัก**:
-- ✅ สถาปัตยกรรมแบบโมดูลที่สมบูรณ์
-- ✅ เครื่องมือ SAP ที่พร้อมใช้งานจริง 4 อย่าง
-- ✅ การขนส่ง Stdio พร้อมเซิร์ฟเวอร์ MCP
-- ✅ การบันทึกและการตรวจสอบที่มีโครงสร้าง
-- ✅ ความครอบคลุมของการทดสอบ 56% (45 การทดสอบ)
-- ✅ เอกสารที่ครอบคลุม
-
-**การปรับปรุง**:
-- แก้ไขปัญหาจุดเริ่มต้น async
-- อัปเดตเส้นทางโมดูล
-- ปรับปรุงการจัดการข้อผิดพลาด
-- ปรับปรุงการตรวจสอบความปลอดภัย
-
-**การเปลี่ยนแปลงการกำหนดค่า**:
-- ⚠️ **การเปลี่ยนแปลงที่เข้ากันไม่ได้**: ตำแหน่งไฟล์ `.env.server` ถูกรวมไว้ที่ **รากของโครงการเท่านั้น**
-  - ไม่รองรับตำแหน่ง `packages/server/.env.server` ก่อนหน้านี้อีกต่อไป
-  - ปรับปรุงตรรกะการค้นหาไฟล์ด้วยการค้นหาตามลำดับความสำคัญ
-  - ปรับปรุงการบันทึกสำหรับตำแหน่งไฟล์การกำหนดค่า
-- การผสานรวม Gemini CLI ตอนนี้ต้องการพารามิเตอร์ `cwd` ใน `settings.json`
-- อัปเดต README พร้อมการแก้ไขปัญหาโดยละเอียดสำหรับปัญหาการกำหนดค่า
-
-### v0.1.0 (เริ่มต้น) - 2024-12-01
-
-- การผสานรวม SAP Gateway พื้นฐาน
-- โครงสร้างแบบเสาหิน
-- การทดสอบที่จำกัด
-- เซิร์ฟเวอร์ Stdio เท่านั้น
-
----
-
-## 🙏 การยอมรับ
-
-- **โปรโตคอล MCP**: Model Context Protocol ของ Anthropic
-- **SAP Gateway**: การผสานรวม OData v2/v4
-- **ชุมชน**: ผู้มีส่วนร่วมและผู้ทดสอบ
+- **MCP Protocol**: Anthropic's Model Context Protocol
+- **SAP Gateway**: การรวม OData v2/v4
+- **Community**: ผู้ร่วมสมทบและผู้ทดสอบ
 
 ---
 
 <div align="center">
 
-**สร้างด้วย ❤️ สำหรับการผสานรวม SAP ผ่าน Model Context Protocol**
+**Built with ❤️ for SAP integration via Model Context Protocol**
 
 [![Status](https://img.shields.io/badge/status-production%20ready-brightgreen.svg)]()
 [![Coverage](https://img.shields.io/badge/coverage-56%25-yellow.svg)]()
 [![Tests](https://img.shields.io/badge/tests-44%2F45%20passing-success.svg)]()
 
-**พร้อมใช้งานจริง** | **ครอบคลุม 56%** | **ความสำเร็จในการทดสอบ 98%**
+**Production Ready** | **56% Coverage** | **98% Test Success**
 
 </div>

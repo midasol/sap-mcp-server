@@ -1,6 +1,6 @@
-# SAP MCP - モデルコンテキストプロトコルによるSAP Gateway統合
+# SAP MCP - Model Context ProtocolによるSAP Gateway統合
 
-AIエージェント向けのSAP OData操作のためのモジュール式ツールを提供する、SAP Gateway統合のための完全なMCPサーバーです。
+AIエージェントによるSAP OData操作のためのモジュール式ツールを提供する、SAP Gateway統合のための完全なMCPサーバーです。
 
 <div align="center">
 
@@ -16,24 +16,27 @@ AIエージェント向けのSAP OData操作のためのモジュール式ツー
 
 ## 🎯 プロジェクト概要
 
-AIエージェントやアプリケーションが、クリーンでモジュール化されたアーキテクチャを通じてSAP Gatewayシステムと対話できるようにする、本番環境対応のMCP（モデルコンテキストプロトコル）サーバーです。信頼性、セキュリティ、開発者エクスペリエンスを考慮して構築されています。
+AIエージェントやアプリケーションが、クリーンでモジュール化されたアーキテクチャを通じてSAP Gatewayシステムと対話できるようにする、本番環境対応のMCP（Model Context Protocol）サーバーです。信頼性、セキュリティ、開発者体験を重視して構築されています。
 
-**現在のステータス**: ✅ **本番環境対応**（全5フェーズ完了）
+**現在のステータス**: ✅ **本番環境対応** (全5フェーズ完了)
 
-### 主なハイライト
+### 主な特徴
 
-- 🔐 **安全なSAP統合**: エンタープライズグレードの認証とSSL/TLSサポート
+- 🔐 **セキュアなSAP統合**: エンタープライズグレードの認証とSSL/TLSサポート
 - 🛠️ **4つのモジュール式ツール**: 認証、クエリ、エンティティ取得、サービス検出
-- 🚀 **Stdioトランスポート**: 本番環境対応のMCPサーバー
+- 🚀 **Stdioトランスポート**: 本番対応MCPサーバー
 - 📊 **構造化ロギング**: パフォーマンスメトリクスを含むJSONおよびコンソール形式
-- ✅ **検証済み入力**: 包括的なODataおよびセキュリティ検証
-- 🧪 **十分なテスト**: 56%のカバレッジ、44/45のテストに合格（98%の成功率）
+- ✅ **入力検証**: 包括的なODataおよびセキュリティ検証
+- 🧪 **十分なテスト**: カバレッジ56%、44/45テスト合格 (成功率98%)
 
 ---
 
 ## 📐 アーキテクチャ
 
 ### システム概要
+
+<details>
+<summary>📊 システム概要図を表示するにはクリック</summary>
 
 ```mermaid
 graph TB
@@ -59,16 +62,16 @@ graph TB
 
     subgraph core["⚡ コアレイヤー"]
         direction LR
-        D1["SAPクライアント<br/><small>ODataハンドラー</small>"]
-        D2["認証マネージャー<br/><small>資格情報</small>"]
+        D1["SAPクライアント<br/><small>ODataハンドラ</small>"]
+        D2["認証マネージャー<br/><small>クレデンシャル</small>"]
         D3["設定ローダー<br/><small>YAML/ENV</small>"]
     end
 
     subgraph utils["🔧 ユーティリティ"]
         direction LR
-        E1["バリデーター<br/><small>入力/セキュリティ</small>"]
+        E1["バリデータ<br/><small>入力/セキュリティ</small>"]
         E2["ロガー<br/><small>構造化ログ</small>"]
-        E3["エラーハンドラー<br/><small>本番グレード</small>"]
+        E3["エラーハンドラ<br/><small>本番グレード</small>"]
     end
 
     subgraph sap["🏢 SAP Gateway"]
@@ -82,17 +85,17 @@ graph TB
     C1 & C2 & C3 & C4 -->|コアサービス| D1
     C1 -->|認証フロー| D2
     C2 & C3 & C4 -->|設定アクセス| D3
-    D1 & D2 & D3 -->|検証 & ロギング| E1 & E2 & E3
+    D1 & D2 & D3 -->|検証 & ログ| E1 & E2 & E3
     D1 -->|ODataプロトコル| F1
     F1 -->|データアクセス| F2
 
-    classDef clientNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
+    classDef clientNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:20px
+    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:20px
     classDef futureNode fill:#E8E8E8,stroke:#999999,stroke-width:2px,stroke-dasharray:5 5
-    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px
-    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef sapNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
+    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:20px
+    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:20px
+    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:20px
+    classDef sapNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:20px
 
     class A1,A2,A3 clientNode
     class B1 transportNode
@@ -102,7 +105,12 @@ graph TB
     class F1,F2 sapNode
 ```
 
+</details>
+
 ### コンポーネント詳細
+
+<details>
+<summary>🔧 コンポーネント詳細図を表示するにはクリック</summary>
 
 ```mermaid
 graph TB
@@ -116,14 +124,14 @@ graph TB
 
         subgraph tools["🛠️ tools/"]
             direction TB
-            TO5["base.py<br/><small>ツールベースクラス</small>"]
+            TO5["base.py<br/><small>ツール基底クラス</small>"]
 
             subgraph toolImpl["ツール実装"]
                 direction LR
                 TO1["auth_tool.py<br/><small>認証</small>"]
                 TO2["query_tool.py<br/><small>ODataクエリ</small>"]
                 TO3["entity_tool.py<br/><small>単一エンティティ</small>"]
-                TO4["service_tool.py<br/><small>サービスリスト</small>"]
+                TO4["service_tool.py<br/><small>サービス一覧</small>"]
             end
         end
 
@@ -152,23 +160,23 @@ graph TB
         end
     end
 
-    T1 -->|ディスパッチ先| TO1 & TO2 & TO3 & TO4
-    TO1 & TO2 & TO3 & TO4 -.->|拡張| TO5
+    T1 -->|ディスパッチ| TO1 & TO2 & TO3 & TO4
+    TO1 & TO2 & TO3 & TO4 -.->|継承| TO5
     TO5 -->|使用| C1 & C2
     C1 -->|ロード| CF1 & CF2
-    C2 -->|読み取り| CF1
+    C2 -->|読み込み| CF1
     C1 & C2 -->|検証 & ログ| U1 & U2
     TO5 -.->|実装| P1
     C3 -.->|エラータイプ| C1 & C2
 
-    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
+    classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
     classDef futureNode fill:#E8E8E8,stroke:#999999,stroke-width:2px,stroke-dasharray:5 5
-    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px
-    classDef baseNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef configNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef protocolNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
+    classDef toolNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:18px
+    classDef baseNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef coreNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef configNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef utilNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef protocolNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:18px
 
     class T1 transportNode
     class TO1,TO2,TO3,TO4 toolNode
@@ -179,7 +187,12 @@ graph TB
     class P1 protocolNode
 ```
 
-### データフロー：注文クエリの例
+</details>
+
+### データフロー: 注文クエリの例
+
+<details>
+<summary>🔄 データフロー図を表示するにはクリック</summary>
 
 ```mermaid
 sequenceDiagram
@@ -199,7 +212,7 @@ sequenceDiagram
         participant SAPClient as 🔧<br/>SAPクライアント
     end
     box rgba(213, 245, 227, 0.3) サポートレイヤー
-        participant Validator as ✅<br/>バリデーター
+        participant Validator as ✅<br/>バリデータ
         participant Logger as 📊<br/>ロガー
     end
     box rgba(235, 222, 240, 0.3) 外部
@@ -207,61 +220,66 @@ sequenceDiagram
     end
 
     rect rgba(214, 234, 248, 0.15)
-        Note over Client,Registry: ⚡ フェーズ1：セッション初期化
+        Note over Client,Registry: ⚡ フェーズ 1: セッション初期化
         Client->>+Transport: stdioストリーム経由で接続
-        Transport->>+Registry: ツールレジストリを初期化
-        Registry-->>-Transport: ✅ 4つのツールが登録されました
-        Transport-->>-Client: 接続が確立されました
+        Transport->>+Registry: ツールレジストリ初期化
+        Registry-->>-Transport: ✅ 4つのツール登録済み
+        Transport-->>-Client: 接続確立
     end
 
     rect rgba(213, 245, 227, 0.15)
-        Note over Client,SAP: 🔐 フェーズ2：認証
+        Note over Client,SAP: 🔐 フェーズ 2: 認証
         Client->>+Transport: call_tool(sap_authenticate, {})
-        Transport->>+Registry: ツールを取得：sap_authenticate
-        Registry->>+AuthTool: 認証を実行
-        AuthTool->>+Validator: 資格情報を検証
-        Validator-->>-AuthTool: ✅ 資格情報は有効です
-        AuthTool->>+Logger: 認証試行をログに記録
-        Logger-->>-AuthTool: ログに記録しました
+        Transport->>+Registry: ツール取得: sap_authenticate
+        Registry->>+AuthTool: 認証実行
+        AuthTool->>+Validator: クレデンシャル検証
+        Validator-->>-AuthTool: ✅ クレデンシャル有効
+        AuthTool->>+Logger: 認証試行をログ記録
+        Logger-->>-AuthTool: 記録完了
         AuthTool->>+SAPClient: SAPで認証
         SAPClient->>+SAP: POST /sap/opu/odata/auth
         SAP-->>-SAPClient: 200 OK + セッショントークン
-        SAPClient-->>-AuthTool: ✅ 認証に成功しました
-        AuthTool-->>-Registry: 成功応答
-        Registry-->>-Transport: 認証トークン + セッションID
-        Transport-->>-Client: ✅ 認証が完了しました
+        SAPClient-->>-AuthTool: ✅ 認証成功
+        AuthTool-->>-Registry: 成功レスポンス
+        Registry-->>-Transport: Authトークン + セッションID
+        Transport-->>-Client: ✅ 認証完了
     end
 
     rect rgba(252, 243, 207, 0.15)
-        Note over Client,SAP: 🔍 フェーズ3：クエリ実行
+        Note over Client,SAP: 🔍 フェーズ 3: クエリ実行
         Client->>+Transport: call_tool(sap_query, {filter: "OrderID eq '91000043'"})
-        Transport->>+Registry: ツールを取得：sap_query
+        Transport->>+Registry: ツール取得: sap_query
         Registry->>+QueryTool: パラメータ付きで実行
-        QueryTool->>+Validator: ODataフィルター構文を検証
-        Validator-->>-QueryTool: ✅ フィルターは安全です
-        QueryTool->>+Logger: クエリ開始をログに記録
-        Logger-->>-QueryTool: ログに記録しました
-        QueryTool->>+SAPClient: ODataクエリを実行
+        QueryTool->>+Validator: ODataフィルタ構文検証
+        Validator-->>-QueryTool: ✅ フィルタ安全
+        QueryTool->>+Logger: クエリ開始をログ記録
+        Logger-->>-QueryTool: 記録完了
+        QueryTool->>+SAPClient: ODataクエリ実行
         SAPClient->>+SAP: GET /OrderSet?$filter=OrderID eq '91000043'
-        SAP-->>-SAPClient: 200 OK + 注文データ（JSON）
-        SAPClient->>SAPClient: 応答を解析 & 変換
-        SAPClient-->>-QueryTool: ✅ 注文データを解析しました
-        QueryTool->>+Logger: クエリ成功 + メトリクスをログに記録
-        Logger-->>-QueryTool: ログに記録しました
+        SAP-->>-SAPClient: 200 OK + 注文データ (JSON)
+        SAPClient->>SAPClient: レスポンスのパース & 変換
+        SAPClient-->>-QueryTool: ✅ パース済み注文データ
+        QueryTool->>+Logger: クエリ成功 + メトリクスをログ記録
+        Logger-->>-QueryTool: 記録完了
         QueryTool-->>-Registry: 注文詳細
-        Registry-->>-Transport: フォーマットされた応答
-        Transport-->>-Client: ✅ クエリが完了しました
+        Registry-->>-Transport: フォーマット済みレスポンス
+        Transport-->>-Client: ✅ クエリ完了
     end
 
     rect rgba(213, 245, 227, 0.15)
-        Note over Logger: 📊 フェーズ4：パフォーマンストラッキング
-        Logger->>Logger: 実行メトリクスを計算
-        Logger->>Logger: 構造化JSONログを書き込み
-        Logger->>Logger: パフォーマンスカウンターを更新
+        Note over Logger: 📊 フェーズ 4: パフォーマンス追跡
+        Logger->>Logger: 実行メトリクス計算
+        Logger->>Logger: 構造化JSONログ書き込み
+        Logger->>Logger: パフォーマンスカウンタ更新
     end
 ```
 
+</details>
+
 ### ツール実行フロー
+
+<details>
+<summary>⚡ ツール実行フロー図を表示するにはクリック</summary>
 
 ```mermaid
 flowchart TD
@@ -269,43 +287,43 @@ flowchart TD
 
     Start --> Validate{🔍 入力検証<br/><small>スキーマチェック</small><br/><small>セキュリティスキャン</small>}
 
-    Validate -->|❌ 無効| Error1[🚫 検証エラー<br/><small>エラー詳細を返す</small>]
-    Validate -->|✅ 有効| Auth{🔐 認証済みか？<br/><small>セッションチェック</small>}
+    Validate -->|❌ 無効| Error1[🚫 検証エラー<br/><small>エラー詳細返却</small>]
+    Validate -->|✅ 有効| Auth{🔐 認証済み?<br/><small>セッションチェック</small>}
 
-    Auth -->|いいえ| DoAuth[🔑 認証実行<br/><small>資格情報検証</small><br/><small>SAPハンドシェイク</small>]
-    DoAuth --> AuthCheck{✅ 認証成功か？<br/><small>トークン受信済み</small>}
+    Auth -->|No| DoAuth[🔑 認証実行<br/><small>クレデンシャル検証</small><br/><small>SAPハンドシェイク</small>]
+    DoAuth --> AuthCheck{✅ 認証成功?<br/><small>トークン受信</small>}
 
-    AuthCheck -->|❌ 失敗| Error2[🚫 認証エラー<br/><small>無効な資格情報</small>]
+    AuthCheck -->|❌ 失敗| Error2[🚫 認証エラー<br/><small>無効なクレデンシャル</small>]
     AuthCheck -->|✅ 成功| Execute
 
-    Auth -->|はい| Execute[⚡ ツール実行<br/><small>ビジネスロジック</small><br/><small>パラメータ処理</small>]
+    Auth -->|Yes| Execute[⚡ ツール実行<br/><small>ビジネスロジック</small><br/><small>パラメータ処理</small>]
 
-    Execute --> SAPCall[🌐 SAP OData呼び出し<br/><small>HTTPリクエスト</small><br/><small>SSL/TLS暗号化</small>]
+    Execute --> SAPCall[🌐 SAP ODataコール<br/><small>HTTPリクエスト</small><br/><small>SSL/TLS暗号化</small>]
 
-    SAPCall --> SAPCheck{📡 SAP応答<br/><small>ステータスチェック</small>}
+    SAPCall --> SAPCheck{📡 SAPレスポンス<br/><small>ステータスチェック</small>}
 
     SAPCheck -->|❌ エラー| Error3[🚫 SAPエラー<br/><small>サービス利用不可</small><br/><small>またはデータエラー</small>]
-    SAPCheck -->|✅ 200 OK| Parse[📊 応答解析<br/><small>XML/JSON解析</small><br/><small>データ抽出</small>]
+    SAPCheck -->|✅ 200 OK| Parse[📊 レスポンスパース<br/><small>XML/JSONパース</small><br/><small>データ抽出</small>]
 
     Parse --> Transform[🔄 データ変換<br/><small>MCPフォーマット</small><br/><small>スキーママッピング</small>]
 
-    Transform --> Log[📝 メトリクス記録<br/><small>パフォーマンスデータ</small><br/><small>監査証跡</small>]
+    Transform --> Log[📝 メトリクスログ<br/><small>パフォーマンスデータ</small><br/><small>監査証跡</small>]
 
-    Log --> Success([✅ 成功応答<br/><small>クライアントに返す</small>])
+    Log --> Success([✅ 成功レスポンス<br/><small>クライアントへ返却</small>])
 
-    Error1 & Error2 & Error3 --> LogError[📝 エラー記録<br/><small>エラーコンテキスト</small><br/><small>スタックトレース</small>]
+    Error1 & Error2 & Error3 --> LogError[📝 エラーログ<br/><small>エラーコンテキスト</small><br/><small>スタックトレース</small>]
 
-    LogError --> End([❌ エラー応答<br/><small>クライアントに返す</small>])
+    LogError --> End([❌ エラーレスポンス<br/><small>クライアントへ返却</small>])
 
-    classDef startNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef decisionNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px
-    classDef authNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px
-    classDef processNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px
-    classDef sapNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef errorNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
-    classDef logNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef successNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px
-    classDef endNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
+    classDef startNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef decisionNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:18px
+    classDef authNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:18px
+    classDef processNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:18px
+    classDef sapNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef errorNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
+    classDef logNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef successNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
+    classDef endNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:18px
 
     class Start startNode
     class Validate,SAPCheck,AuthCheck decisionNode
@@ -318,60 +336,65 @@ flowchart TD
     class End endNode
 ```
 
+</details>
+
 ### セキュリティアーキテクチャ
 
+<details>
+<summary>🔒 セキュリティアーキテクチャ図を表示するにはクリック</summary>
+
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'fontSize':'16px', 'fontFamily':'arial'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'fontSize':'14px', 'fontFamily':'arial'}}}%%
 graph TB
-    subgraph security["🛡️ 多層防御セキュリティアーキテクチャ<br/>"]
+    subgraph security["🛡️ 多層防御セキュリティアーキテクチャ"]
         direction TB
 
-        subgraph layer1["レイヤー1：入力検証 - エントリポイントセキュリティ"]
+        subgraph layer1["レイヤー 1: 入力検証 - エントリポイントセキュリティ"]
             direction LR
-            L1A["🔍 ODataフィルター<br/>SQLインジェクション防止<br/>構文検証"]
-            L1B["🔑 エンティティキー<br/>フォーマット検証<br/>型チェック"]
-            L1C["🧹 サニタイズ<br/>XSS防止<br/>入力クリーニング"]
+            L1A["🔍 ODataフィルタ<br/><br/>SQLインジェクション<br/>防止<br/><br/>構文検証"]
+            L1B["🔑 エンティティキー<br/><br/>フォーマット<br/>検証<br/><br/>型チェック"]
+            L1C["🧹 サニタイズ<br/><br/>XSS<br/>防止<br/><br/>入力クリーニング"]
         end
 
-        subgraph layer2["レイヤー2：認証 - ID検証"]
+        subgraph layer2["レイヤー 2: 認証 - 本人確認"]
             direction LR
-            L2A["✅ 資格情報<br/>ユーザー検証<br/>パスワードチェック"]
-            L2B["🎫 セッション<br/>セッションライフサイクル<br/>タイムアウト処理"]
-            L2C["🔐 トークン<br/>JWT/Bearerトークン<br/>トークンローテーション"]
+            L2A["✅ クレデンシャル<br/><br/>ユーザー<br/>検証<br/><br/>パスワードチェック"]
+            L2B["🎫 セッション<br/><br/>セッション<br/>ライフサイクル<br/><br/>タイムアウト処理"]
+            L2C["🔐 トークン<br/><br/>JWT/Bearer<br/>トークン<br/><br/>トークンローテーション"]
         end
 
-        subgraph layer3["レイヤー3：認可 - アクセス制御"]
+        subgraph layer3["レイヤー 3: 認可 - アクセス制御"]
             direction LR
-            L3A["🚦 サービスアクセス<br/>サービスレベルRBAC<br/>権限マトリックス"]
-            L3B["📋 エンティティ権限<br/>データレベルアクセス<br/>フィールドフィルタリング"]
+            L3A["🚦 サービスアクセス<br/><br/>サービスレベル<br/>RBAC<br/><br/>権限マトリクス"]
+            L3B["📋 エンティティ権限<br/><br/>データレベル<br/>アクセス<br/><br/>フィールドフィルタリング"]
         end
 
-        subgraph layer4["レイヤー4：トランスポートセキュリティ - 暗号化レイヤー"]
+        subgraph layer4["レイヤー 4: トランスポートセキュリティ - 暗号化レイヤー"]
             direction LR
-            L4A["🔒 SSL/TLS<br/>TLS 1.2+のみ<br/>完全前方秘匿性"]
-            L4B["📜 証明書<br/>チェーン検証<br/>失効チェック"]
+            L4A["🔒 SSL/TLS<br/><br/>TLS 1.2+ のみ<br/><br/>Perfect forward<br/>secrecy"]
+            L4B["📜 証明書<br/><br/>チェーン<br/>検証<br/><br/>失効チェック"]
         end
 
-        subgraph layer5["レイヤー5：監査 & 監視 - 可観測性"]
+        subgraph layer5["レイヤー 5: 監査 & モニタリング - 可観測性"]
             direction LR
-            L5A["📊 構造化ログ<br/>JSONロギング<br/>PII除外"]
-            L5B["⚡ パフォーマンス<br/>メトリックストラッキング<br/>SLA監視"]
-            L5C["🚨 エラートラッキング<br/>例外ロギング<br/>アラートトリガー"]
+            L5A["📊 構造化ログ<br/><br/>JSONロギング<br/><br/>PII除外"]
+            L5B["⚡ パフォーマンス<br/><br/>メトリクス<br/>追跡<br/><br/>SLAモニタリング"]
+            L5C["🚨 エラー追跡<br/><br/>例外<br/>ロギング<br/><br/>アラートトリガー"]
         end
     end
 
     L1A & L1B & L1C -->|検証済み入力| L2A
-    L2A -->|ID検証済み| L2B
+    L2A -->|本人確認済み| L2B
     L2B -->|セッションアクティブ| L2C
     L2C -->|認証済み| L3A & L3B
     L3A & L3B -->|認可済み| L4A & L4B
     L4A & L4B -->|暗号化済み| L5A & L5B & L5C
 
-    classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,padding:15px
-    classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:15px
-    classDef authzNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:2px,padding:15px
-    classDef transportNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:15px
-    classDef auditNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:15px
+    classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:3px,padding:25px
+    classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:3px,padding:25px
+    classDef authzNode fill:#EBDEF0,stroke:#8E44AD,stroke-width:3px,padding:25px
+    classDef transportNode fill:#D6EAF8,stroke:#3498DB,stroke-width:3px,padding:25px
+    classDef auditNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:3px,padding:25px
 
     class L1A,L1B,L1C inputNode
     class L2A,L2B,L2C authNode
@@ -380,6 +403,8 @@ graph TB
     class L5A,L5B,L5C auditNode
 ```
 
+</details>
+
 ---
 
 ## 📦 リポジトリ構造
@@ -387,45 +412,86 @@ graph TB
 ```
 sap-mcp/
 ├── packages/
-│   └── server/                          ✅ 本番環境対応MCPサーバー
+│   └── server/                          ✅ 本番対応MCPサーバー
 │       ├── src/sap_mcp_server/
-│       │   ├── core/                    # SAPクライアント & 認証（3ファイル）
+│       │   ├── core/                    # SAPクライアント & 認証 (4ファイル)
+│       │   │   ├── __init__.py          # モジュール初期化
 │       │   │   ├── sap_client.py        # OData操作
-│       │   │   ├── auth.py              # 資格情報管理
+│       │   │   ├── auth.py              # クレデンシャル管理
 │       │   │   └── exceptions.py        # カスタム例外
-│       │   ├── config/                  # 設定（4ファイル）
+│       │   ├── config/                  # 設定 (4ファイル)
+│       │   │   ├── __init__.py          # モジュール初期化
 │       │   │   ├── settings.py          # 環境設定
 │       │   │   ├── loader.py            # YAMLローダー
 │       │   │   └── schemas.py           # Pydanticモデル
-│       │   ├── protocol/                # MCPプロトコル（2ファイル）
+│       │   ├── protocol/                # MCPプロトコル (2ファイル)
+│       │   │   ├── __init__.py          # モジュール初期化
 │       │   │   └── schemas.py           # リクエスト/レスポンススキーマ
-│       │   ├── tools/                   # 4つのモジュール式SAPツール
-│       │   │   ├── base.py              # ツールベースクラス
+│       │   ├── tools/                   # 4つのモジュール式SAPツール (6ファイル)
+│       │   │   ├── __init__.py          # ツールレジストリ
+│       │   │   ├── base.py              # ツール基底クラス
 │       │   │   ├── auth_tool.py         # 認証
 │       │   │   ├── query_tool.py        # ODataクエリ
 │       │   │   ├── entity_tool.py       # エンティティ取得
 │       │   │   └── service_tool.py      # サービス検出
-│       │   ├── transports/              # トランスポートレイヤー
+│       │   ├── transports/              # トランスポートレイヤー (2ファイル)
+│       │   │   ├── __init__.py          # モジュール初期化
 │       │   │   └── stdio.py             # Stdioトランスポート ✅
-│       │   └── utils/                   # ユーティリティ（3ファイル）
-│       │       ├── logger.py            # 構造化ロギング
-│       │       └── validators.py        # 入力検証
+│       │   ├── utils/                   # ユーティリティ (3ファイル)
+│       │   │   ├── __init__.py          # モジュール初期化
+│       │   │   ├── logger.py            # 構造化ロギング
+│       │   │   └── validators.py        # 入力検証
+│       │   └── __init__.py              # パッケージ初期化
 │       ├── config/                      # サーバー設定
 │       │   ├── services.yaml            # SAPサービス設定
 │       │   └── services.yaml.example    # 設定テンプレート
-│       ├── tests/                       # 45テスト（56%カバレッジ）
-│       │   ├── conftest.py              # 8フィクスチャ
-│       │   ├── unit/                    # 高速分離テスト
+│       ├── tests/                       # テストスイート (7ファイル, 56% カバレッジ)
+│       │   ├── __init__.py              # テストパッケージ初期化
+│       │   ├── conftest.py              # Pytestフィクスチャ
+│       │   ├── unit/                    # ユニットテスト
+│       │   │   ├── __init__.py          # ユニットテストパッケージ
+│       │   │   ├── test_base.py         # 基底ツールテスト
+│       │   │   └── test_validators.py   # バリデータテスト
 │       │   └── integration/             # 統合テスト
-│       └── pyproject.toml               # パッケージ設定
+│       │       ├── __init__.py          # 統合テストパッケージ
+│       │       └── test_tool_integration.py  # ツール統合テスト
+│       ├── pyproject.toml               # パッケージ設定
+│       └── README.md                    # サーバーパッケージドキュメント
 │
 ├── docs/                                # ドキュメント
-│   ├── guides/                          # ユーザーガイド
-│   └── api/                             # APIリファレンス
+│   ├── architecture/                    # アーキテクチャドキュメント
+│   │   └── server.md                    # サーバーアーキテクチャ
+│   └── guides/                          # ユーザーガイド
+│       ├── configuration.md             # 設定ガイド
+│       ├── deployment.md                # デプロイメントガイド
+│       ├── troubleshooting.md           # トラブルシューティングガイド
+│       ├── odata-service-creation-flight-demo.md  # ODataサービス作成
+│       └── sfight-demo-guide.md         # SFLIGHTデモガイド
+│
+├── examples/                            # サンプルアプリケーション
+│   ├── basic/                           # 基本サンプル
+│   │   └── stdio_client.py              # Stdioクライアント例
+│   ├── chatbot/                         # チャットボットサンプル
+│   │   └── order_inquiry_chatbot.py     # 注文照会チャットボット
+│   └── README.md                        # サンプルドキュメント
+│
 ├── scripts/                             # 開発スクリプト
-├── .env.server                          # サーバー設定
-├── .env.server.example                  # 設定テンプレート
-└── README.md                            # このファイル
+│   ├── create_structure.sh              # プロジェクト構造作成
+│   ├── migrate_code.sh                  # コード移行スクリプト
+│   └── update_imports.py                # インポート更新スクリプト
+│
+├── .claude/                             # Claude Code設定
+│   └── settings.local.json              # ローカル設定
+│
+├── .env.server.example                  # 環境変数テンプレート
+├── .gitignore                           # Git除外ルール
+├── README.md                            # メインドキュメント (英語)
+├── README.ja.md                         # 日本語ドキュメント
+├── README.ko.md                         # 韓国語ドキュメント
+├── README.th.md                         # タイ語ドキュメント
+├── README.zh-TW.md                      # 繁体字中国語ドキュメント
+├── README.old.md                        # 以前のREADMEバージョン
+└── REFACTORING_SUMMARY.md               # リファクタリング履歴
 ```
 
 ---
@@ -439,8 +505,8 @@ sap-mcp/
 <td width="50%">
 
 #### 🛠️ ツール
-- ✅ **sap_authenticate**: 安全なSAP認証
-- ✅ **sap_query**: フィルター付きODataクエリ
+- ✅ **sap_authenticate**: セキュアなSAP認証
+- ✅ **sap_query**: フィルタ付きODataクエリ
 - ✅ **sap_get_entity**: 単一エンティティ取得
 - ✅ **sap_list_services**: サービス検出
 
@@ -448,17 +514,17 @@ sap-mcp/
 <td width="50%">
 
 #### 🚀 トランスポート
-- ✅ **Stdio**: 本番環境対応のstdin/stdout
+- ✅ **Stdio**: 本番対応stdin/stdout
 
 </td>
 </tr>
 <tr>
 <td>
 
-#### 📊 ロギング & 監視
+#### 📊 ロギング & モニタリング
 - ✅ **構造化ロギング**: JSON + コンソール
-- ✅ **パフォーマンスメトリクス**: リクエストタイミング
-- ✅ **エラートラッキング**: 完全なコンテキスト
+- ✅ **パフォーマンスメトリクス**: リクエスト時間計測
+- ✅ **エラー追跡**: 完全なコンテキスト
 - ✅ **監査証跡**: セキュリティイベント
 
 </td>
@@ -466,32 +532,22 @@ sap-mcp/
 
 #### 🔒 セキュリティ
 - ✅ **入力検証**: OData & セキュリティ
-- ✅ **SSL/TLSサポート**: 安全な接続
-- ✅ **資格情報管理**: .env.server
-- ✅ **エラー処理**: 本番グレード
+- ✅ **SSL/TLSサポート**: セキュアな接続
+- ✅ **クレデンシャル管理**: .env.server
+- ✅ **エラーハンドリング**: 本番グレード
 
 </td>
 </tr>
 </table>
 
-### 品質 & テスト
+### 開発者体験
 
-| メトリクス | 値 | ステータス |
-|--------|-------|--------|
-| **テストカバレッジ** | 56% | 🟡 良好 |
-| **テスト合格** | 44/45 (98%) | 🟢 優秀 |
-| **テスト速度** | <0.2秒 | 🟢 高速 |
-| **フィクスチャ** | 8つの包括的なもの | 🟢 完了 |
-| **テストカテゴリ** | ユニット + 統合 | 🟢 完了 |
-
-### 開発者エクスペリエンス
-
-- ✅ **モジュール式アーキテクチャ**: ファイルごとに1つのツール
+- ✅ **モジュール式アーキテクチャ**: 1ファイル1ツール
 - ✅ **型安全性**: 完全な型ヒント
 - ✅ **ドキュメント**: 包括的なガイド
-- ✅ **簡単なセットアップ**: `pip install -e .`
+- ✅ **簡単セットアップ**: `pip install -e .`
 - ✅ **ホットリロード**: 開発モード
-- ✅ **サンプルアプリ**: 3つの動作例
+- ✅ **サンプルアプリ**: 3つの動作するサンプル
 
 ---
 
@@ -501,10 +557,10 @@ sap-mcp/
 
 #### システム要件
 
-- **Python 3.11以上**
-- **pip**（Pythonパッケージインストーラー）
-- **Git**（リポジトリのクローン用）
-- SAP Gatewayアクセス資格情報
+- **Python 3.11 以上**
+- **pip** (Pythonパッケージインストーラ)
+- **Git** (リポジトリクローン用)
+- SAP Gateway アクセスクレデンシャル
 - 仮想環境のサポート
 
 #### Pythonのインストール
@@ -512,101 +568,101 @@ sap-mcp/
 <details>
 <summary><b>🪟 Windows</b></summary>
 
-**オプション1：Microsoft Store（Windows 10/11推奨）**
+**オプション 1: Microsoft Store (Windows 10/11推奨)**
 ```powershell
-# Microsoft Storeで「Python 3.11」または「Python 3.12」を検索
-# またはpython.orgからダウンロード
+# Microsoft Storeで "Python 3.11" または "Python 3.12" を検索
+# または python.org からダウンロード
 ```
 
-**オプション2：Python.orgインストーラー**
-1. [python.org/downloads](https://www.python.org/downloads/)からダウンロード
-2. インストーラーを実行
-3. ✅ **「Add Python to PATH」をチェック**
-4. 「Install Now」をクリック
+**オプション 2: Python.org インストーラ**
+1. [python.org/downloads](https://www.python.org/downloads/) からダウンロード
+2. インストーラを実行
+3. ✅ **"Add Python to PATH" をチェック**
+4. "Install Now" をクリック
 
-**インストールの確認：**
+**インストール確認:**
 ```powershell
 python --version
-# Python 3.11.x以上が表示されるはずです
+# 表示例: Python 3.11.x or higher
 
 pip --version
-# pip 23.x.x以上が表示されるはずです
+# 表示例: pip 23.x.x or higher
 ```
 
-**一般的な問題：**
-- `python`コマンドが見つからない場合は、`python3`または`py`を使用してください
-- `pip`が見つからない場合は、`python -m ensurepip --upgrade`でインストールしてください
+**よくある問題:**
+- `python` コマンドが見つからない場合は、`python3` または `py` を試してください
+- `pip` が見つからない場合は、次でインストール: `python -m ensurepip --upgrade`
 
 </details>
 
 <details>
 <summary><b>🍎 macOS</b></summary>
 
-**オプション1：Homebrew（推奨）**
+**オプション 1: Homebrew (推奨)**
 ```bash
-# Homebrewがインストールされていない場合はインストール
+# Homebrewが未インストールの場合
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Pythonをインストール
+# Pythonインストール
 brew install python@3.11
 # または
 brew install python@3.12
 ```
 
-**オプション2：Python.orgインストーラー**
-1. [python.org/downloads/macos](https://www.python.org/downloads/macos/)からダウンロード
-2. `.pkg`ファイルを開く
+**オプション 2: Python.org インストーラ**
+1. [python.org/downloads/macos](https://www.python.org/downloads/macos/) からダウンロード
+2. `.pkg` ファイルを開く
 3. インストールウィザードに従う
 
-**インストールの確認：**
+**インストール確認:**
 ```bash
 python3 --version
-# Python 3.11.x以上が表示されるはずです
+# 表示例: Python 3.11.x or higher
 
 pip3 --version
-# pip 23.x.x以上が表示されるはずです
+# 表示例: pip 23.x.x or higher
 ```
 
-**注意：** macOSにはPython 2.7がプリインストールされている場合があります。常に`python3`および`pip3`コマンドを使用してください。
+**注意:** macOSにはPython 2.7がプリインストールされている場合があります。常に `python3` と `pip3` コマンドを使用してください。
 
 </details>
 
 <details>
 <summary><b>🐧 Linux</b></summary>
 
-**Ubuntu/Debian：**
+**Ubuntu/Debian:**
 ```bash
-# パッケージリストを更新
+# パッケージリスト更新
 sudo apt update
 
-# Python 3.11+をインストール
+# Python 3.11+ インストール
 sudo apt install python3.11 python3.11-venv python3-pip
 
-# または最新のPythonの場合
+# または最新のPython
 sudo apt install python3 python3-venv python3-pip
 ```
 
-**Fedora/RHEL/CentOS：**
+**Fedora/RHEL/CentOS:**
 ```bash
-# Python 3.11+をインストール
+# Python 3.11+ インストール
 sudo dnf install python3.11 python3-pip
 
 # または
 sudo yum install python3 python3-pip
 ```
 
-**Arch Linux：**
+**Arch Linux:**
 ```bash
 sudo pacman -S python python-pip
 ```
 
-**インストールの確認：**
+**インストール確認:**
 ```bash
 python3 --version
-# Python 3.11.x以上が表示されるはずです
+# 表示例: Python 3.11.x or higher
 
 pip3 --version
-# pip 23.x.x以上が表示されるはずです
+# 表示例: pip 23.x.x or higher
 ```
 
 </details>
@@ -615,126 +671,126 @@ pip3 --version
 
 ### 1. インストール
 
-#### ステップバイステップのインストール
+#### ステップバイステップ・インストール
 
 <details open>
-<summary><b>🪟 Windows（PowerShell/コマンドプロンプト）</b></summary>
+<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
 
 ```powershell
 # リポジトリをクローン
 git clone <repository-url>
 cd sap-mcp
 
-# 仮想環境を作成
+# 仮想環境作成
 python -m venv .venv
 
-# 仮想環境をアクティブ化
+# 仮想環境アクティベート
 .venv\Scripts\activate
-# またはPowerShellで：
+# または PowerShell で:
 # .venv\Scripts\Activate.ps1
 
-# PowerShellで実行ポリシーエラーが発生した場合：
+# PowerShellで実行ポリシーエラーが出る場合:
 # Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# アクティブ化の確認（プロンプトに（.venv）が表示されるはずです）
+# アクティベーション確認 (プロンプトに (.venv) が表示されるはずです)
 # (.venv) PS C:\path\to\sap-mcp>
 
-# サーバーパッケージをインストール
+# サーバーパッケージインストール
 cd packages\server
 pip install -e .
 
-# 開発依存関係をインストール（オプション）
+# 開発依存関係インストール (オプション)
 pip install -e ".[dev]"
 
-# インストールの確認
+# インストール確認
 sap-mcp-server-stdio --help
 ```
 
-**Windowsの一般的な問題：**
-- **`python`が見つからない**：`python3`または`py`を試してください
-- **アクセスが拒否されました**：PowerShellを管理者として実行してください
-- **実行ポリシー**：`Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`を実行してください
-- **長いパスのサポート**：Windowsで長いパスのサポートを有効にしてください（設定 > システム > バージョン情報 > システムの詳細設定）
+**Windowsのよくある問題:**
+- **`python` が見つからない**: `python3` または `py` を試してください
+- **アクセス拒否**: PowerShellを管理者として実行してください
+- **実行ポリシー**: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` を実行
+- **長いパスのサポート**: Windowsで長いパスを有効化 (設定 > システム > バージョン情報 > システムの詳細設定)
 
 </details>
 
 <details>
-<summary><b>🍎 macOS（ターミナル）</b></summary>
+<summary><b>🍎 macOS (Terminal)</b></summary>
 
 ```bash
 # リポジトリをクローン
 git clone <repository-url>
 cd sap-mcp
 
-# 仮想環境を作成
+# 仮想環境作成
 python3 -m venv .venv
 
-# 仮想環境をアクティブ化
+# 仮想環境アクティベート
 source .venv/bin/activate
 
-# アクティブ化の確認（プロンプトに（.venv）が表示されるはずです）
+# アクティベーション確認 (プロンプトに (.venv) が表示されるはずです)
 # (.venv) user@macbook sap-mcp %
 
-# サーバーパッケージをインストール
+# サーバーパッケージインストール
 cd packages/server
 pip install -e .
 
-# 開発依存関係をインストール（オプション）
+# 開発依存関係インストール (オプション)
 pip install -e ".[dev]"
 
-# インストールの確認
+# インストール確認
 sap-mcp-server-stdio --help
 
-# インストールパスを確認（Gemini CLIの設定に便利）
+# インストールパス確認 (Gemini CLIセットアップに有用)
 which sap-mcp-server-stdio
-# 出力例：/Users/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
+# 出力例: /Users/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
 ```
 
-**macOSの一般的な問題：**
-- **`python`が見つからない**：代わりに`python3`を使用してください
-- **`pip`が見つからない**：代わりに`pip3`を使用してください
-- **アクセスが拒否されました**：仮想環境で`sudo`を使用しないでください
-- **インストール後にコマンドが見つからない**：仮想環境がアクティブ化されていることを確認してください
+**macOSのよくある問題:**
+- **`python` が見つからない**: `python3` を代わりに使用してください
+- **`pip` が見つからない**: `pip3` を代わりに使用してください
+- **アクセス拒否**: 仮想環境では `sudo` を使用しないでください
+- **インストール後にコマンドが見つからない**: 仮想環境がアクティベートされているか確認してください
 
 </details>
 
 <details>
-<summary><b>🐧 Linux（Bash/Zsh）</b></summary>
+<summary><b>🐧 Linux (Bash/Zsh)</b></summary>
 
 ```bash
 # リポジトリをクローン
 git clone <repository-url>
 cd sap-mcp
 
-# 仮想環境を作成
+# 仮想環境作成
 python3 -m venv .venv
 
-# 仮想環境をアクティブ化
+# 仮想環境アクティベート
 source .venv/bin/activate
 
-# アクティブ化の確認（プロンプトに（.venv）が表示されるはずです）
+# アクティベーション確認 (プロンプトに (.venv) が表示されるはずです)
 # (.venv) user@linux:~/sap-mcp$
 
-# サーバーパッケージをインストール
+# サーバーパッケージインストール
 cd packages/server
 pip install -e .
 
-# 開発依存関係をインストール（オプション）
+# 開発依存関係インストール (オプション)
 pip install -e ".[dev]"
 
-# インストールの確認
+# インストール確認
 sap-mcp-server-stdio --help
 
-# インストールパスを確認（Gemini CLIの設定に便利）
+# インストールパス確認 (Gemini CLIセットアップに有用)
 which sap-mcp-server-stdio
-# 出力例：/home/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
+# 出力例: /home/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
 ```
 
-**Linuxの一般的な問題：**
-- **`python3-venv`が見つからない**：`sudo apt install python3-venv`でインストールしてください
-- **アクセスが拒否されました**：仮想環境で`sudo`を使用しないでください
-- **SSLエラー**：`sudo apt install ca-certificates`で証明書をインストールしてください
-- **ビルド依存関係がありません**：`sudo apt install build-essential python3-dev`でインストールしてください
+**Linuxのよくある問題:**
+- **`python3-venv` が見つからない**: `sudo apt install python3-venv` でインストール
+- **アクセス拒否**: 仮想環境では `sudo` を使用しないでください
+- **SSLエラー**: 証明書をインストール: `sudo apt install ca-certificates`
+- **ビルド依存関係不足**: `sudo apt install build-essential python3-dev` でインストール
 
 </details>
 
@@ -742,167 +798,167 @@ which sap-mcp-server-stdio
 
 ### 2. 設定
 
-SAP MCPサーバーには2つの設定ファイルが必要です：
-1. **`.env.server`**：SAP接続資格情報（1つのSAPシステム）
-2. **`services.yaml`**：SAP Gatewayサービスと認証設定
+SAP MCPサーバーには2つの設定ファイルが必要です:
+1. **`.env.server`**: SAP接続クレデンシャル (単一SAPシステム)
+2. **`services.yaml`**: SAP Gatewayサービスおよび認証設定
 
-#### 2.1. SAP接続設定（`.env.server`）
+#### 2.1. SAP接続設定 (`.env.server`)
 
-> **⚠️ 重要**：v0.2.0以降、`.env.server`は**プロジェクトルートディレクトリのみ**に統合されました。以前の`packages/server/.env.server`の場所はサポートされなくなりました。
+> **⚠️ 重要**: v0.2.0以降、`.env.server` は **プロジェクトルートディレクトリのみ** に統合されました。以前の `packages/server/.env.server` の場所はサポートされなくなりました。
 
-**ファイルの場所**：`.env.server`は**プロジェクトルートディレクトリ**にある必要があります。
+**ファイル場所**: `.env.server` は **プロジェクトルートディレクトリ** にある必要があります。
 
 ```
 sap-mcp/
-├── .env.server              ← 設定ファイル（唯一の場所 - ここに作成）
+├── .env.server              ← 設定ファイル (ここだけに作成)
 ├── .env.server.example      ← サンプルテンプレート
 ├── packages/
 │   └── server/
 └── README.md
 ```
 
-**設定手順**：
+**セットアップ手順**:
 
 <details open>
-<summary><b>🪟 Windows（PowerShell/コマンドプロンプト）</b></summary>
+<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
 
 ```powershell
-# プロジェクトルートに移動
+# プロジェクトルートへ移動
 cd C:\path\to\sap-mcp
 
 # 環境テンプレートをコピー
 copy .env.server.example .env.server
 
-# メモ帳でSAP資格情報を使用して設定を編集
+# メモ帳でSAPクレデンシャルを設定編集
 notepad .env.server
 
-# または、お好みのエディタを使用してください：
+# またはお好みのエディタで:
 # code .env.server (VS Code)
 # notepad++ .env.server (Notepad++)
 
-# 注意：Windowsではファイル権限の管理方法が異なります
+# 注意: Windowsではファイル権限管理が異なります
 # ファイルがパブリックフォルダにないことを確認してください
-# .env.serverを右クリック > プロパティ > セキュリティでアクセスを制限
+# .env.server を右クリック > プロパティ > セキュリティ でアクセス制限
 ```
 
-**Windows固有の注意点：**
-- Windowsではパスにバックスラッシュ（`\`）を使用してください
-- PowerShellの実行ポリシーによりスクリプトがブロックされる場合があります（インストールセクションを参照）
-- `.env.server`をアクセスが制限されたユーザーフォルダに保存してください
-- ウイルス対策ソフトがファイルをブロックする場合は、Windows Defenderの除外設定を使用してください
+**Windows固有の注意点:**
+- Windowsではパスにバックスラッシュ (`\`) を使用
+- PowerShell実行ポリシーがスクリプトをブロックする可能性があります（インストールセクション参照）
+- `.env.server` はアクセス制限されたユーザーフォルダに保存してください
+- アンチウイルスがファイルをブロックする場合はWindows Defenderの除外を使用
 
 </details>
 
 <details>
-<summary><b>🍎 macOS（ターミナル）</b></summary>
+<summary><b>🍎 macOS (Terminal)</b></summary>
 
 ```bash
-# プロジェクトルートに移動
-cd /path/to/sap-mcp
+# プロジェクトルートへ移動
+cd /path/to/your/sap-mcp
 
 # 環境テンプレートをコピー
 cp .env.server.example .env.server
 
-# SAP資格情報を使用して設定を編集
+# SAPクレデンシャルを設定編集
 nano .env.server
-# または、お好みのエディタを使用してください：
+# またはお好みのエディタで:
 # vim .env.server
 # code .env.server (VS Code)
 # open -a TextEdit .env.server
 
-# 適切な権限を設定（セキュリティ上推奨）
+# 適切な権限を設定 (セキュリティ推奨)
 chmod 600 .env.server
 
-# 権限を確認
+# 権限確認
 ls -la .env.server
-# -rw-------（所有者のみ読み書き可能）と表示されるはずです
+# 表示: -rw------- (所有者のみ読み書き可能)
 ```
 
-**macOS固有の注意点：**
+**macOS固有の注意点:**
 - ファイル権限はUnixベースです（Linuxと同じ）
-- `chmod 600`により、自分だけがファイルを読み書きできるようになります
-- macOSは初回アクセス時に追加のセキュリティプロンプトを表示する場合があります
-- セキュリティを最大限に高めるために、ホームディレクトリに保存してください
+- `chmod 600` はあなたのユーザーのみが読み書きできるようにします
+- macOSは初回アクセス時に追加のセキュリティプロンプトを出す場合があります
+- 最良のセキュリティのためにホームディレクトリに保存してください
 
 </details>
 
 <details>
-<summary><b>🐧 Linux（Bash/Zsh）</b></summary>
+<summary><b>🐧 Linux (Bash/Zsh)</b></summary>
 
 ```bash
-# プロジェクトルートに移動
-cd /path/to/sap-mcp
+# プロジェクトルートへ移動
+cd /path/to/your/sap-mcp
 
 # 環境テンプレートをコピー
 cp .env.server.example .env.server
 
-# SAP資格情報を使用して設定を編集
+# SAPクレデンシャルを設定編集
 nano .env.server
-# または、お好みのエディタを使用してください：
+# またはお好みのエディタで:
 # vim .env.server
 # code .env.server (VS Code)
 # gedit .env.server (GNOME)
 
-# 適切な権限を設定（セキュリティ上必須）
+# 適切な権限を設定 (セキュリティに必須)
 chmod 600 .env.server
 
-# 権限を確認
+# 権限確認
 ls -la .env.server
-# -rw-------（所有者のみ読み書き可能）と表示されるはずです
+# 表示: -rw------- (所有者のみ読み書き可能)
 
-# オプション：ファイルがグローバルに読み取り可能でないことを確認
+# オプション: ファイルがワールドリーダブルでないことを確認
 stat .env.server
 ```
 
-**Linux固有の注意点：**
-- `chmod 600`はセキュリティ上重要です（所有者のみアクセス可能）
-- SELinux/AppArmorは追加の設定が必要な場合があります
+**Linux固有の注意点:**
+- `chmod 600` はセキュリティに重要です（所有者のみアクセス可能）
+- SELinux/AppArmorは追加設定が必要な場合があります
 - ファイルはサーバーを実行するユーザーが所有している必要があります
-- このファイルで編集または実行するために`sudo`を使用しないでください
+- このファイルの編集や実行に `sudo` を使用しないでください
 
 </details>
 
 ---
 
-**必須の環境変数**：
+**必須環境変数**:
 ```bash
-# SAPシステム接続（単一SAPシステム）
+# SAPシステム接続 (単一SAPシステム)
 SAP_HOST=your-sap-host.com          # SAP Gatewayホスト名
-SAP_PORT=443                         # HTTPSポート（通常は443または8443）
+SAP_PORT=443                         # HTTPSポート (通常 443 または 8443)
 SAP_USERNAME=your-username           # SAPユーザーID
 SAP_PASSWORD=your-password           # SAPパスワード
-SAP_CLIENT=100                       # SAPクライアント番号（例：100、800）
+SAP_CLIENT=100                       # SAPクライアント番号 (例: 100, 800)
 
 # セキュリティ設定
-SAP_VERIFY_SSL=true                  # SSL証明書検証を有効にする（推奨）
-SAP_TIMEOUT=30                       # リクエストタイムアウト（秒）
+SAP_VERIFY_SSL=true                  # SSL証明書検証を有効化 (推奨)
+SAP_TIMEOUT=30                       # リクエストタイムアウト (秒)
 
-# オプション：接続プーリング
-SAP_MAX_CONNECTIONS=10               # 最大同時接続数（オプション）
-SAP_RETRY_ATTEMPTS=3                 # 失敗時の再試行回数（オプション）
+# オプション: 接続プーリング
+SAP_MAX_CONNECTIONS=10               # 最大同時接続数 (オプション)
+SAP_RETRY_ATTEMPTS=3                 # 失敗時の再試行回数 (オプション)
 ```
 
-**セキュリティのベストプラクティス**：
-- ✅ `.env.server`をバージョン管理にコミットしないでください（`.gitignore`に既にあります）
+**セキュリティベストプラクティス**:
+- ✅ `.env.server` をバージョン管理にコミットしないでください (すでに `.gitignore` に含まれています)
 - ✅ 強力でユニークなパスワードを使用してください
-- ✅ 本番環境ではSSL検証を有効にしてください（`SAP_VERIFY_SSL=true`）
-- ✅ ファイル権限を制限してください：`chmod 600 .env.server`
+- ✅ 本番環境ではSSL検証を有効にしてください (`SAP_VERIFY_SSL=true`)
+- ✅ ファイル権限を制限してください: `chmod 600 .env.server`
 
-#### 2.2. SAP Gatewayサービス設定（`services.yaml`）
+#### 2.2. SAP Gatewayサービス設定 (`services.yaml`)
 
-MCPサーバーがアクセスできるSAP Gatewayサービス（ODataサービス）を設定します。
+MCPサーバーがアクセスできるSAP Gatewayサービス (ODataサービス) を設定します。
 
-**場所**：`packages/server/config/services.yaml`
+**場所**: `packages/server/config/services.yaml`
 
 ```bash
-# 設定例をコピー
+# 設定サンプルをコピー
 cp packages/server/config/services.yaml.example packages/server/config/services.yaml
 
 # サービス設定を編集
 vim packages/server/config/services.yaml
 ```
 
-**基本設定例**：
+**基本設定例**:
 
 ```yaml
 # Gateway URL設定
@@ -910,7 +966,7 @@ gateway:
   # ODataサービスのベースURLパターン
   base_url_pattern: "https://{host}:{port}/sap/opu/odata"
 
-  # メタデータエンドポイントのサフィックス
+  # メタデータエンドポイントサフィックス
   metadata_suffix: "/$metadata"
 
   # サービスカタログパス
@@ -918,83 +974,55 @@ gateway:
 
   # 認証エンドポイント設定
   auth_endpoint:
-    # 推奨：カタログメタデータを使用（特定のサービスなしで動作）
+    # 推奨: カタログメタデータを使用 (特定のサービスなしで動作)
     use_catalog_metadata: true
 
-    # オプション：認証に特定のサービスを使用（カタログが利用できない場合）
+    # オプション: 認証に特定のサービスを使用 (カタログが利用不可の場合)
     # use_catalog_metadata: false
-    # service_id: Z_SALES_ORDER_GENAI_SRV
-    # entity_name: zsd004Set
+    # service_id: Z_TRAVEL_RECOMMENDATIONS_SRV
+    # entity_name: AirlineSet
 
 # SAP ODataサービス
 services:
-  # 例：販売注文サービス
-  - id: Z_SALES_ORDER_GENAI_SRV          # 一意のサービス識別子
-    name: "Sales Order GenAI Service"     # 人間が読める名前
-    path: "/SAP/Z_SALES_ORDER_GENAI_SRV"  # サービスパス
-    version: v2                            # ODataバージョン（v2またはv4）
-    description: "販売注文管理サービス"
-
-    # このサービスのエンティティセット
-    entities:
-      - name: zsd004Set                    # エンティティセット名
-        key_field: Vbeln                   # プライマリキーフィールド
-        description: "販売注文"
-        default_select:                    # デフォルトで選択するフィールド
-          - Vbeln      # 販売注文番号
-          - Erdat      # 作成日
-          - Ernam      # 作成者
-          - Netwr      # 正味価格
-          - Waerk      # 通貨
-
-    # オプション：このサービスのカスタムヘッダー
-    custom_headers: {}
-```
-
-**複数サービスの追加**：
-
-```yaml
-services:
-  # 販売注文サービス
-  - id: Z_SALES_ORDER_GENAI_SRV
-    name: "Sales Order Service"
-    path: "/SAP/Z_SALES_ORDER_GENAI_SRV"
+  # SFLIGHTデモサービス (旅行推奨)
+  - id: Z_TRAVEL_RECOMMENDATIONS_SRV
+    name: "Travel Recommendations Service (SFLIGHT)"
+    path: "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV"
     version: v2
+    description: "OData service for the SFLIGHT demo dataset."
     entities:
-      - name: zsd004Set
-        key_field: Vbeln
-        description: "販売注文"
-
-  # 顧客マスターサービス
-  - id: Z_CUSTOMER_SRV
-    name: "Customer Master Service"
-    path: "/SAP/Z_CUSTOMER_SRV"
-    version: v2
-    entities:
-      - name: CustomerSet
-        key_field: Kunnr
-        description: "顧客マスターレコード"
+      - name: AirlineSet
+        key_field: CARRID
+        description: "Airlines (e.g., LH, AA)"
         default_select:
-          - Kunnr      # 顧客番号
-          - Name1      # 名前
-          - Land1      # 国
+          - CARRID
+          - CARRNAME
+          - CURRCODE
+          - URL
+      - name: AirportSet
+        key_field: ID
+        description: "Airports (e.g., FRA, JFK)"
+        default_select:
+          - ID
+          - NAME
+          - CITY
+          - COUNTRY
+      - name: FlightSet
+        key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}'"
+        description: "Specific flights on a given date"
+      - name: BookingSet
+        key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}',BOOKID='{BOOKID}'"
+        description: "Individual flight bookings"
 
-  # 品目マスターサービス
-  - id: Z_MATERIAL_SRV
-    name: "Material Master Service"
-    path: "/SAP/Z_MATERIAL_SRV"
-    version: v2
-    entities:
-      - name: MaterialSet
-        key_field: Matnr
-        description: "品目マスター"
+    # オプション: このサービスのカスタムヘッダー
+    custom_headers: {}
 ```
 
 #### 2.3. 認証エンドポイントオプション
 
-`auth_endpoint`設定は、MCPサーバーがSAPと認証する方法を制御します。
+`auth_endpoint` 設定は、MCPサーバーがSAPで認証する方法を制御します。
 
-**オプション1：カタログメタデータ（推奨）**
+**オプション 1: カタログメタデータ (推奨)**
 
 ```yaml
 gateway:
@@ -1002,152 +1030,135 @@ gateway:
     use_catalog_metadata: true
 ```
 
-**利点**：
-- ✅ 特定のSAP Gatewayサービスを必要とせずに動作します
-- ✅ SAPシステム間でより柔軟でポータブルです
+**利点**:
+- ✅ 特定のSAP Gatewayサービスを必要とせずに動作
+- ✅ SAPシステム間でより柔軟で移植性が高い
 - ✅ サービスに依存しない認証
-- ✅ カスタムサービス展開への依存なし
+- ✅ カスタムサービスのデプロイに依存しない
 
-**認証フロー**：
-- CSRFトークン：`/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
-- 検証：`/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
+**認証フロー**:
+- CSRFトークン: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
+- 検証: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
 ---
 
-**オプション2：サービス固有の認証**
+**オプション 2: サービス固有の認証**
 
 ```yaml
 gateway:
   auth_endpoint:
     use_catalog_metadata: false
-    service_id: Z_SALES_ORDER_GENAI_SRV    # 以下のサービスIDと一致する必要があります
-    entity_name: zsd004Set                  # そのサービスのエンティティである必要があります
+    service_id: Z_TRAVEL_RECOMMENDATIONS_SRV    # 以下のサービスIDと一致する必要があります
+    entity_name: AirlineSet                     # そのサービスのエンティティである必要があります
 ```
 
-**利点**：
+**利点**:
 - ✅ 明示的なサービスベースの認証
-- ✅ カタログサービスが利用できない場合に動作します（まれ）
+- ✅ カタログサービスが利用できない場合に動作 (稀)
 
-**欠点**：
-- ❌ 指定されたサービスが展開されている必要があります
-- ❌ サービスが変更された場合の柔軟性が低い
-- ❌ サービス名が変更された場合は設定を更新する必要があります
+**欠点**:
+- ❌ 指定されたサービスがデプロイされている必要がある
+- ❌ サービスが変更された場合に柔軟性が低い
+- ❌ サービス名が変更された場合に設定を更新する必要がある
 
-**認証フロー**：
-- CSRFトークン：`/SAP/Z_SALES_ORDER_GENAI_SRV/zsd004Set`
-- 検証：`/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
+**認証フロー**:
+- CSRFトークン: `/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV/AirlineSet`
+- 検証: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
 ---
 
-**推奨事項**：認証に特定のサービスを使用する特別な理由がない限り、**オプション1（カタログメタデータ）**を使用してください。
+**推奨**: 特定のサービスを認証に使用する特別な理由がない限り、**オプション 1 (カタログメタデータ)** を使用してください。
 
-### 3. サーバーの実行
+### 3. サーバー実行
 
 <details open>
-<summary><b>🪟 Windows（PowerShell/コマンドプロンプト）</b></summary>
+<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
 
 ```powershell
-# 仮想環境をアクティブ化
+# 仮想環境アクティベート
 .venv\Scripts\activate
-# またはPowerShellで：
+# または PowerShell で:
 # .venv\Scripts\Activate.ps1
 
-# stdioサーバーを実行（推奨）
+# stdioサーバー実行 (推奨)
 sap-mcp-server-stdio
 
 # またはPythonで直接実行
 python -m sap_mcp_server.transports.stdio
 
-# 完了したら非アクティブ化
+# 終了時に非アクティブ化する場合
 deactivate
 ```
 
-**Windows固有の注意点：**
-- パスにはバックスラッシュ（`\`）を使用してください
+**Windows固有の注意点:**
+- パスにはバックスラッシュ (`\`) を使用
 - PowerShellは実行ポリシーの変更が必要な場合があります
 - サーバーは現在のターミナルウィンドウで実行されます
-- `Ctrl+C`を押してサーバーを停止します
+- サーバーを停止するには `Ctrl+C` を押します
 
 </details>
 
 <details>
-<summary><b>🍎 macOS（ターミナル）</b></summary>
+<summary><b>🍎 macOS (Terminal)</b></summary>
 
 ```bash
-# 仮想環境をアクティブ化
+# 仮想環境アクティベート
 source .venv/bin/activate
 
-# stdioサーバーを実行（推奨）
+# stdioサーバー実行 (推奨)
 sap-mcp-server-stdio
 
 # またはPythonで直接実行
 python3 -m sap_mcp_server.transports.stdio
 
-# 完了したら非アクティブ化
+# 終了時に非アクティブ化する場合
 deactivate
 ```
 
-**macOS固有の注意点：**
-- `python`の代わりに`python3`を使用してください
+**macOS固有の注意点:**
+- `python` の代わりに `python3` を使用
 - サーバーは現在のターミナルセッションで実行されます
-- `Cmd+C`または`Ctrl+C`を押してサーバーを停止します
-- サーバーの実行中はターミナルを開いたままにしておく必要があります
+- サーバーを停止するには `Cmd+C` または `Ctrl+C` を押します
+- サーバー実行中はターミナルを開いたままにする必要があります
 
 </details>
 
 <details>
-<summary><b>🐧 Linux（Bash/Zsh）</b></summary>
+<summary><b>🐧 Linux (Bash/Zsh)</b></summary>
 
 ```bash
-# 仮想環境をアクティブ化
+# 仮想環境アクティベート
 source .venv/bin/activate
 
-# stdioサーバーを実行（推奨）
+# stdioサーバー実行 (推奨)
 sap-mcp-server-stdio
 
 # またはPythonで直接実行
 python3 -m sap_mcp_server.transports.stdio
 
-# 完了したら非アクティブ化
+# 終了時に非アクティブ化する場合
 deactivate
 ```
 
-**Linux固有の注意点：**
-- `python`の代わりに`python3`を使用してください
+**Linux固有の注意点:**
+- `python` の代わりに `python3` を使用
 - サーバーは現在のターミナルセッションで実行されます
-- `Ctrl+C`を押してサーバーを停止します
-- `nohup`または`systemd`サービスを使用してバックグラウンドで実行できます
+- サーバーを停止するには `Ctrl+C` を押します
+- `nohup` や `systemd` サービスでバックグラウンド実行可能
 
 </details>
-
----
-
-### 4. インストールの確認
-
-```bash
-# テストを実行
-cd packages/server
-python -m pytest -v
-
-# カバレッジレポート付き
-python -m pytest --cov=sap_mcp_server --cov-report=term-missing
-
-# 特定のテストカテゴリ
-python -m pytest -m unit          # ユニットテストのみ
-python -m pytest -m integration   # 統合テストのみ
-```
 
 ---
 
 ## 🤖 Gemini CLIとの統合
 
-> **📖 公式ドキュメント**：Gemini CLIの詳細については、<a href="https://geminicli.com/" target="_blank">https://geminicli.com/</a>をご覧ください。
+> **📖 公式ドキュメント**: Gemini CLIの詳細については、<a href="https://geminicli.com/" target="_blank">https://geminicli.com/</a> をご覧ください。
 
 ### 前提条件
 
-- Node.js 18+およびnpmがインストールされていること
-- SAP MCPサーバーがインストールされていること（上記のクイックスタートを参照）
-- Gemini APIアクセス用のGoogleアカウント
+- Node.js 18+ および npm がインストールされていること
+- SAP MCPサーバーがインストールされていること (上記のクイックスタート参照)
+- Gemini APIアクセスのためのGoogleアカウント
 
 ### 1. Gemini CLIのインストール
 
@@ -1155,25 +1166,25 @@ python -m pytest -m integration   # 統合テストのみ
 # Gemini CLIをグローバルにインストール
 npm install -g @google/gemini-cli
 
-# インストールの確認
+# インストール確認
 gemini --version
 ```
 
 ### 2. Gemini CLIの認証
 
-**オプションA：Gemini APIキーの使用（入門におすすめ）**
+**オプション A: Gemini APIキーの使用 (開始に推奨)**
 
-1. [Google AI Studio](https://aistudio.google.com/apikey)からAPIキーを取得します
-2. 環境変数を設定します：
+1. [Google AI Studio](https://aistudio.google.com/apikey) からAPIキーを取得
+2. 環境変数を設定:
 
 ```bash
 export GEMINI_API_KEY="your-api-key-here"
 ```
 
-**オプションB：Google Cloudの使用（本番環境用）**
+**オプション B: Google Cloudの使用 (本番用)**
 
 ```bash
-# まずGoogle Cloud CLIをインストール
+# Google Cloud CLIを最初にインストール
 gcloud auth application-default login
 
 # プロジェクトを設定
@@ -1183,28 +1194,28 @@ export GOOGLE_CLOUD_LOCATION="us-central1"
 
 ### 3. SAP MCPサーバーの登録
 
-**方法A：絶対パスの使用（仮想環境におすすめ）**
+**方法 A: 絶対パスの使用 (仮想環境に推奨)**
 
-仮想環境にサーバーをインストールした場合は、実行ファイルの絶対パスを使用します：
+サーバーを仮想環境にインストールした場合、実行可能ファイルへの絶対パスを使用します:
 
-1. **絶対パスを見つける**：
+1. **絶対パスを見つける**:
 ```bash
-# SAP MCPディレクトリに移動
-cd /path/to/sap-mcp
+# SAP MCPディレクトリへ移動
+cd /path/to/your/sap-mcp
 
 # 絶対パスを取得
 pwd
-# 出力例：/Users/sanggyulee/my-project/python-project/sap-mcp
+# 出力例: /path/to/your/sap-mcp
 ```
 
-2. **`~/.gemini/settings.json`を編集**：
+2. **`~/.gemini/settings.json` を編集**:
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/Users/sanggyulee/my-project/python-project/sap-mcp/.venv/bin/sap-mcp-server-stdio",
-      "cwd": "/Users/sanggyulee/my-project/python-project/sap-mcp",
-      "description": "OData統合用のSAP Gateway MCPサーバー",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "cwd": "/path/to/your/sap-mcp",
+      "description": "SAP Gateway MCP Server for OData integration",
       "timeout": 30000,
       "trust": false
     }
@@ -1212,50 +1223,50 @@ pwd
 }
 ```
 
-**`/Users/sanggyulee/my-project/python-project/sap-mcp`を実際のプロジェクトパスに置き換えてください。**
+**`/path/to/your/sap-mcp` を実際のプロジェクトパスに置き換えてください。**
 
-> **📝 注意**：`cwd`（現在の作業ディレクトリ）パラメータは、`.env.server`ファイルの検出に**必須**です。これにより、サーバーが設定ファイルのあるプロジェクトルートディレクトリから実行されることが保証されます。
+> **📝 注意**: `cwd` (カレントワーキングディレクトリ) パラメータは、`.env.server` ファイル検出のために **絶対に重要** です。これをプロジェクトルートディレクトリ (例: `/Users/username/projects/sap-mcp`) に設定 **しなければなりません**。省略または誤っている場合、サーバーはクレデンシャルをロードできません。
 
-3. **パスの確認**：
+3. **パスの確認**:
 ```bash
-# コマンドが機能するかテスト
+# コマンドが動作するかテスト
 /path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio --help
 
-# 登録の確認
+# 登録確認
 gemini mcp list
-# 期待される出力：✓ sap-server: ... (stdio) - 接続済み
+# 期待される出力: ✓ sap-server: ... (stdio) - Connected
 ```
 
 ---
 
-**方法B：CLIコマンドの使用（グローバルにインストールされている場合）**
+**方法 B: CLIコマンドの使用 (グローバルインストールの場合)**
 
-`sap-mcp-server-stdio`がシステムのPATHにある場合：
+`sap-mcp-server-stdio` がシステムPATHにある場合:
 
 ```bash
-# サーバーを登録
+# サーバー登録
 gemini mcp add sap-server sap-mcp-server-stdio
 
-# 登録の確認
+# 登録確認
 gemini mcp list
 ```
 
-**注意**：この方法は、仮想環境をPATHに追加した場合、またはパッケージをグローバルにインストールした場合にのみ機能します。
+**注意**: この方法は、仮想環境をPATHに追加したか、パッケージをグローバルにインストールした場合のみ機能します。
 
 ---
 
-**方法C：Pythonモジュールパスの使用**
+**方法 C: Pythonモジュールパスの使用**
 
-Pythonモジュールを使用する代替アプローチ：
+Pythonモジュールを使用した代替アプローチ:
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/python",
+      "command": "/path/to/your/sap-mcp/.venv/bin/python",
       "args": ["-m", "sap_mcp_server.transports.stdio"],
-      "cwd": "/path/to/sap-mcp/packages/server",
-      "description": "SAP Gateway MCPサーバー",
+      "cwd": "/path/to/your/sap-mcp/packages/server",
+      "description": "SAP Gateway MCP Server",
       "timeout": 30000,
       "trust": false
     }
@@ -1263,37 +1274,37 @@ Pythonモジュールを使用する代替アプローチ：
 }
 ```
 
-### 4. SAP MCPとGemini CLIの使用開始
+### 4. Gemini CLIでSAP MCPの使用を開始
 
 ```bash
-# Gemini CLIを開始
+# Gemini CLI起動
 gemini
 
-# MCPサーバーのステータスを確認
+# MCPサーバー状態確認
 > /mcp
 
-# 利用可能なSAPツールを表示
+# 利用可能なSAPツール表示
 > /mcp desc
 
-# 例：SAPの注文をクエリ
-> SAPツールを使用して認証し、注文番号91000043をクエリします
+# 例: SAP航空会社をクエリ
+> SAPツールを使用して認証し、すべての航空会社を表示して
 
-# 例：利用可能なSAPサービスを一覧表示
+# 例: 利用可能なSAPサービス一覧
 > どのようなSAPサービスが利用可能ですか？
 
-# 例：顧客詳細を取得
-> SAPから顧客CUST001の詳細を取得します
+# 例: 空港詳細取得
+> フランクフルト空港 (FRA) の詳細を取得して
 ```
 
 ### 高度な設定
 
-**信頼できるサーバーの自動承認を有効にする**
+**信頼できるサーバーの自動承認を有効化**
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "trust": true,
       "timeout": 30000
     }
@@ -1301,7 +1312,7 @@ gemini
 }
 ```
 
-**注意**：各ツール呼び出しの承認プロンプトをスキップするには、`"trust": true`を設定します。信頼できるサーバーに対してのみ有効にしてください。
+**注意**: `"trust": true` を設定すると、各ツール呼び出しの承認プロンプトをスキップします。信頼できるサーバーに対してのみ有効にしてください。
 
 ---
 
@@ -1311,7 +1322,7 @@ gemini
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "includeTools": ["sap_authenticate", "sap_query"],
       "excludeTools": ["sap_list_services"],
       "timeout": 30000
@@ -1320,20 +1331,20 @@ gemini
 }
 ```
 
-**使用例**：
-- `includeTools`：特定のツールのみを許可（ホワイトリスト）
-- `excludeTools`：特定のツールをブロック（ブラックリスト）
+**ユースケース**:
+- `includeTools`: 特定のツールのみ許可 (ホワイトリスト)
+- `excludeTools`: 特定のツールをブロック (ブラックリスト)
 - 両方を同時に使用することはできません
 
 ---
 
-**環境変数を追加（オプション）**
+**環境変数の追加 (オプション)**
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
       "env": {
         "SAP_HOST": "${SAP_HOST}",
         "SAP_USERNAME": "${SAP_USERNAME}",
@@ -1345,50 +1356,50 @@ gemini
 }
 ```
 
-**注意**：`settings.json`の環境変数は`.env.server`の値を上書きします。セキュリティ上の理由から推奨されません。代わりに`.env.server`ファイルを使用してください。
+**注意**: `settings.json` 内の環境変数は `.env.server` の値を上書きします。セキュリティ上の理由から推奨されません - 代わりに `.env.server` ファイルを使用することを推奨します。
 
 ---
 
-**遅いネットワークのタイムアウトを増やす**
+**低速ネットワーク向けにタイムアウトを延長**
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
-      "timeout": 60000,  // 60秒（デフォルト：30000）
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "timeout": 60000,  // 60秒 (デフォルト: 30000)
       "trust": false
     }
   }
 }
 ```
 
-**増やす場合**：
-- 遅いネットワーク接続
+**延長すべき場合**:
+- 低速なネットワーク接続
 - 大規模なデータクエリ
 - 複雑なSAP操作
 - 頻繁なタイムアウトエラー
 
 ### トラブルシューティング
 
-**問題：サーバーが「切断済み」ステータスを表示する**
+**問題: サーバーが "Disconnected" (切断) 状態を示す**
 
 ```bash
-# MCPサーバーのステータスを確認
+# MCPサーバー状態確認
 gemini mcp list
-# ✗ sap-server: sap-mcp-server-stdio (stdio) - 切断済みと表示された場合
+# 表示: ✗ sap-server: sap-mcp-server-stdio (stdio) - Disconnected
 ```
 
-**解決策1：絶対パスを使用する（最も一般的）**
+**解決策 1: 絶対パスを使用 (最も一般的)**
 
-コマンドは仮想環境にある可能性が高いです。`~/.gemini/settings.json`を更新してください：
+コマンドが仮想環境内にある可能性があります。`~/.gemini/settings.json` を更新:
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
-      "command": "/full/path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio",
-      "description": "SAP Gateway MCPサーバー",
+      "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
+      "description": "SAP Gateway MCP Server",
       "timeout": 30000,
       "trust": false
     }
@@ -1396,54 +1407,54 @@ gemini mcp list
 }
 ```
 
-**絶対パスを見つける**：
+**絶対パスを見つける**:
 ```bash
-# SAP MCPディレクトリに移動
-cd /path/to/sap-mcp
+# SAP MCPディレクトリへ移動
+cd /path/to/your/sap-mcp
 
-# フルパスを取得
+# フルパス取得
 pwd
-# 例：/Users/sanggyulee/my-project/python-project/sap-mcp
+# 例: /path/to/your/sap-mcp
 
-# コマンドが存在することを確認
+# コマンド存在確認
 ls -la .venv/bin/sap-mcp-server-stdio
 ```
 
 ---
 
-**問題：PATHにコマンドが見つからない**
+**問題: コマンドがPATHに見つからない**
 
 ```bash
-# サーバーを直接テスト
+# サーバー直接テスト
 sap-mcp-server-stdio
-# エラー：コマンドが見つかりません
+# エラー: command not found
 
-# コマンドが存在するか確認
+# コマンド存在確認
 which sap-mcp-server-stdio
-# 戻り値：コマンドが見つかりません
+# 戻り値: command not found
 ```
 
-**解決策2：仮想環境を確認する**
+**解決策 2: 仮想環境を確認**
 
 ```bash
 # 仮想環境が存在するか確認
 ls -la .venv/bin/sap-mcp-server-stdio
 
-# 存在する場合は、settings.jsonで絶対パスを使用
-# 存在しない場合は、再インストール：
+# 存在する場合、settings.jsonで絶対パスを使用
+# 存在しない場合、再インストール:
 cd packages/server
 pip install -e .
 ```
 
 ---
 
-**問題：認証エラーまたは`.env.server`が見つからない**
+**問題: 認証エラーまたは `.env.server` が見つからない**
 
 ```bash
-# .env.serverがPROJECT ROOTにあることを確認（packages/server/ではない）
+# .env.server がプロジェクトルート (packages/server/ ではない) に存在することを確認
 cat .env.server
 
-# 必須フィールド：
+# 必須フィールド:
 # SAP_HOST=your-host
 # SAP_PORT=443
 # SAP_USERNAME=your-username
@@ -1451,79 +1462,79 @@ cat .env.server
 # SAP_CLIENT=100
 ```
 
-**解決策3：ファイルの場所と資格情報を確認する**
+**解決策 3: ファイル場所とクレデンシャルを確認**
 
 ```bash
-# 1. .env.serverがプロジェクトルートにあることを確認
+# 1. .env.server がプロジェクトルートにあるか確認
 ls -la .env.server
-# /path/to/sap-mcp/.env.serverにあるはずです
+# 存在するべき場所: /path/to/sap-mcp/.env.server
 
-# 2. Gemini CLIのsettings.jsonに「cwd」パラメータがあることを確認
+# 2. Gemini CLI settings.json に "cwd" パラメータがあるか確認
 cat ~/.gemini/settings.json
-# 「cwd」: 「/path/to/sap-mcp」が含まれている必要があります
+# 含むべき: "cwd": "/path/to/sap-mcp"
 
-# 3. 手動で認証をテスト
+# 3. 手動で認証テスト
 source .venv/bin/activate
 python -c "from sap_mcp_server.config.settings import get_connection_config; print(get_connection_config())"
 ```
 
-**一般的な問題**：
+**よくある問題**:
 
-1. **「フィールドが必要です」エラー**：`.env.server`がロードされていません。確認してください：
-   - ファイルがプロジェクトルートに存在します：`/path/to/sap-mcp/.env.server`
-   - Gemini CLIの`settings.json`に正しい`cwd`パラメータがあります
-   - ファイルに適切な権限があります：`chmod 600 .env.server`
+1. **"Field required" エラー**: `.env.server` がロードされていません。確認事項:
+   - ファイルがプロジェクトルートに存在するか: `/path/to/your/sap-mcp/.env.server`
+   - Gemini CLI `settings.json` が正しい `cwd` パラメータを持っているか
+   - ファイルが適切な権限を持っているか: `chmod 600 .env.server`
 
-2. **401 Unauthorizedエラー**：v0.2.1（2025-01-22）で修正済み
-   - **以前の問題**：SAP Gatewayが`sap-client`パラメータなしのリクエストを拒否していました
-   - **現在のステータス**：自動的に処理されます - すべてのリクエストに`sap-client`パラメータが含まれます
-   - **確認**：v0.2.1以降に更新したことを確認してください
-   - **手動確認**：有効な資格情報で認証が成功するはずです
+2. **401 Unauthorized エラー**: v0.2.1 (2025-01-22) で修正済み
+   - **以前の問題**: SAP Gatewayが `sap-client` パラメータなしのリクエストを拒否していた
+   - **現在のステータス**: 自動的に処理 - すべてのリクエストに `sap-client` パラメータが含まれます
+   - **確認**: v0.2.1以降に更新されていることを確認してください
+   - **手動チェック**: 有効なクレデンシャルで認証が成功するはずです
 
 ---
 
-**問題：サーバーを再登録する必要がある**
+**問題: サーバーの再登録が必要**
 
 ```bash
 # 既存のサーバー設定を削除
 rm ~/.gemini/settings.json
 
-# または手動で編集してsap-serverエントリを削除
+# または手動で編集して sap-server エントリを削除
 ```
 
-**解決策4：クリーンな再登録**
+**解決策 4: クリーン再登録**
 
 ```bash
-# 方法1：設定を直接編集
+# 方法 1: 設定を直接編集
 vim ~/.gemini/settings.json
 
-# 方法2：絶対パスを使用（推奨）
-# 上記セクション3の「方法A：絶対パスの使用」に従ってください
+# 方法 2: 絶対パスを使用 (推奨)
+# 上記セクション3の "方法 A: 絶対パスの使用" に従う
 ```
 
 ---
 
-**クイック診断手順**
+**クイック診断ステップ**
 
-1. **サーバー実行可能ファイルを確認**：
+1. **サーバー実行ファイル確認**:
 ```bash
 /path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio --help
-# サーバーの起動メッセージが表示されるはずです
+# サーバー起動メッセージが表示されるはずです
 ```
 
-2. **Gemini CLI設定を確認**：
+2. **Gemini CLI設定確認**:
 ```bash
 cat ~/.gemini/settings.json | grep -A 5 "sap-server"
-# 「command」パスが正しいことを確認
+# "command" パスが正しいか確認
 ```
 
-3. **接続をテスト**：
+3. **接続テスト**:
 ```bash
 gemini mcp list
-# ✓ sap-server: ... - 接続済みと表示されるはずです
+# 表示: ✓ sap-server: ... - Connected
 ```
 
-4. **Gemini CLIでテスト**：
+4. **Gemini CLIでテスト**:
 ```bash
 gemini
 > /mcp
@@ -1533,58 +1544,58 @@ gemini
 
 ### Gemini CLIで利用可能なSAPツール
 
-登録すると、自然言語を通じてこれらのSAPツールを使用できます：
+登録後、自然言語を通じてこれらのSAPツールを使用できます:
 
 | ツール | 説明 | プロンプト例 |
 |------|-------------|----------------|
-| **sap_authenticate** | SAP Gatewayで認証 | 「SAPで認証」 |
-| **sap_query** | ODataフィルターでSAPエンティティをクエリ | 「顧客CUST001のすべての注文をクエリ」 |
-| **sap_get_entity** | キーで特定のエンティティを取得 | 「注文91000043の詳細を取得」 |
-| **sap_list_services** | 利用可能なSAPサービスを一覧表示 | 「利用可能なSAPサービスは何ですか？」 |
+| **sap_authenticate** | SAP Gatewayで認証 | "SAPで認証して" |
+| **sap_query** | ODataフィルタでSAPエンティティをクエリ | "旅行推奨サービスを使ってすべての航空会社を表示して" |
+| **sap_get_entity** | キーで特定のエンティティを取得 | "フランクフルト空港 (FRA) の詳細を取得して" |
+| **sap_list_services** | 利用可能なSAPサービスを一覧表示 | "どのようなSAPサービスが利用可能ですか？" |
 
 ### ワークフロー例
 
-**1. 注文照会ワークフロー**
+**1. フライト照会ワークフロー**
 
 ```bash
 gemini
 
-> SAPに接続し、先週顧客CUST001が発注したすべての注文を検索します
-# Geminiは：
-# 1. sap_authenticateを呼び出します
-# 2. 適切なフィルターでsap_queryを呼び出します
-# 3. 結果をフォーマットして表示します
+> SAPに接続してすべてのルフトハンザ便を見つけて
+# Geminiの動作:
+# 1. sap_authenticate を呼び出し
+# 2. フィルタ "CARRID eq 'LH'" で FlightSet に対して sap_query を呼び出し
+# 3. 結果をフォーマットして提示
 ```
 
-**2. 顧客分析**
+**2. 空港分析**
 
 ```bash
-> SAPデータを使用して、注文量で上位5社の顧客を分析します
-# Geminiは：
-# 1. 認証します
-# 2. 顧客の注文をクエリします
-# 3. データを集計して分析します
-# 4. インサイトを提示します
+> フランクフルト空港の詳細を取得し、利用可能な接続を表示して
+# Geminiの動作:
+# 1. 認証
+# 2. AirportSet に対して 'FRA' で sap_get_entity を呼び出し
+# 3. ConnectionSet に対して sap_query を呼び出し
+# 4. インサイトを提示
 ```
 
 **3. サービス検出**
 
 ```bash
 > システムで利用可能なSAPサービスとエンティティセットは何ですか？
-# Geminiは：
-# 1. sap_list_servicesを呼び出します
-# 2. サービスカタログをフォーマットします
+# Geminiの動作:
+# 1. sap_list_services を呼び出し
+# 2. サービスカタログをフォーマット
 ```
 
 ---
 
 ## 🔧 利用可能なツール
 
-### 1. SAP認証
+### 1. SAP Authenticate (認証)
 
-`.env.server`の資格情報を使用してSAP Gatewayシステムで認証します。
+`.env.server` のクレデンシャルを使用してSAP Gatewayシステムで認証します。
 
-**リクエスト**：
+**リクエスト**:
 ```json
 {
   "name": "sap_authenticate",
@@ -1592,84 +1603,86 @@ gemini
 }
 ```
 
-**レスポンス**：
+**レスポンス**:
 ```json
 {
   "success": true,
   "session_id": "abc123...",
-  "message": "SAPで正常に認証されました"
+  "message": "Successfully authenticated with SAP Gateway",
+  "host": "example.sap.corp",
+  "client": "100"
 }
 ```
 
 ---
 
-### 2. SAPクエリ
+### 2. SAP Query (クエリ)
 
-ODataフィルター、選択、ページネーションを使用してSAPエンティティをクエリします。
+ODataフィルタ、選択、ページネーションを使用してSAPエンティティをクエリします。
 
-**リクエスト**：
+**リクエスト**:
 ```json
 {
   "name": "sap_query",
   "arguments": {
-    "service": "Z_SALES_ORDER_GENAI_SRV",
-    "entity_set": "zsd004Set",
-    "filter": "OrderID eq '91000043'",
-    "select": "OrderID,Bstnk,Kunnr,Matnr",
+    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+    "entity_set": "AirlineSet",
+    "filter": "CARRID eq 'LH'",
+    "select": "CARRID,CARRNAME,CURRCODE",
     "top": 10,
     "skip": 0
   }
 }
 ```
 
-**レスポンス**：
+**レスポンス**:
 ```json
 {
-  "data": {
-    "d": {
-      "results": [
-        {
-          "OrderID": "91000043",
-          "Bstnk": "PO-2024-001",
-          "Kunnr": "CUST001",
-          "Matnr": "MAT-12345"
-        }
-      ]
-    }
-  },
-  "count": 1
+  "d": {
+    "results": [
+      {
+        "CARRID": "LH",
+        "CARRNAME": "Lufthansa",
+        "CURRCODE": "EUR"
+      }
+    ]
+  }
 }
 ```
 
 ---
 
-### 3. SAPエンティティ取得
+### 3. SAP Get Entity (エンティティ取得)
 
-キーで特定のエンティティを取得します。
+キーによって特定のエンティティを取得します。
 
-**リクエスト**：
+**リクエスト**:
 ```json
 {
   "name": "sap_get_entity",
   "arguments": {
-    "service": "Z_SALES_ORDER_GENAI_SRV",
-    "entity_set": "zsd004Set",
-    "entity_key": "91000043"
+    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+    "entity_set": "AirportSet",
+    "entity_key": "'FRA'"
   }
 }
 ```
 
-**レスポンス**：
+**レスポンス**:
 ```json
 {
+  "success": true,
+  "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+  "entity_set": "AirportSet",
+  "entity_key": "'FRA'",
+  "key_field": "ID",
   "data": {
     "d": {
-      "OrderID": "91000043",
-      "Bstnk": "PO-2024-001",
-      "Kunnr": "CUST001",
-      "Matnr": "MAT-12345",
-      "Wmeng": "100",
-      "Vkorg": "1000"
+      "ID": "FRA",
+      "NAME": "Frankfurt International",
+      "CITY": "Frankfurt",
+      "COUNTRY": "DE",
+      "TIME_ZONE": "CET"
     }
   }
 }
@@ -1677,11 +1690,11 @@ ODataフィルター、選択、ページネーションを使用してSAPエン
 
 ---
 
-### 4. SAPサービス一覧
+### 4. SAP List Services (サービス一覧)
 
 設定から利用可能なすべてのSAPサービスを一覧表示します。
 
-**リクエスト**：
+**リクエスト**:
 ```json
 {
   "name": "sap_list_services",
@@ -1689,17 +1702,33 @@ ODataフィルター、選択、ページネーションを使用してSAPエン
 }
 ```
 
-**レスポンス**：
+**レスポンス**:
 ```json
 {
+  "success": true,
+  "count": 1,
   "services": [
     {
-      "name": "Z_SALES_ORDER_GENAI_SRV",
-      "description": "GenAI用販売注文サービス",
-      "entity_sets": ["zsd004Set", "OrderHeaderSet"]
+      "id": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+      "name": "Travel Recommendations Service (SFLIGHT)",
+      "path": "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV",
+      "version": "v2",
+      "description": "OData service for the SFLIGHT demo dataset.",
+      "entities": [
+        {
+          "name": "AirlineSet",
+          "key_field": "CARRID",
+          "description": "Airlines (e.g., LH, AA)"
+        },
+        {
+          "name": "AirportSet",
+          "key_field": "ID",
+          "description": "Airports (e.g., FRA, JFK)"
+        }
+      ]
     }
   ],
-  "count": 1
+  "source": "services.yaml configuration"
 }
 ```
 
@@ -1718,7 +1747,7 @@ tools = tool_registry.list_tools()
 for tool in tools:
     print(f"- {tool.name}: {tool.description}")
 
-# ツールを呼び出す
+# ツール呼び出し
 request = ToolCallRequest(
     name="sap_list_services",
     arguments={}
@@ -1727,7 +1756,7 @@ result = await tool_registry.call_tool(request)
 print(result)
 ```
 
-### MCPクライアントの例
+### MCPクライアント例
 
 ```python
 from mcp import StdioServerParameters
@@ -1743,19 +1772,19 @@ async def main():
 
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
-            # セッションを初期化
+            # セッション初期化
             await session.initialize()
 
             # 認証
             auth_result = await session.call_tool("sap_authenticate", {})
 
-            # 注文をクエリ
+            # 航空会社クエリ
             entity_result = await session.call_tool(
-                "sap_get_entity",
+                "sap_query",
                 {
-                    "service": "Z_SALES_ORDER_GENAI_SRV",
-                    "entity_set": "zsd004Set",
-                    "entity_key": "91000043"
+                    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
+                    "entity_set": "AirlineSet",
+                    "filter": "CARRID eq 'LH'"
                 }
             )
             print(entity_result)
@@ -1766,16 +1795,16 @@ async def main():
 ```python
 from sap_mcp_server.utils.logger import setup_logging, get_logger
 
-# 本番環境（JSONログ）
+# 本番 (JSONログ)
 setup_logging(level="INFO", json_logs=True)
 
-# 開発環境（色付きコンソール）
+# 開発 (色付きコンソール)
 setup_logging(level="DEBUG", json_logs=False)
 
-# ロガーを使用
+# ロガー使用
 logger = get_logger(__name__)
-logger.info("サーバーが起動しました", port=8080, transport="stdio")
-logger.error("クエリに失敗しました", error=str(e), query=params)
+logger.info("Server started", port=8080, transport="stdio")
+logger.error("Query failed", error=str(e), query=params)
 ```
 
 ### 入力検証
@@ -1787,17 +1816,17 @@ from sap_mcp_server.utils.validators import (
     sanitize_input
 )
 
-# ODataフィルターを検証
-if validate_odata_filter("OrderID eq '12345'"):
+# ODataフィルタ検証
+if validate_odata_filter("CARRID eq 'LH'"):
     # 実行しても安全
     pass
 
-# ユーザー入力をサニタイズ
+# ユーザー入力サニタイズ
 safe_input = sanitize_input(user_data, max_length=1000)
 
-# エンティティキーを検証
+# エンティティキー検証
 if validate_entity_key(key):
-    # エンティティを取得
+    # エンティティ取得
     pass
 ```
 
@@ -1809,87 +1838,203 @@ if validate_entity_key(key):
 
 | レイヤー | 実装 | ステータス |
 |-------|---------------|--------|
-| **入力検証** | OData構文、SQLインジェクション防止 | ✅ |
-| **認証** | 資格情報検証、セッション管理 | ✅ |
+| **入力検証** | OData構文, SQLインジェクション防止 | ✅ |
+| **認証** | クレデンシャル検証, セッション管理 | ✅ |
 | **認可** | サービスアクセス制御 | ✅ |
-| **トランスポートセキュリティ** | SSL/TLS、証明書検証 | ✅ |
-| **監査ロギング** | 構造化ログ、機密データなし | ✅ |
+| **トランスポートセキュリティ** | SSL/TLS, 証明書検証 | ✅ |
+| **監査ログ** | 構造化ログ, 機密データなし | ✅ |
 
 ### ベストプラクティス
 
-1. **資格情報**：`.env.server`に保存し、gitにコミットしないでください
-2. **SSL/TLS**：本番環境では常に有効にしてください（`SAP_VERIFY_SSL=true`）
-3. **検証**：SAP呼び出しの前にすべての入力を検証してください
-4. **ロギング**：ログから機密データを除外してください
-5. **エラー処理**：クライアントに一般的なエラーメッセージを返してください
+1. **クレデンシャル**: `.env.server` に保存し、gitにコミットしない
+2. **SSL/TLS**: 本番環境では常に有効化 (`SAP_VERIFY_SSL=true`)
+3. **検証**: SAP呼び出し前にすべての入力を検証
+4. **ロギング**: ログから機密データを除外
+5. **エラーハンドリング**: クライアントへは一般的なエラーメッセージ
 
 ---
 
-## 🧪 テスト
+## 🎓 SAP SFLIGHT デモシナリオ
 
-### テスト構造
+### シナリオ概要
 
+SFLIGHTデータセットは、フライトスケジュール、航空会社、空港、予約のデータを含む、SAPが提供するサンプルデータベースです。データモデリングやサービス作成のテストやデモに最適なリソースです。
+
+このガイドは、このデータセットを公開するODataサービスがあることを前提としています。目標は、SAP MCPサーバーをこのサービスに接続し、AIエージェントや他のクライアントを使用して対話することです。
+
+**SAP公式ドキュメント:**
+- [SAP Documentation - Flight Model](https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm)
+- [SAP Help Portal - Flight Model](https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html)
+
+---
+
+### 前提条件
+
+1. **SAP MCPサーバーのインストール**: SAP MCPサーバーがインストールされ、Python環境が動作している必要があります。詳細な手順については、[クイックスタートセクション](#-quick-start)を参照してください。
+
+2. **SFLIGHT ODataサービス**: SFLIGHTデータセットを公開するアクティブなODataサービスがSAP Gatewayシステム上で利用可能である必要があります。
+   - このサービスを作成する必要がある場合は、詳細ガイドに従ってください: [OData Service Creation Guide: FLIGHT Demo Scenario](./docs/guides/odata-service-creation-flight-demo.md)。
+   - このガイドでは、ガイドで作成された `Z_TRAVEL_RECOMMENDATIONS_SRV` という名前のサービスを想定しています。
+
+---
+
+### ODataサービス作成ガイド
+
+このガイドでは、SAP Gateway Service Builder (`SEGW`) を使用してSAPシステムでODataサービスを作成し、SAP S/4HANA Fully Activated Appliance (FAA) バージョンで利用可能なFlightシナリオデータを公開するためのステップバイステップのウォークスルーを提供します。
+
+#### シナリオ概要
+
+* **目標:** フライトスケジュール、予約、関連マスターデータをODataサービス経由で公開する。
+* **シナリオデータニーズ:** フライトスケジュール、日付、時間、空港詳細、航空会社詳細、乗客詳細、価格設定など。
+* **関連SAPテーブル:** `SFLIGHT`, `SPFLI`, `SCARR`, `SAIRPORT`, `SBOOK`, `SCUSTOM`.
+
+---
+
+#### SEGWでのODataサービス作成手順
+
+##### 1. SAP Gateway Service Builderへのアクセス
+
+SAPトランザクションコード `SEGW` に移動します。
+
+##### 2. 新規プロジェクト作成
+
+1. "Create Project" ボタンをクリック。
+2. **Project Name:** 名前を割り当て (例: `Z_TRAVEL_RECOMMENDATIONS_SRV`)。
+3. **Description:** 意味のある説明を入力。
+4. **Package:** パッケージに割り当て (例: ローカル開発用の `$TMP` または移送可能なパッケージ)。
+
+##### 3. DDIC構造からデータモデルをインポート
+
+このステップでは、基礎となるSAPテーブルに基づいてODataエンティティを定義します。
+
+1. プロジェクト内の "Data Model" フォルダを右クリック。
+2. **"Import" -> "DDIC Structure"** を選択。
+3. 必要な各テーブルについてインポートプロセスを繰り返し、**Entity Type Name** を指定し、必要なフィールドを選択します。
+
+***必要なアクション:*** インポートプロセス中にキーフィールドが正しくマークされていることを確認してください。
+
+| DDIC構造 | エンティティタイプ名 | 推奨キーフィールド | 関連ペイロードフィールド (例) |
+| :---- | :---- | :---- | :---- |
+| `SFLIGHT` | **Flight** | `CARRID`, `CONNID`, `FLDATE` | `PRICE`, `CURRENCY`, `PLANETYPE`, `SEATSMAX`, `SEATSOCC` |
+| `SPFLI` | **Connection** | `CARRID`, `CONNID` | `COUNTRYFR`, `CITYFROM`, `AIRPFROM`, `COUNTRYTO`, `CITYTO`, `AIRPTO`, `DEPTIME`, `ARRTIME`, `DISTANCE` |
+| `SCARR` | **Airline** | `CARRID` | `CARRNAME`, `CURRCODE`, `URL` |
+| `SAIRPORT` | **Airport** | `ID` | `NAME`, `CITY`, `COUNTRY` |
+| `SBOOK` | **Booking** | `CARRID`, `CONNID`, `FLDATE`, `BOOKID` | `CUSTOMID`, `CUSTTYPE`, `SMOKER`, `LUGGWEIGHT`, `WUNIT`, `INVOICE`, `CLASS`, `FORCURAM`, `ORDER_DATE` |
+| `SCUSTOM` | **Passenger** | `ID` | `NAME`, `FORM`, `STREET`, `POSTCODE`, `CITY`, `COUNTRY`, `PHONE` |
+
+##### 4. アソシエーションとナビゲーションプロパティの定義
+
+アソシエーションはキーフィールドに基づいてエンティティをリンクします。ナビゲーションプロパティにより、クライアントアプリケーションはこれらの関係を簡単にトラバースできます (例: `$expand` を使用)。
+
+**論理的関係:**
+
+* **1:N:** 航空会社 <-> フライト, 航空会社 <-> 接続, 接続 <-> フライト, フライト <-> 予約, 乗客 <-> 予約。
+* **N:1:** 接続 <-> 出発空港, 接続 <-> 到着空港。
+
+**アソシエーション作成手順:**
+
+1. "Data Model" を右クリック -> **"Create" -> "Association"**。
+2. **Association Name**, **Principal Entity** ('1'側), **Dependent Entity** ('多'側), **Cardinality** (例: 1:N) を定義。
+3. 次の画面で、PrincipalエンティティとDependentエンティティ間のキーフィールドを一致させて **Specify Key Mapping** を行います。
+
+**作成する特定のアソシエーション:**
+
+| No. | アソシエーション名 | Principal:Dependent | カーディナリティ | キーマッピング |
+| :---- | :---- | :---- | :---- | :---- |
+| 1 | `Assoc_Airline_Flights` | `Airline` : `Flight` | 1:N | `Airline.CARRID` <-> `Flight.CARRID` |
+| 2 | `Assoc_Airline_Connections` | `Airline` : `Connection` | 1:N | `Airline.CARRID` <-> `Connection.CARRID` |
+| 3 | `Assoc_Connection_Flights` | `Connection` : `Flight` | 1:N | `CARRID` & `CONNID` (双方向) |
+| 4 | `Assoc_Flight_Bookings` | `Flight` : `Booking` | 1:N | `CARRID`, `CONNID`, `FLDATE` (全3方向) |
+| 5 | `Assoc_Passenger_Bookings` | `Passenger` : `Booking` | 1:N | `Passenger.ID` <-> `Booking.CUSTOMID` |
+| 6 | `Assoc_Connection_OriginAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPFROM` <-> `Airport.ID` |
+| 7 | `Assoc_Connection_DestAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPTO` <-> `Airport.ID` |
+
+**作成するナビゲーションプロパティ:**
+
+| エンティティ | ナビゲーションプロパティ名 | ターゲットエンティティ | 使用アソシエーション |
+| :---- | :---- | :---- | :---- |
+| **Airline** | `ToFlights`, `ToConnections` | `Flight`, `Connection` | `Assoc_Airline_Flights`, `Assoc_Airline_Connections` |
+| **Flight** | `ToAirline`, `ToConnection`, `ToBookings` | `Airline`, `Connection`, `Booking` | `Assoc_Airline_Flights`, `Assoc_Connection_Flights`, `Assoc_Flight_Bookings` |
+| **Connection** | `ToAirline`, `ToFlights`, `ToOriginAirport`, `ToDestinationAirport` | `Airline`, `Flight`, `Airport`, `Airport` | `Assoc_Airline_Connections`, `Assoc_Connection_Flights`, `Assoc_Connection_OriginAirport`, `Assoc_Connection_DestAirport` |
+| **Booking** | `ToFlight`, `ToPassenger` | `Flight`, `Passenger` | `Assoc_Flight_Bookings`, `Assoc_Passenger_Bookings` |
+| **Passenger** | `ToBookings` | `Booking` | `Assoc_Passenger_Bookings` |
+
+##### 5. ランタイムオブジェクトの生成
+
+1. **"Generate Runtime Objects"** ボタン (魔法の杖アイコン) をクリック。
+2. これによりABAPクラスが生成されます: Model Provider Class (MPC) と Data Provider Class (DPC)。
+3. デフォルトのクラス名を受け入れるか調整します。
+
+##### 6. Data Provider Class (DPC) メソッドの実装
+
+生成されたDPC拡張クラス (例: `ZCL_Z_TRAVEL_RECOM_DPC_EXT`) はカスタムロジックに使用されます。
+
+* 直接的なテーブルマッピングで十分な場合は、基本実装で十分な場合があります。
+* カスタムフィルタリング、結合、計算、または複雑なRead/Create/Update/Delete (CRUD) 操作の場合、DPC拡張クラスで `*_GET_ENTITY` (単一レコード) や `*_GET_ENTITYSET` (コレクション) などのメソッドを再定義する必要があります。
+
+AIRLINESET_GET_ENTITYSETメソッドの例:
+
+```abap
+METHOD airlineset_get_entityset.
+  DATA: lt_airlines TYPE TABLE OF scarr,
+        ls_airline TYPE scarr,
+        lv_filter_string TYPE string.
+
+  TRY.
+      lv_filter_string = io_tech_request_context->get_filter( )->get_filter_string( ).
+    CATCH cx_sy_itab_line_not_found.
+      CLEAR lv_filter_string.
+  ENDTRY.
+
+  " TODO: Apply filtering based on lv_filter_string"
+  IF lv_filter_string IS NOT INITIAL.
+    SELECT * FROM scarr INTO TABLE lt_airlines WHERE (lv_filter_string).
+  ELSE.
+    SELECT * FROM scarr INTO TABLE lt_airlines.
+  ENDIF.
+
+  LOOP AT lt_airlines INTO ls_airline.
+    APPEND ls_airline TO et_entityset.
+  ENDLOOP.
+ENDMETHOD.
 ```
-tests/
-├── conftest.py              # 8つの包括的なフィクスチャ
-├── unit/                    # 高速で分離されたテスト（40テスト）
-│   ├── test_base.py        # ツールレジストリ（16テスト）
-│   └── test_validators.py  # バリデーター（24テスト）
-└── integration/             # 統合テスト（5テスト）
-    └── test_tool_integration.py  # ツールシステムテスト
-```
 
-### テストの実行
+##### 7. サービスの登録
 
-```bash
-# すべてのテストを詳細な出力で実行
-python -m pytest -v
+1. トランザクション `/IWFND/MAINT_SERVICE` に移動。
+2. **"Add Service"** をクリック。
+3. バックエンドシステムの **System Alias** を入力 (例: `LOCAL`)。
+4. **Technical Service Name** でサービスを検索 (例: `Z_TRAVEL_RECOMMENDATIONS_SRV`)。
+5. サービスを選択し **"Add Selected Services"** をクリック。
+6. パッケージを割り当てて確認。
 
-# カバレッジレポート付き
-python -m pytest --cov=sap_mcp_server --cov-report=term-missing
+##### 8. サービスの有効化とテスト
 
-# HTMLカバレッジレポート
-python -m pytest --cov=sap_mcp_server --cov-report=html
-open htmlcov/index.html
+1. `/IWFND/MAINT_SERVICE` で、新しく登録したサービスを見つけます。
+2. **ICF node is active** (緑色のライト) であることを確認。そうでない場合は、サービスを選択し **"ICF Node" -> "Activate"**。
+3. サービスを選択し **"SAP Gateway Client"** ボタンをクリック。
+4. **Gateway Clientでのテスト:**
+   * エンティティコレクション取得テスト: **"EntitySets"** をクリックし、EntitySet (例: `AirlineCollection`) を選択して **"Execute"** をクリック。
+   * OData機能テスト: `$filter` などのクエリオプションを試し、特に **`$expand`** を使用してナビゲーションプロパティが機能していることを確認 (例: `/FlightSet(key)?$expand=ToAirline`)。
 
-# 特定のテストカテゴリ
-python -m pytest -m unit          # ユニットテストのみ
-python -m pytest -m integration   # 統合テストのみ
-python -m pytest -m sap           # SAP統合テスト
+##### 9. サービスURLをメモ
 
-# 特定のテストファイル
-python -m pytest tests/unit/test_validators.py -v
+最終的なODataサービスURLはGateway Clientに表示されます。通常は以下の構造に従います:
 
-# ウォッチモード（pytest-watchが必要）
-ptw -- -v
-```
-
-### カバレッジレポート
-
-**現在：56%**（目標：70%以上）
-
-| モジュール | カバレッジ | ステータス |
-|--------|----------|--------|
-| `tools/base.py` | 100% | 🟢 優秀 |
-| `protocol/schemas.py` | 100% | 🟢 優秀 |
-| `tools/service_tool.py` | 88% | 🟢 良好 |
-| `config/settings.py` | 82% | 🟢 良好 |
-| `utils/validators.py` | 80% | 🟢 良好 |
-| `core/sap_client.py` | 45% | 🟡 要改善 |
-| `transports/stdio.py` | 30% | 🟡 要改善 |
+`/sap/opu/odata/sap/Z_TRAVEL_RECOMMENDATIONS_SRV/.` このURLは、クライアントアプリケーション (Fioriやカスタムモバイルアプリなど) がSFLIGHTデータを消費するために使用するものです。
 
 ---
 
 ## 🛠️ 開発
 
-### プロジェクトのセットアップ
+### プロジェクトセットアップ
 
 ```bash
 # クローンとセットアップ
 git clone <repository-url>
 cd sap-mcp
 
-# 仮想環境を作成
+# 仮想環境作成
 python3 -m venv .venv
 source .venv/bin/activate
 
@@ -1900,7 +2045,7 @@ pip install -e ".[dev]"
 
 ### 新しいツールの追加
 
-1. **ツールファイルの作成**：`packages/server/src/sap_mcp_server/tools/my_tool.py`
+1. **ツールファイル作成**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
 
 ```python
 from .base import MCPTool
@@ -1912,7 +2057,7 @@ class MyNewTool(MCPTool):
 
     @property
     def description(self) -> str:
-        return "私の新しいツールの説明"
+        return "Description of my new tool"
 
     @property
     def input_schema(self) -> dict:
@@ -1929,7 +2074,7 @@ class MyNewTool(MCPTool):
         return {"result": "success"}
 ```
 
-2. **ツールの登録**：`packages/server/src/sap_mcp_server/tools/__init__.py`を更新
+2. **ツール登録**: `packages/server/src/sap_mcp_server/tools/__init__.py` を更新
 
 ```python
 from .my_tool import MyNewTool
@@ -1938,7 +2083,7 @@ from .my_tool import MyNewTool
 tool_registry.register(MyNewTool())
 ```
 
-3. **テストの追加**：`tests/unit/test_my_tool.py`
+3. **テスト追加**: `tests/unit/test_my_tool.py`
 
 ```python
 import pytest
@@ -1954,10 +2099,10 @@ async def test_my_tool():
 ### コード品質
 
 ```bash
-# コードのフォーマット
+# コードフォーマット
 black packages/server/src
 
-# インポートのソート
+# インポートソート
 isort packages/server/src
 
 # リント
@@ -1969,198 +2114,44 @@ mypy packages/server/src
 # セキュリティスキャン
 bandit -r packages/server/src
 
-# すべての品質チェック
+# 全品質チェック
 black . && isort . && flake8 . && mypy . && bandit -r src/
 ```
 
 ---
 
-## 🗺️ ロードマップ
-
-### ✅ 完了（v0.2.0）
-
-- [x] フェーズ1：構造とコードの移行
-- [x] フェーズ2：ツールの分割（4つのモジュール式ツール）
-- [x] フェーズ3：トランスポートレイヤー（Stdio）
-- [x] フェーズ4：ユーティリティとテスト（56%のカバレッジ）
-- [x] フェーズ5：クリーンアップとドキュメント
-
-### 📝 計画中（v0.3.0）
-
-**高優先度**：
-- [ ] テストカバレッジを70%以上に向上
-- [ ] パフォーマンスベンチマーク
-- [ ] APIドキュメント（Sphinx）
-
-**中優先度**：
-- [ ] Dockerデプロイガイド
-- [ ] Kubernetesマニフェスト
-- [ ] Prometheusメトリクス
-- [ ] OpenTelemetry統合
-
-**低優先度**：
-- [ ] レート制限
-- [ ] キャッシュレイヤー
-- [ ] GraphQLサポート
-- [ ] WebSocketトランスポート
-- [ ] HTTP/RESTトランスポート
-
----
-
-## 🤝 貢献
-
-### はじめに
-
-1. リポジトリをフォークする
-2. 機能ブランチを作成する（`git checkout -b feature/amazing-feature`）
-3. 変更を加えてテストを追加する
-4. テストを実行する：`python -m pytest -v`
-5. コード品質チェックを実行する：`black . && isort . && flake8 .`
-6. 変更をコミットする（`git commit -m '素晴らしい機能を追加'`）
-7. ブランチにプッシュする（`git push origin feature/amazing-feature`）
-8. プルリクエストを開く
-
-### コーディング標準
-
-- **スタイル**：PEP 8スタイルガイドに従う
-- **型**：すべての関数に型ヒントを追加する
-- **ドキュメント**：包括的なdocstringを記述する
-- **テスト**：カバレッジを50%以上に維持する
-- **コミット**：従来のコミットメッセージを使用する
-
-### プルリクエストチェックリスト
-
-- [ ] テストが追加/更新され、合格している
-- [ ] ドキュメントが更新されている
-- [ ] コードが`black`でフォーマットされている
-- [ ] インポートが`isort`でソートされている
-- [ ] 型ヒントが追加されている
-- [ ] カバレッジが維持/向上している
-- [ ] 変更履歴が更新されている
-
----
-
-## 📊 プロジェクトメトリクス
-
-| メトリクス | 値 |
-|--------|-------|
-| **コード行数** | 927（本番コード） |
-| **テストカバレッジ** | 56% |
-| **テスト** | 45（44合格、98%成功率） |
-| **Pythonモジュール** | 24 |
-| **SAPツール** | 4 |
-| **トランスポートレイヤー** | 1（Stdio） |
-| **開発時間** | 約3時間（全5フェーズ） |
-| **Pythonバージョン** | 3.11+ |
-| **依存関係** | 11コア、9開発 |
-
----
-
 ## 📖 ドキュメント
 
-- **[サーバーパッケージREADME](./packages/server/README.md)**：詳細なサーバードキュメント
-- **[設定ガイド](./docs/guides/configuration.md)**：YAMLと環境設定
-- **[デプロイガイド](./docs/guides/deployment.md)**：本番デプロイ
-- **[アーキテクチャドキュメント](./docs/architecture/server.md)**：システムアーキテクチャの詳細
-- **[APIリファレンス](./docs/api/)**：ツールとプロトコルのドキュメント
+- **[サーバーパッケージ README](./packages/server/README.md)**: 詳細なサーバー・ドキュメント
+- **[設定ガイド](./docs/guides/configuration.md)**: YAMLおよび環境設定
+- **[デプロイメントガイド](./docs/guides/deployment.md)**: 本番デプロイメント
+- **[アーキテクチャドキュメント](./docs/architecture/server.md)**: システムアーキテクチャ詳細
+- **[APIリファレンス](./docs/api/)**: ツールおよびプロトコル・ドキュメント
 
 ---
 
 ## 📝 ライセンス
 
-MITライセンス - 詳細は[LICENSE](LICENSE)ファイルを参照してください。
-
----
-
-## 🆘 サポート
-
-- **問題**：[問題を作成](https://github.com/midasol/SAP-MCP-GCP/issues)
-- **ドキュメント**：`docs/`ディレクトリを参照
-- **サーバーパッケージ**：実装の詳細は`packages/server/`を参照
-- **コミュニティ**：ディスカッションに参加してください
-
----
-
-## 📜 バージョン履歴
-
-### v0.2.2（現在） - 2025-11-10
-
-**ドキュメントの更新**：
-- 📚 **READMEの強化**：包括的なOS固有（Windows、macOS、Linux）のインストールおよび設定ガイドを追加
-  - 各OSの詳細なPythonインストール手順を追加
-  - OS固有の仮想環境設定およびアクティベーションコマンドを追加
-  - 適切なファイル権限を持つOS固有の`.env.server`設定ガイドを追加
-  - OS固有のサーバー実行手順を追加
-  - Gemini CLI公式ドキュメントへのリンクを追加
-- 🔧 **明確性の向上**：非推奨のファイルパス参照を削除
-- ✨ **ユーザーエクスペリエンスの向上**：ドキュメントのナビゲーションを改善するための折りたたみ可能なセクションを追加
-
-### v0.2.1 - 2025-01-22
-
-**バグ修正**：
-- 🐛 **重要な修正**：すべてのSAP Gateway APIリクエストに不足していた`sap-client`パラメータを追加
-  - **問題**：401 Unauthorizedエラーで認証が失敗していました
-  - **根本原因**：SAP Gatewayは、リクエストを正しいSAPクライアントにルーティングするために`sap-client`パラメータを必要とします
-  - **解決策**：
-    - CSRFトークンと認証URLに`sap-client`を含めるように`auth.py`を修正
-    - すべてのAPIリクエストに`sap-client`パラメータを自動的に挿入するように`sap_client.py`を修正
-  - **影響**：すべてのSAP Gateway操作が、適切なクライアントルーティングで正しく機能するようになりました
-
-**技術的な詳細**：
-- URLに`?sap-client={client}`を追加するように`SAPAuthenticator._get_csrf_token()`を更新
-- URLに`?sap-client={client}`を追加するように`SAPAuthenticator._authenticate_session()`を更新
-- リクエストパラメータに`sap-client`を自動的に追加するように`SAPClient._make_request()`を更新
-- 設定変更は不要 - `.env.server`の既存の`SAP_CLIENT`を使用
-
-### v0.2.0 - 2025-01-15
-
-**主な機能**：
-- ✅ 完全なモジュール式アーキテクチャ
-- ✅ 4つの本番環境対応SAPツール
-- ✅ MCPサーバー付きStdioトランスポート
-- ✅ 構造化ロギングと検証
-- ✅ 56%のテストカバレッジ（45テスト）
-- ✅ 包括的なドキュメント
-
-**改善点**：
-- 非同期エントリポイントの問題を修正
-- モジュールパスを更新
-- エラー処理を強化
-- セキュリティ検証を強化
-
-**設定の変更**：
-- ⚠️ **破壊的変更**：`.env.server`ファイルの場所が**プロジェクトルートのみ**に統合されました
-  - 以前の場所`packages/server/.env.server`はサポートされなくなりました
-  - 優先度ベースの検索でファイル検出ロジックを改善
-  - 設定ファイルの場所のロギングを強化
-- Gemini CLI統合には、`settings.json`に`cwd`パラメータが必要になりました
-- 設定の問題に関する詳細なトラブルシューティングを含むREADMEを更新
-
-### v0.1.0（初期） - 2024-12-01
-
-- 基本的なSAP Gateway統合
-- モノリシックな構造
-- 限定的なテスト
-- Stdioサーバーのみ
+MIT License - 詳細は [LICENSE](LICENSE) ファイルを参照してください。
 
 ---
 
 ## 🙏 謝辞
 
-- **MCPプロトコル**：Anthropicのモデルコンテキストプロトコル
-- **SAP Gateway**：OData v2/v4統合
-- **コミュニティ**：貢献者とテスター
+- **MCP Protocol**: AnthropicのModel Context Protocol
+- **SAP Gateway**: OData v2/v4 統合
+- **コミュニティ**: コントリビューターとテスター
 
 ---
 
 <div align="center">
 
-**モデルコンテキストプロトコルによるSAP統合のために❤️を込めて構築**
+**Built with ❤️ for SAP integration via Model Context Protocol**
 
 [![Status](https://img.shields.io/badge/status-production%20ready-brightgreen.svg)]()
 [![Coverage](https://img.shields.io/badge/coverage-56%25-yellow.svg)]()
 [![Tests](https://img.shields.io/badge/tests-44%2F45%20passing-success.svg)]()
 
-**本番環境対応** | **56%カバレッジ** | **98%テスト成功**
+**Production Ready** | **56% Coverage** | **98% Test Success**
 
 </div>
