@@ -1733,6 +1733,61 @@ List all available SAP services from configuration.
 
 ---
 
+### 5. Adding a New Tool
+
+1. **Create Tool File**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
+
+```python
+from .base import MCPTool
+
+class MyNewTool(MCPTool):
+    @property
+    def name(self) -> str:
+        return "my_new_tool"
+
+    @property
+    def description(self) -> str:
+        return "Description of my new tool"
+
+    @property
+    def input_schema(self) -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "param": {"type": "string"}
+            },
+            "required": ["param"]
+        }
+
+    async def execute(self, params: dict) -> dict:
+        # Implementation
+        return {"result": "success"}
+```
+
+2. **Register Tool**: Update `packages/server/src/sap_mcp_server/tools/__init__.py`
+
+```python
+from .my_tool import MyNewTool
+
+# Add to registry
+tool_registry.register(MyNewTool())
+```
+
+3. **Add Tests**: `tests/unit/test_my_tool.py`
+
+```python
+import pytest
+from sap_mcp_server.tools.my_tool import MyNewTool
+
+@pytest.mark.asyncio
+async def test_my_tool():
+    tool = MyNewTool()
+    result = await tool.execute({"param": "value"})
+    assert result["result"] == "success"
+```
+
+---
+
 ## 📚 Usage Examples
 
 ### Using the Tool Registry
@@ -2042,58 +2097,7 @@ cd packages/server
 pip install -e ".[dev]"
 ```
 
-### Adding a New Tool
 
-1. **Create Tool File**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
-
-```python
-from .base import MCPTool
-
-class MyNewTool(MCPTool):
-    @property
-    def name(self) -> str:
-        return "my_new_tool"
-
-    @property
-    def description(self) -> str:
-        return "Description of my new tool"
-
-    @property
-    def input_schema(self) -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "param": {"type": "string"}
-            },
-            "required": ["param"]
-        }
-
-    async def execute(self, params: dict) -> dict:
-        # Implementation
-        return {"result": "success"}
-```
-
-2. **Register Tool**: Update `packages/server/src/sap_mcp_server/tools/__init__.py`
-
-```python
-from .my_tool import MyNewTool
-
-# Add to registry
-tool_registry.register(MyNewTool())
-```
-
-3. **Add Tests**: `tests/unit/test_my_tool.py`
-
-```python
-import pytest
-from sap_mcp_server.tools.my_tool import MyNewTool
-
-@pytest.mark.asyncio
-async def test_my_tool():
-    tool = MyNewTool()
-    result = await tool.execute({"param": "value"})
-    assert result["result"] == "success"
-```
 
 
 
