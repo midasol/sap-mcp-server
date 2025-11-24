@@ -13,6 +13,29 @@ Complete MCP server for SAP Gateway integration, providing modular tools for SAP
 </div>
 
 ---
+## 📑 Table of Contents
+
+- [🎯 Project Overview](#-project-overview)
+- [⚡ Quick Start](#-quick-start)
+- [📐 Architecture](#-architecture)
+- [📦 Repository Structure](#-repository-structure)
+- [✨ Features](#-features)
+- [🚀 Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites-for-mcp-server)
+  - [Installation](#1-installation)
+  - [Configuration](#2-configuration)
+  - [Run Server](#3-run-server)
+- [🤖 Integration with Gemini CLI](#-integration-with-gemini-cli)
+- [🔧 Available Tools](#-available-tools)
+- [📚 Usage Examples](#-usage-examples)
+- [🔒 Security](#-security)
+- [🎓 SAP SFLIGHT Demo Scenario](#-sap-sflight-demo-scenario)
+- [📖 Documentation](#-documentation)
+- [📝 License](#-license)
+- [🙏 Acknowledgments](#-acknowledgments)
+
+---
+
 
 ## 🎯 Project Overview
 
@@ -30,6 +53,41 @@ Production-ready MCP (Model Context Protocol) server that enables AI agents and 
 - 🧪 **Well-Tested**: 56% coverage, 44/45 tests passing (98% success rate)
 
 ---
+
+---
+
+## ⚡ Quick Start
+
+Get up and running with SAP MCP in 5 minutes:
+
+```bash
+# 1. Clone and navigate to project
+git clone <repository-url>
+cd sap-mcp
+
+# 2. Create virtual environment and install
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+cd packages/server
+pip install -e .
+
+# 3. Configure SAP connection
+cd ../..
+cp .env.server.example .env.server
+# Edit .env.server with your SAP credentials
+
+# 4. Configure services
+cp packages/server/config/services.yaml.example packages/server/config/services.yaml
+# Edit services.yaml with your SAP services
+
+# 5. Run the server
+sap-mcp-server-stdio
+```
+
+**Next Steps:**
+- 📖 See [Getting Started](#-getting-started) for detailed installation instructions
+- 🤖 Check [Integration with Gemini CLI](#-integration-with-gemini-cli) to connect with AI agents
+- 🔧 Explore [Available Tools](#-available-tools) for API documentation
 
 ## 📐 Architecture
 
@@ -480,11 +538,7 @@ sap-mcp/
 │   ├── migrate_code.sh                  # Code migration script
 │   └── update_imports.py                # Import update script
 │
-├── .claude/                             # Claude Code configuration
-│   └── settings.local.json              # Local settings
-│
 ├── .env.server.example                  # Environment template
-├── .gitignore                           # Git ignore rules
 ├── README.md                            # Main documentation (English)
 ├── README.ja.md                         # Japanese documentation
 ├── README.ko.md                         # Korean documentation
@@ -723,7 +777,7 @@ The final OData service URL will be visible in the Gateway Client. It typically 
 
 ---
 
-## 📋 Preparation
+## 🚀 Getting Started
 
 ### Prerequisites for MCP Server
 
