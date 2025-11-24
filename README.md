@@ -1813,11 +1813,35 @@ if validate_entity_key(key):
 
 ---
 
-## 🎓 OData Service Creation Guide: FLIGHT Demo Scenario
+## 🎓 SAP SFLIGHT Demo Scenario
+
+### Scenario Overview
+
+The SFLIGHT dataset is a sample database provided by SAP that includes data for flight schedules, airlines, airports, and bookings. It's an excellent resource for testing and demonstrating data modeling and service creation.
+
+This guide assumes you have an OData service exposing this dataset. The goal is to connect our SAP MCP server to this service and interact with it using AI agents or other clients.
+
+**Official SAP Documentation:**
+- [SAP Documentation - Flight Model](https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm)
+- [SAP Help Portal - Flight Model](https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html)
+
+---
+
+### Prerequisites
+
+1. **SAP MCP Server Installed**: You must have the SAP MCP server installed and a working Python environment. For full instructions, please see the [Quick Start section](#-quick-start).
+
+2. **SFLIGHT OData Service**: An active OData service exposing the SFLIGHT dataset must be available on your SAP Gateway system.
+   - If you need to create this service, you can follow our detailed guide: [OData Service Creation Guide: FLIGHT Demo Scenario](./docs/guides/odata-service-creation-flight-demo.md).
+   - For this guide, we will assume the service is named `Z_TRAVEL_RECOMMENDATIONS_SRV` as created in the guide.
+
+---
+
+### OData Service Creation Guide
 
 This guide provides a step-by-step walkthrough for creating an OData service in an SAP system using the SAP Gateway Service Builder (`SEGW`) to expose the Flight scenario data available in SAP S/4HANA Fully Activated Appliance (FAA) version.
 
-### Scenario Overview
+#### Scenario Overview
 
 * **Goal:** Expose flight schedules, bookings, and related master data via an OData service.
 * **Scenario Data Needs:** Flight schedules, dates, times, airport details, airline details, passenger details, pricing, etc.
@@ -1825,20 +1849,20 @@ This guide provides a step-by-step walkthrough for creating an OData service in 
 
 ---
 
-### Steps to Create the OData Service in SEGW
+#### Steps to Create the OData Service in SEGW
 
-#### 1. Access SAP Gateway Service Builder
+##### 1. Access SAP Gateway Service Builder
 
 Navigate to the SAP transaction code `SEGW`.
 
-#### 2. Create a New Project
+##### 2. Create a New Project
 
 1. Click the "Create Project" button.
 2. **Project Name:** Assign a name (e.g., `Z_TRAVEL_RECOMMENDATIONS_SRV`).
 3. **Description:** Provide a meaningful description.
 4. **Package:** Assign to a package (e.g., `$TMP` for local development or a transportable package).
 
-#### 3. Import Data Model from DDIC Structures
+##### 3. Import Data Model from DDIC Structures
 
 This step defines your OData entities based on the underlying SAP tables.
 
@@ -1857,7 +1881,7 @@ This step defines your OData entities based on the underlying SAP tables.
 | `SBOOK` | **Booking** | `CARRID`, `CONNID`, `FLDATE`, `BOOKID` | `CUSTOMID`, `CUSTTYPE`, `SMOKER`, `LUGGWEIGHT`, `WUNIT`, `INVOICE`, `CLASS`, `FORCURAM`, `ORDER_DATE` |
 | `SCUSTOM` | **Passenger** | `ID` | `NAME`, `FORM`, `STREET`, `POSTCODE`, `CITY`, `COUNTRY`, `PHONE` |
 
-#### 4. Define Associations and Navigation Properties
+##### 4. Define Associations and Navigation Properties
 
 Associations link entities based on key fields. Navigation Properties allow client applications to easily traverse these relationships (e.g., using `$expand`).
 
@@ -1894,13 +1918,13 @@ Associations link entities based on key fields. Navigation Properties allow clie
 | **Booking** | `ToFlight`, `ToPassenger` | `Flight`, `Passenger` | `Assoc_Flight_Bookings`, `Assoc_Passenger_Bookings` |
 | **Passenger** | `ToBookings` | `Booking` | `Assoc_Passenger_Bookings` |
 
-#### 5. Generate Runtime Objects
+##### 5. Generate Runtime Objects
 
 1. Click the **"Generate Runtime Objects"** button (magic wand icon).
 2. This generates the ABAP classes: Model Provider Class (MPC) and Data Provider Class (DPC).
 3. Accept or adjust the default class names.
 
-#### 6. Implement Data Provider Class (DPC) Methods
+##### 6. Implement Data Provider Class (DPC) Methods
 
 The generated DPC extension class (e.g., `ZCL_Z_TRAVEL_RECOM_DPC_EXT`) is used for custom logic.
 
@@ -1934,7 +1958,7 @@ METHOD airlineset_get_entityset.
 ENDMETHOD.
 ```
 
-#### 7. Register the Service
+##### 7. Register the Service
 
 1. Go to transaction `/IWFND/MAINT_SERVICE`.
 2. Click **"Add Service"**.
@@ -1943,7 +1967,7 @@ ENDMETHOD.
 5. Select the service and click **"Add Selected Services"**.
 6. Assign a package and confirm.
 
-#### 8. Activate and Test the Service
+##### 8. Activate and Test the Service
 
 1. In `/IWFND/MAINT_SERVICE`, find your newly registered service.
 2. Ensure the **ICF node is active** (green light). If not, select the service, go to **"ICF Node" -> "Activate"**.
@@ -1952,7 +1976,7 @@ ENDMETHOD.
    * Test entity collection retrieval: Click **"EntitySets"**, select an EntitySet (e.g., `AirlineCollection`), and click **"Execute"**.
    * Test OData features: Try query options like `$filter`, and especially **`$expand`** to verify the navigation properties are working (e.g., `/FlightSet(key)?$expand=ToAirline`).
 
-#### 9. Note the Service URL
+##### 9. Note the Service URL
 
 The final OData service URL will be visible in the Gateway Client. It typically follows the structure:
 
