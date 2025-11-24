@@ -620,16 +620,6 @@ This guide assumes you have an OData service exposing this dataset. The goal is 
 
 ---
 
-### Prerequisites
-
-1. **SAP MCP Server Installed**: You must have the SAP MCP server installed and a working Python environment. For full instructions, please see the [Quick Start section](#-quick-start).
-
-2. **SFLIGHT OData Service**: An active OData service exposing the SFLIGHT dataset must be available on your SAP Gateway system.
-   - If you need to create this service, you can follow our detailed guide: [OData Service Creation Guide: FLIGHT Demo Scenario](./docs/guides/odata-service-creation-flight-demo.md).
-   - For this guide, we will assume the service is named `Z_TRAVEL_RECOMMENDATIONS_SRV` as created in the guide.
-
----
-
 ### OData Service Creation Guide
 
 This guide provides a step-by-step walkthrough for creating an OData service in an SAP system using the SAP Gateway Service Builder (`SEGW`) to expose the Flight scenario data available in SAP S/4HANA Fully Activated Appliance (FAA) version.
