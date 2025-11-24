@@ -1,193 +1,148 @@
-# SAP MCP Demo Guide: Interacting with the SFLIGHT OData Service
+# OData Service Creation Guide: FLIGHT Demo Scenario
 
-This guide provides a step-by-step walkthrough on how to use the SAP MCP (Model Context Protocol) server to interact with an OData service based on the standard SAP SFLIGHT demo dataset. It will show you how to configure the server and use its tools to query flight data.
+This guide provides a step-by-step walkthrough for creating an OData service in an SAP system using the SAP Gateway Service Builder (`SEGW`) to expose the Flight scenario data available in SAP S/4HANA Fully Activated Appliance (FAA) version.
 
-## 🎯 Scenario Overview
+# Scenario Overview
 
-The SFLIGHT dataset is a sample database provided by SAP that includes data for flight schedules, airlines, airports, and bookings. It's an excellent resource for testing and demonstrating data modeling and service creation.
-
-This guide assumes you have an OData service exposing this dataset. The goal is to connect our SAP MCP server to this service and interact with it using AI agents or other clients.
-
-**Official SAP Documentation:**
-*   <a href="https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm" target="_blank">SAP Documentation - Flight Model</a>
-*   <a href="https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html" target="_blank">SAP Help Portal - Flight Model</a>
+* **Goal:** Expose flight schedules, bookings, and related master data via an OData service.
+* **Scenario Data Needs:** Flight schedules, dates, times, airport details, airline details, passenger details, pricing, etc.
+* **SAP Tables Involved:** `SFLIGHT`, `SPFLI`, `SCARR`, `SAIRPORT`, `SBOOK`, `SCUSTOM`.
 
 ---
 
-## ✅ Prerequisites
+# Steps to Create the OData Service in SEGW
 
-1.  **SAP MCP Server Installed**: You must have the SAP MCP server installed and a working Python environment. For full instructions, please see the <a href="https://github.com/midasol/SAP-MCP-GCP/tree/main?tab=readme-ov-file#-quick-start" target="_blank">**Quick Start section in the main README.md**</a>.
+## 1\. Access SAP Gateway Service Builder
 
-2.  **SFLIGHT OData Service**: An active OData service exposing the SFLIGHT dataset must be available on your SAP Gateway system.
-    *   If you need to create this service, you can follow our detailed guide: <a href="./odata-service-creation-flight-demo.md" target="_blank">**OData Service Creation Guide: FLIGHT Demo Scenario**</a>.
-    *   For this guide, we will assume the service is named `Z_TRAVEL_RECOMMENDATIONS_SRV` as created in the guide.
+Navigate to the SAP transaction code `SEGW`.
 
----
+## 2\. Create a New Project
 
-## ⚙️ Step 1: Configure the SFLIGHT Service
+1. Click the "Create Project" button.
+2. **Project Name:** Assign a name (e.g., `Z_TRAVEL_RECOMMENDATIONS_SRV`).
+3. **Description:** Provide a meaningful description.
+4. **Package:** Assign to a package (e.g., `$TMP` for local development or a transportable package).
 
-First, we need to make the SAP MCP server aware of our SFLIGHT OData service. We do this by adding its definition to the `services.yaml` file.
+## 3\. Import Data Model from DDIC Structures
 
-**1. Open the configuration file**:
-Navigate to and open `packages/server/config/services.yaml`.
+This step defines your OData entities based on the underlying SAP tables.
 
-**2. Add the service definition**:
-Append the following YAML block to the `services` list. This configuration defines the service ID, its entities, and key fields based on the `Z_TRAVEL_RECOMMENDATIONS_SRV` service model.
+1. Right-click on the "Data Model" folder within your project.
+2. Select **"Import" \-\> "DDIC Structure"**.
+3. Repeat the import process for each required table, specifying the **Entity Type Name** and selecting the necessary fields.
 
-```yaml
-# packages/server/config/services.yaml
+***Action Required:*** Ensure the Key fields are correctly marked during the import process.
 
-# ... (other services may be listed here)
+| DDIC Structure | Entity Type Name | Recommended Key Fields | Relevant Payload Fields (Examples) |
+| :---- | :---- | :---- | :---- |
+| `SFLIGHT` | **Flight** | `CARRID`, `CONNID`, `FLDATE` | `PRICE`, `CURRENCY`, `PLANETYPE`, `SEATSMAX`, `SEATSOCC` |
+| `SPFLI` | **Connection** | `CARRID`, `CONNID` | `COUNTRYFR`, `CITYFROM`, `AIRPFROM`, `COUNTRYTO`, `CITYTO`, `AIRPTO`, `DEPTIME`, `ARRTIME`, `DISTANCE` |
+| `SCARR` | **Airline** | `CARRID` | `CARRNAME`, `CURRCODE`, `URL` |
+| `SAIRPORT` | **Airport** | `ID` | `NAME`, `CITY`, `COUNTRY` |
+| `SBOOK` | **Booking** | `CARRID`, `CONNID`, `FLDATE`, `BOOKID` | `CUSTOMID`, `CUSTTYPE`, `SMOKER`, `LUGGWEIGHT`, `WUNIT`, `INVOICE`, `CLASS`, `FORCURAM`, `ORDER_DATE` |
+| `SCUSTOM` | **Passenger** | `ID` | `NAME`, `FORM`, `STREET`, `POSTCODE`, `CITY`, `COUNTRY`, `PHONE` |
 
-  # SFLIGHT Demo Service (Travel Recommendations)
-  - id: Z_TRAVEL_RECOMMENDATIONS_SRV
-    name: "Travel Recommendations Service (SFLIGHT)"
-    path: "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV"  # IMPORTANT: Replace with your actual service path if different
-    version: v2
-    description: "OData service for the SFLIGHT demo dataset."
-    entities:
-      - name: AirlineSet
-        key_field: CARRID
-        description: "Airlines (e.g., LH, AA)"
-        default_select: ["CARRID", "CARRNAME", "CURRCODE", "URL"]
-      - name: AirportSet
-        key_field: ID
-        description: "Airports (e.g., FRA, JFK)"
-        default_select: ["ID", "NAME", "CITY", "COUNTRY"]
-      - name: ConnectionSet
-        # Composite Key Example
-        key_field: "CARRID='{CARRID}',CONNID='{CONNID}'"
-        description: "Flight connections between two airports"
-      - name: FlightSet
-        # Composite Key Example
-        key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}'"
-        description: "Specific flights on a given date"
-      - name: BookingSet
-        # Composite Key Example
-        key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}',BOOKID='{BOOKID}'"
-        description: "Individual flight bookings"
-      - name: PassengerSet
-        key_field: ID
-        description: "Passengers (Customers)"
+## 4\. Define Associations and Navigation Properties
+
+Associations link entities based on key fields. Navigation Properties allow client applications to easily traverse these relationships (e.g., using `$expand`).
+
+### Logical Relationships
+
+* **1:N:** Airline \<-\> Flights, Airline \<-\> Connections, Connection \<-\> Flights, Flight \<-\> Bookings, Passenger \<-\> Bookings.
+* **N:1:** Connection \<-\> Origin Airport, Connection \<-\> Destination Airport.
+
+### Steps to Create an Association
+
+1. Right-click on "Data Model" \-\> **"Create" \-\> "Association"**.
+2. Define the **Association Name**, **Principal Entity** (the 'one' side), **Dependent Entity** (the 'many' side), and **Cardinality** (e.g., 1:N).
+3. On the next screen, **Specify Key Mapping** by matching the key fields between the Principal and Dependent entities.
+
+### Specific Associations to Create Suggested Navigation Properties
+
+| No. | Association Name | Principal:Dependent | Cardinality | Key Mapping |
+| :---- | :---- | :---- | :---- | :---- |
+| 1 | `Assoc_Airline_Flights` | `Airline` : `Flight` | 1:N | `Airline.CARRID` \<-\> `Flight.CARRID` |
+| 2 | `Assoc_Airline_Connections` | `Airline` : `Connection` | 1:N | `Airline.CARRID` \<-\> `Connection.CARRID` |
+| 3 | `Assoc_Connection_Flights` | `Connection` : `Flight` | 1:N | `CARRID` & `CONNID` (both ways) |
+| 4 | `Assoc_Flight_Bookings` | `Flight` : `Booking` | 1:N | `CARRID`, `CONNID`, `FLDATE` (all three ways) |
+| 5 | `Assoc_Passenger_Bookings` | `Passenger` : `Booking` | 1:N | `Passenger.ID` \<-\> `Booking.CUSTOMID` |
+| 6 | `Assoc_Connection_OriginAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPFROM` \<-\> `Airport.ID` |
+| 7 | `Assoc_Connection_DestAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPTO` \<-\> `Airport.ID` |
+
+###
+
+### Navigation Properties to Create
+
+| Entity | Navigation Property Name | Target Entity | Used Association |
+| :---- | :---- | :---- | :---- |
+| **Airline** | `ToFlights`, `ToConnections` | `Flight`, `Connection` | `Assoc_Airline_Flights`, `Assoc_Airline_Connections` |
+| **Flight** | `ToAirline`, `ToConnection`, `ToBookings` | `Airline`, `Connection`, `Booking` | `Assoc_Airline_Flights`, `Assoc_Connection_Flights`, `Assoc_Flight_Bookings` |
+| **Connection** | `ToAirline`, `ToFlights`, `ToOriginAirport`, `ToDestinationAirport` | `Airline`, `Flight`, `Airport`, `Airport` | `Assoc_Airline_Connections`, `Assoc_Connection_Flights`, `Assoc_Connection_OriginAirport`, `Assoc_Connection_DestAirport` |
+| **Booking** | `ToFlight`, `ToPassenger` | `Flight`, `Passenger` | `Assoc_Flight_Bookings`, `Assoc_Passenger_Bookings` |
+| **Passenger** | `ToBookings` | `Booking` | `Assoc_Passenger_Bookings` |
+
+##
+
+## 5\. Generate Runtime Objects
+
+1. Click the **"Generate Runtime Objects"** button (magic wand icon).
+2. This generates the ABAP classes: Model Provider Class (MPC) and Data Provider Class (DPC).
+3. Accept or adjust the default class names.
+
+## 6\. Implement Data Provider Class (DPC) Methods
+
+The generated DPC extension class (e.g., `ZCL_Z_TRAVEL_RECOM_DPC_EXT`) is used for custom logic.
+
+* If direct table mapping is sufficient, the base implementation may suffice.
+* For custom filtering, joins, calculations, or complex Read/Create/Update/Delete (CRUD) operations, you must redefine methods like `*_GET_ENTITY` (single record) and `*_GET_ENTITYSET` (collection) in the DPC extension class.
+
+Here is an example of method AIRLINESET\_GET\_ENTITYSET:
+
+```
+METHOD airlineset_get_entityset.
+  DATA: lt_airlines TYPE TABLE OF scarr,
+        ls_airline TYPE scarr,
+        lv_filter_string TYPE string.
+
+  TRY.
+      lv_filter_string = io_tech_request_context->get_filter( )->get_filter_string( ).
+    CATCH cx_sy_itab_line_not_found.
+      CLEAR lv_filter_string.
+  ENDTRY.
+
+  " TODO: Apply filtering based on lv_filter_string"
+  IF lv_filter_string IS NOT INITIAL.
+    SELECT * FROM scarr INTO TABLE lt_airlines WHERE (lv_filter_string).
+  ELSE.
+    SELECT * FROM scarr INTO TABLE lt_airlines.
+  ENDIF.
+
+  LOOP AT lt_airlines INTO ls_airline.
+    APPEND ls_airline TO et_entityset.
+  ENDLOOP.
+ENDMETHOD.
 ```
 
-**3. Save the file.** The server will now recognize `Z_TRAVEL_RECOMMENDATIONS_SRV` and its associated entities.
+## 7\. Register the Service
 
----
+1. Go to transaction `/IWFND/MAINT_SERVICE`.
+2. Click **"Add Service"**.
+3. Enter the **System Alias** for your backend system (e.g., `LOCAL`).
+4. Search for your service by the **Technical Service Name** (e.g., `Z_TRAVEL_RECOMMENDATIONS_SRV`).
+5. Select the service and click **"Add Selected Services"**.
+6. Assign a package and confirm.
 
-## 🛠️ Step 2: Interact with the SFLIGHT Service Using MCP Tools
+## 8\. Activate and Test the Service
 
-With the configuration in place, you can now use the SAP MCP tools to query the SFLIGHT data. Below are examples of `ToolCallRequest` JSON payloads you could send to the server.
+1. In `/IWFND/MAINT_SERVICE`, find your newly registered service.
+2. Ensure the **ICF node is active** (green light). If not, select the service, go to **"ICF Node" \-\> "Activate"**.
+3. Select the service and click the **"SAP Gateway Client"** button.
+4. **Testing in Gateway Client:**
+   * Test entity collection retrieval: Click **"EntitySets"**, select an EntitySet (e.g., `AirlineCollection`), and click **"Execute"**.
+   * Test OData features: Try query options like `$filter`, and especially **`$expand`** to verify the navigation properties are working (e.g., `/FlightSet(key)?$expand=ToAirline`).
 
-### 1. List All Available Services
+## 9\. Note the Service URL
 
-First, let's verify that our new service is registered correctly.
+The final OData service URL will be visible in the Gateway Client. It typically follows the structure:
 
-**Request**:
-```json
-{
-  "name": "sap_list_services",
-  "arguments": {}
-}
-```
-
-**Expected Response**:
-The output should now include the `Z_TRAVEL_RECOMMENDATIONS_SRV`.
-```json
-{
-  "services": [
-    {
-      "name": "Z_TRAVEL_RECOMMENDATIONS_SRV",
-      "description": "OData service for the SFLIGHT demo dataset.",
-      "entity_sets": ["AirlineSet", "AirportSet", "ConnectionSet", "FlightSet", "BookingSet", "PassengerSet"]
-    }
-    // ... other services
-  ],
-  "count": 1
-}
-```
-
-### 2. Query Airlines (`sap_query`)
-
-Let's retrieve a list of all airlines.
-
-**Request**:
-```json
-{
-  "name": "sap_query",
-  "arguments": {
-    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
-    "entity_set": "AirlineSet"
-  }
-}
-```
-
-### 3. Get a Specific Airport (`sap_get_entity`)
-
-Now, let's fetch the details for a single airport, for example, Frankfurt Airport (`FRA`).
-
-**Request**:
-```json
-{
-  "name": "sap_get_entity",
-  "arguments": {
-    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
-    "entity_set": "AirportSet",
-    "entity_key": "'FRA'"
-  }
-}
-```
-> **Note**: For string keys in OData, the value must be enclosed in single quotes.
-
-### 4. Query Flights with a Filter (`sap_query`)
-
-Let's find all Lufthansa (`LH`) flights.
-
-**Request**:
-```json
-{
-  "name": "sap_query",
-  "arguments": {
-    "service": "Z_TRAVEL_RECOMMENDATIONS_SRV",
-    "entity_set": "FlightSet",
-    "filter": "CARRID eq 'LH'",
-    "select": "CARRID,CONNID,FLDATE,PRICE",
-    "top": 5
-  }
-}
-```
-
-
----
-
-## 🤖 Step 3: Example Prompts for Gemini CLI
-
-If you have integrated the SAP MCP server with the Gemini CLI, you can now use natural language to query the SFLIGHT data.
-
-1.  **Start Gemini CLI**:
-    ```bash
-    gemini
-    ```
-
-2.  **Use natural language prompts**:
-
-    *   **"Authenticate with SAP."**
-        *   *Gemini will call `sap_authenticate`.*
-
-    *   **"Using the travel recommendations service, show me all airlines."**
-        *   *Gemini will call `sap_query` on the `AirlineSet` of the `Z_TRAVEL_RECOMMENDATIONS_SRV` service.*
-
-    *   **"Find details for Frankfurt airport using the SFLIGHT service."**
-        *   *Gemini will likely use `sap_query` with a filter: `sap_query(service="Z_TRAVEL_RECOMMENDATIONS_SRV", entity_set="AirportSet", filter="ID eq 'FRA'")`.*
-
-    *   **"List the first 5 Lufthansa flights available in the system."**
-        *   *Gemini will call `sap_query` on `FlightSet` with a filter for `CARRID eq 'LH'` and `$top=5`.*
-
-    *   **"What SAP services are available?"**
-        *   *Gemini will call `sap_list_services` and show you the newly added SFLIGHT service.*
-
----
-
-## Conclusion
-
-You have successfully configured the SAP MCP server to connect to the SFLIGHT OData service (`Z_TRAVEL_RECOMMENDATIONS_SRV`) and have tested data retrieval using the available tools. This setup provides a powerful foundation for building AI-driven applications that can interact with real-world SAP data scenarios.
+`/sap/opu/odata/sap/Z_TRAVEL_RECOMMENDATIONS_SRV/.` This URL is what client applications (like Fiori or custom mobile apps) will use to consume the SFLIGHT data.
