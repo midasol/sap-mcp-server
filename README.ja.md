@@ -1731,6 +1731,59 @@ ODataフィルタ、選択、ページネーションを使用してSAPエンテ
 }
 ```
 
+### 5. 新しいツールの追加
+
+1. **ツールファイル作成**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
+
+```python
+from .base import MCPTool
+
+class MyNewTool(MCPTool):
+    @property
+    def name(self) -> str:
+        return "my_new_tool"
+
+    @property
+    def description(self) -> str:
+        return "Description of my new tool"
+
+    @property
+    def input_schema(self) -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "param": {"type": "string"}
+            },
+            "required": ["param"]
+        }
+
+    async def execute(self, params: dict) -> dict:
+        # 実装
+        return {"result": "success"}
+```
+
+2. **ツール登録**: `packages/server/src/sap_mcp_server/tools/__init__.py` を更新
+
+```python
+from .my_tool import MyNewTool
+
+# レジストリに追加
+tool_registry.register(MyNewTool())
+```
+
+3. **テスト追加**: `tests/unit/test_my_tool.py`
+
+```python
+import pytest
+from sap_mcp_server.tools.my_tool import MyNewTool
+
+@pytest.mark.asyncio
+async def test_my_tool():
+    tool = MyNewTool()
+    result = await tool.execute({"param": "value"})
+    assert result["result"] == "success"
+```
+
 ---
 
 ## 📚 使用例
@@ -2042,80 +2095,9 @@ cd packages/server
 pip install -e ".[dev]"
 ```
 
-### 新しいツールの追加
 
-1. **ツールファイル作成**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
 
-```python
-from .base import MCPTool
 
-class MyNewTool(MCPTool):
-    @property
-    def name(self) -> str:
-        return "my_new_tool"
-
-    @property
-    def description(self) -> str:
-        return "Description of my new tool"
-
-    @property
-    def input_schema(self) -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "param": {"type": "string"}
-            },
-            "required": ["param"]
-        }
-
-    async def execute(self, params: dict) -> dict:
-        # 実装
-        return {"result": "success"}
-```
-
-2. **ツール登録**: `packages/server/src/sap_mcp_server/tools/__init__.py` を更新
-
-```python
-from .my_tool import MyNewTool
-
-# レジストリに追加
-tool_registry.register(MyNewTool())
-```
-
-3. **テスト追加**: `tests/unit/test_my_tool.py`
-
-```python
-import pytest
-from sap_mcp_server.tools.my_tool import MyNewTool
-
-@pytest.mark.asyncio
-async def test_my_tool():
-    tool = MyNewTool()
-    result = await tool.execute({"param": "value"})
-    assert result["result"] == "success"
-```
-
-### コード品質
-
-```bash
-# コードフォーマット
-black packages/server/src
-
-# インポートソート
-isort packages/server/src
-
-# リント
-flake8 packages/server/src
-
-# 型チェック
-mypy packages/server/src
-
-# セキュリティスキャン
-bandit -r packages/server/src
-
-# 全品質チェック
-black . && isort . && flake8 . && mypy . && bandit -r src/
-```
 
 ---
 

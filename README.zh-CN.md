@@ -1731,6 +1731,59 @@ gemini
 }
 ```
 
+### 5. 添加新工具
+
+1. **创建工具文件**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
+
+```python
+from .base import MCPTool
+
+class MyNewTool(MCPTool):
+    @property
+    def name(self) -> str:
+        return "my_new_tool"
+
+    @property
+    def description(self) -> str:
+        return "Description of my new tool"
+
+    @property
+    def input_schema(self) -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "param": {"type": "string"}
+            },
+            "required": ["param"]
+        }
+
+    async def execute(self, params: dict) -> dict:
+        # Implementation
+        return {"result": "success"}
+```
+
+2. **注册工具**: 更新 `packages/server/src/sap_mcp_server/tools/__init__.py`
+
+```python
+from .my_tool import MyNewTool
+
+# Add to registry
+tool_registry.register(MyNewTool())
+```
+
+3. **添加测试**: `tests/unit/test_my_tool.py`
+
+```python
+import pytest
+from sap_mcp_server.tools.my_tool import MyNewTool
+
+@pytest.mark.asyncio
+async def test_my_tool():
+    tool = MyNewTool()
+    result = await tool.execute({"param": "value"})
+    assert result["result"] == "success"
+```
+
 ---
 
 ## 📚 使用示例
@@ -2042,80 +2095,9 @@ cd packages/server
 pip install -e ".[dev]"
 ```
 
-### 添加新工具
 
-1. **创建工具文件**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
 
-```python
-from .base import MCPTool
 
-class MyNewTool(MCPTool):
-    @property
-    def name(self) -> str:
-        return "my_new_tool"
-
-    @property
-    def description(self) -> str:
-        return "Description of my new tool"
-
-    @property
-    def input_schema(self) -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "param": {"type": "string"}
-            },
-            "required": ["param"]
-        }
-
-    async def execute(self, params: dict) -> dict:
-        # Implementation
-        return {"result": "success"}
-```
-
-2. **注册工具**: 更新 `packages/server/src/sap_mcp_server/tools/__init__.py`
-
-```python
-from .my_tool import MyNewTool
-
-# Add to registry
-tool_registry.register(MyNewTool())
-```
-
-3. **添加测试**: `tests/unit/test_my_tool.py`
-
-```python
-import pytest
-from sap_mcp_server.tools.my_tool import MyNewTool
-
-@pytest.mark.asyncio
-async def test_my_tool():
-    tool = MyNewTool()
-    result = await tool.execute({"param": "value"})
-    assert result["result"] == "success"
-```
-
-### 代码质量
-
-```bash
-# 格式化代码
-black packages/server/src
-
-# 排序导入
-isort packages/server/src
-
-# Lint
-flake8 packages/server/src
-
-# 类型检查
-mypy packages/server/src
-
-# 安全扫描
-bandit -r packages/server/src
-
-# 所有质量检查
-black . && isort . && flake8 . && mypy . && bandit -r src/
-```
 
 ---
 

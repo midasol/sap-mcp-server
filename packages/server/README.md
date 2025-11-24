@@ -165,6 +165,48 @@ List all available SAP services.
 }
 ```
 
+### 5. Adding a New Tool
+
+1. **Create Tool File**: `src/sap_mcp_server/tools/my_tool.py`
+
+```python
+from .base import MCPTool
+
+class MyNewTool(MCPTool):
+    @property
+    def name(self) -> str:
+        return "my_new_tool"
+
+    @property
+    def description(self) -> str:
+        return "Description of my new tool"
+
+    @property
+    def input_schema(self) -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "param": {"type": "string"}
+            },
+            "required": ["param"]
+        }
+
+    async def execute(self, params: dict) -> dict:
+        # Implementation
+        return {"result": "success"}
+```
+
+2. **Register Tool**: Update `src/sap_mcp_server/tools/__init__.py`
+
+```python
+from .my_tool import MyNewTool
+
+# Add to registry
+tool_registry.register(MyNewTool())
+```
+
+3. **Add Tests**: `tests/unit/test_my_tool.py`
+
 ## 🧪 Testing
 
 ### Running Tests
@@ -222,69 +264,9 @@ ptw -- -v
 
 ## 🛠️ Development
 
-### Adding a New Tool
 
-1. **Create Tool File**: `src/sap_mcp_server/tools/my_tool.py`
 
-```python
-from .base import MCPTool
 
-class MyNewTool(MCPTool):
-    @property
-    def name(self) -> str:
-        return "my_new_tool"
-
-    @property
-    def description(self) -> str:
-        return "Description of my new tool"
-
-    @property
-    def input_schema(self) -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "param": {"type": "string"}
-            },
-            "required": ["param"]
-        }
-
-    async def execute(self, params: dict) -> dict:
-        # Implementation
-        return {"result": "success"}
-```
-
-2. **Register Tool**: Update `src/sap_mcp_server/tools/__init__.py`
-
-```python
-from .my_tool import MyNewTool
-
-# Add to registry
-tool_registry.register(MyNewTool())
-```
-
-3. **Add Tests**: `tests/unit/test_my_tool.py`
-
-### Code Quality
-
-```bash
-# Format code
-black src/
-
-# Sort imports
-isort src/
-
-# Lint
-flake8 src/
-
-# Type check
-mypy src/
-
-# Security scan
-bandit -r src/
-
-# All quality checks
-black . && isort . && flake8 . && mypy . && bandit -r src/
-```
 
 ## 📚 Documentation
 
