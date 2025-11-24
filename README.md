@@ -550,7 +550,7 @@ sap-mcp/
 
 ---
 
-## 🚀 Quick Start
+## 📋 Preparation
 
 ### Prerequisites
 

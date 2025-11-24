@@ -551,7 +551,7 @@ sap-mcp/
 
 ---
 
-## 🚀 Inicio Rápido
+## 📋 Preparación
 
 ### Requisitos Previos
 
