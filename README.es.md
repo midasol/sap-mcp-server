@@ -553,7 +553,7 @@ sap-mcp/
 
 ## 📋 Preparación
 
-### Requisitos Previos
+### Requisitos Previos para el Servidor MCP
 
 #### Requisitos del Sistema
 

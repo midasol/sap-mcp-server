@@ -552,7 +552,7 @@ sap-mcp/
 
 ## 📋 Preparation
 
-### Prerequisites
+### Prerequisites for MCP Server
 
 #### System Requirements
 

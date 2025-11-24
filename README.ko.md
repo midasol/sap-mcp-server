@@ -552,7 +552,7 @@ sap-mcp/
 
 ## 📋 Preparation
 
-### 전제 조건
+### Prerequisites for MCP Server
 
 #### 시스템 요구 사항
 
