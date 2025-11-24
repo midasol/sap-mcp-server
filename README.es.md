@@ -1732,59 +1732,6 @@ Lista todos los servicios SAP disponibles desde la configuración.
 }
 ```
 
-### 5. Agregar Nueva Herramienta
-
-1. **Crear archivo de herramienta**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
-
-```python
-from .base import MCPTool
-
-class MyNewTool(MCPTool):
-    @property
-    def name(self) -> str:
-        return "my_new_tool"
-
-    @property
-    def description(self) -> str:
-        return "Description of my new tool"
-
-    @property
-    def input_schema(self) -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "param": {"type": "string"}
-            },
-            "required": ["param"]
-        }
-
-    async def execute(self, params: dict) -> dict:
-        # Implementación
-        return {"result": "success"}
-```
-
-2. **Registrar herramienta**: Actualizar `packages/server/src/sap_mcp_server/tools/__init__.py`
-
-```python
-from .my_tool import MyNewTool
-
-# Agregar al registro
-tool_registry.register(MyNewTool())
-```
-
-3. **Agregar pruebas**: `tests/unit/test_my_tool.py`
-
-```python
-import pytest
-from sap_mcp_server.tools.my_tool import MyNewTool
-
-@pytest.mark.asyncio
-async def test_my_tool():
-    tool = MyNewTool()
-    result = await tool.execute({"param": "value"})
-    assert result["result"] == "success"
-```
-
 ---
 
 ## 📚 Ejemplos de Uso
@@ -2096,7 +2043,58 @@ cd packages/server
 pip install -e ".[dev]"
 ```
 
+### Agregar Nueva Herramienta
 
+1. **Crear archivo de herramienta**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
+
+```python
+from .base import MCPTool
+
+class MyNewTool(MCPTool):
+    @property
+    def name(self) -> str:
+        return "my_new_tool"
+
+    @property
+    def description(self) -> str:
+        return "Description of my new tool"
+
+    @property
+    def input_schema(self) -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "param": {"type": "string"}
+            },
+            "required": ["param"]
+        }
+
+    async def execute(self, params: dict) -> dict:
+        # Implementación
+        return {"result": "success"}
+```
+
+2. **Registrar herramienta**: Actualizar `packages/server/src/sap_mcp_server/tools/__init__.py`
+
+```python
+from .my_tool import MyNewTool
+
+# Agregar al registro
+tool_registry.register(MyNewTool())
+```
+
+3. **Agregar pruebas**: `tests/unit/test_my_tool.py`
+
+```python
+import pytest
+from sap_mcp_server.tools.my_tool import MyNewTool
+
+@pytest.mark.asyncio
+async def test_my_tool():
+    tool = MyNewTool()
+    result = await tool.execute({"param": "value"})
+    assert result["result"] == "success"
+```
 
 
 

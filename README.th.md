@@ -1731,59 +1731,6 @@ gemini
 }
 ```
 
-### 5. การเพิ่มเครื่องมือใหม่
-
-1. **สร้างไฟล์เครื่องมือ**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
-
-```python
-from .base import MCPTool
-
-class MyNewTool(MCPTool):
-    @property
-    def name(self) -> str:
-        return "my_new_tool"
-
-    @property
-    def description(self) -> str:
-        return "Description of my new tool"
-
-    @property
-    def input_schema(self) -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "param": {"type": "string"}
-            },
-            "required": ["param"]
-        }
-
-    async def execute(self, params: dict) -> dict:
-        # การใช้งาน
-        return {"result": "success"}
-```
-
-2. **ลงทะเบียนเครื่องมือ**: อัปเดต `packages/server/src/sap_mcp_server/tools/__init__.py`
-
-```python
-from .my_tool import MyNewTool
-
-# เพิ่มลงในรีจิสทรี
-tool_registry.register(MyNewTool())
-```
-
-3. **เพิ่มการทดสอบ**: `tests/unit/test_my_tool.py`
-
-```python
-import pytest
-from sap_mcp_server.tools.my_tool import MyNewTool
-
-@pytest.mark.asyncio
-async def test_my_tool():
-    tool = MyNewTool()
-    result = await tool.execute({"param": "value"})
-    assert result["result"] == "success"
-```
-
 ---
 
 ## 📚 ตัวอย่างการใช้งาน
@@ -2095,7 +2042,58 @@ cd packages/server
 pip install -e ".[dev]"
 ```
 
+### การเพิ่มเครื่องมือใหม่
 
+1. **สร้างไฟล์เครื่องมือ**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
+
+```python
+from .base import MCPTool
+
+class MyNewTool(MCPTool):
+    @property
+    def name(self) -> str:
+        return "my_new_tool"
+
+    @property
+    def description(self) -> str:
+        return "Description of my new tool"
+
+    @property
+    def input_schema(self) -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "param": {"type": "string"}
+            },
+            "required": ["param"]
+        }
+
+    async def execute(self, params: dict) -> dict:
+        # การใช้งาน
+        return {"result": "success"}
+```
+
+2. **ลงทะเบียนเครื่องมือ**: อัปเดต `packages/server/src/sap_mcp_server/tools/__init__.py`
+
+```python
+from .my_tool import MyNewTool
+
+# เพิ่มลงในรีจิสทรี
+tool_registry.register(MyNewTool())
+```
+
+3. **เพิ่มการทดสอบ**: `tests/unit/test_my_tool.py`
+
+```python
+import pytest
+from sap_mcp_server.tools.my_tool import MyNewTool
+
+@pytest.mark.asyncio
+async def test_my_tool():
+    tool = MyNewTool()
+    result = await tool.execute({"param": "value"})
+    assert result["result"] == "success"
+```
 
 
 
