@@ -2117,15 +2117,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🆘 Support
-
-- **Issues**: [Create an issue](https://github.com/midasol/SAP-MCP-GCP/issues)
-- **Documentation**: See `docs/` directory
-- **Server Package**: See `packages/server/` for implementation details
-- **Community**: Join our discussions
-
----
-
 ## 🙏 Acknowledgments
 
 - **MCP Protocol**: Anthropic's Model Context Protocol
