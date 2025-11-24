@@ -490,8 +490,7 @@ sap-mcp/
 ├── README.ko.md                         # 韓国語ドキュメント
 ├── README.th.md                         # タイ語ドキュメント
 ├── README.zh-TW.md                      # 繁体字中国語ドキュメント
-├── README.old.md                        # 以前のREADMEバージョン
-└── REFACTORING_SUMMARY.md               # リファクタリング履歴
+└── README.zh-CN.md                      # 簡体字中国語ドキュメント
 ```
 
 ---

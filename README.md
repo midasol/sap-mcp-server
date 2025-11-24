@@ -490,8 +490,7 @@ sap-mcp/
 ├── README.ko.md                         # Korean documentation
 ├── README.th.md                         # Thai documentation
 ├── README.zh-TW.md                      # Traditional Chinese documentation
-├── README.old.md                        # Previous README version
-└── REFACTORING_SUMMARY.md               # Refactoring history
+└── README.zh-CN.md                      # Simplified Chinese documentation
 ```
 
 ---
