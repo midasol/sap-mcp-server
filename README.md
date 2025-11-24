@@ -2101,38 +2101,6 @@ black . && isort . && flake8 . && mypy . && bandit -r src/
 
 ---
 
-## 🗺️ Roadmap
-
-### ✅ Completed (v0.2.0)
-
-- [x] Phase 1: Structure and code migration
-- [x] Phase 2: Tools splitting (4 modular tools)
-- [x] Phase 3: Transport layer (Stdio)
-- [x] Phase 4: Utils and testing (56% coverage)
-- [x] Phase 5: Cleanup and documentation
-
-### 📝 Planned (v0.3.0)
-
-**High Priority**:
-- [ ] Increase test coverage to 70%+
-- [ ] Performance benchmarks
-- [ ] API documentation (Sphinx)
-
-**Medium Priority**:
-- [ ] Docker deployment guide
-- [ ] Kubernetes manifests
-- [ ] Prometheus metrics
-- [ ] OpenTelemetry integration
-
-**Low Priority**:
-- [ ] Rate limiting
-- [ ] Caching layer
-- [ ] GraphQL support
-- [ ] WebSocket transport
-- [ ] HTTP/REST transport
-
----
-
 ## 📖 Documentation
 
 - **[Server Package README](./packages/server/README.md)**: Detailed server documentation
