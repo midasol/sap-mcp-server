@@ -1056,29 +1056,7 @@ async with StdioServerParameters(command="...", args=[...]) as params:
 
 ---
 
-### 5. 개발
 
-#### 프로젝트 설정
-
-```bash
-# 의존성 설치
-pip install -e ".[dev]"
-
-# 테스트 실행
-pytest
-
-# 린트 및 포맷팅
-ruff check .
-ruff format .
-```
-
-#### 기여
-
-1. 이 저장소를 포크하십시오.
-2. 기능 브랜치를 생성하십시오 (`git checkout -b feature/amazing-feature`).
-3. 변경 사항을 커밋하십시오 (`git commit -m 'Add some amazing feature'`).
-4. 브랜치에 푸시하십시오 (`git push origin feature/amazing-feature`).
-5. Pull Request를 열어주십시오.
 
 ---
 

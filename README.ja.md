@@ -2079,23 +2079,7 @@ ENDMETHOD.
 
 ---
 
-## 🛠️ 開発
 
-### プロジェクトセットアップ
-
-```bash
-# クローンとセットアップ
-git clone <repository-url>
-cd sap-mcp
-
-# 仮想環境作成
-python3 -m venv .venv
-source .venv/bin/activate
-
-# 開発モードでインストール
-cd packages/server
-pip install -e ".[dev]"
-```
 
 
 

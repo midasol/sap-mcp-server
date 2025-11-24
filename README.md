@@ -2079,23 +2079,7 @@ The final OData service URL will be visible in the Gateway Client. It typically 
 
 ---
 
-## 🛠️ Development
 
-### Project Setup
-
-```bash
-# Clone and setup
-git clone <repository-url>
-cd sap-mcp
-
-# Create virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
-
-# Install in development mode
-cd packages/server
-pip install -e ".[dev]"
-```
 
 
 
