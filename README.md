@@ -18,18 +18,39 @@ Complete MCP server for SAP Gateway integration, providing modular tools for SAP
 - [🎯 Project Overview](#-project-overview)
 - [⚡ Quick Start](#-quick-start)
 - [📐 Architecture](#-architecture)
+  - [System Overview](#system-overview)
+  - [Component Details](#component-details)
+  - [Data Flow](#data-flow-order-query-example)
+  - [Tool Execution Flow](#tool-execution-flow)
+  - [Security Architecture](#security-architecture)
 - [📦 Repository Structure](#-repository-structure)
 - [✨ Features](#-features)
+- [🎓 SAP SFLIGHT Demo Scenario](#-sap-sflight-demo-scenario)
+  - [Scenario Overview](#scenario-overview)
+  - [OData Service Creation Guide](#odata-service-creation-guide)
 - [🚀 Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites-for-mcp-server)
   - [Installation](#1-installation)
   - [Configuration](#2-configuration)
   - [Run Server](#3-run-server)
 - [🤖 Integration with Gemini CLI](#-integration-with-gemini-cli)
+  - [Prerequisites](#prerequisites)
+  - [Install Gemini CLI](#1-install-gemini-cli)
+  - [Authenticate Gemini CLI](#2-authenticate-gemini-cli)
+  - [Register SAP MCP Server](#3-register-sap-mcp-server)
+  - [Start Using](#4-start-using-sap-mcp-with-gemini-cli)
+  - [Advanced Configuration](#advanced-configuration)
+  - [Troubleshooting](#troubleshooting)
+  - [Available Tools](#available-sap-tools-in-gemini-cli)
+  - [Example Workflows](#example-workflows)
 - [🔧 Available Tools](#-available-tools)
+  - [SAP Authenticate](#1-sap-authenticate)
+  - [SAP Query](#2-sap-query)
+  - [SAP Get Entity](#3-sap-get-entity)
+  - [SAP List Services](#4-sap-list-services)
+  - [Adding a New Tool](#5-adding-a-new-tool)
 - [📚 Usage Examples](#-usage-examples)
 - [🔒 Security](#-security)
-- [🎓 SAP SFLIGHT Demo Scenario](#-sap-sflight-demo-scenario)
 - [📖 Documentation](#-documentation)
 - [📝 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
@@ -2129,11 +2150,31 @@ if validate_entity_key(key):
 
 ## 📖 Documentation
 
-- **[Server Package README](./packages/server/README.md)**: Detailed server documentation
-- **[Configuration Guide](./docs/guides/configuration.md)**: YAML and environment setup
-- **[Deployment Guide](./docs/guides/deployment.md)**: Production deployment
-- **[Architecture Documentation](./docs/architecture/server.md)**: System architecture details
-- **[API Reference](./docs/api/)**: Tool and protocol documentation
+### 📚 Guides
+
+- **[Configuration Guide](./docs/guides/configuration.md)**: Complete guide for YAML and environment configuration
+- **[Deployment Guide](./docs/guides/deployment.md)**: Production deployment best practices
+- **[Troubleshooting Guide](./docs/guides/troubleshooting.md)**: Common issues and solutions
+- **[OData Service Creation Guide](./docs/guides/odata-service-creation-flight-demo.md)**: Step-by-step SFLIGHT OData service creation
+- **[SFLIGHT Demo Guide](./docs/guides/sfight-demo-guide.md)**: Working with SFLIGHT demo scenario
+
+### 🏗️ Architecture
+
+- **[Server Architecture](./docs/architecture/server.md)**: Detailed system architecture and design patterns
+
+### 📦 Package Documentation
+
+- **[Server Package README](./packages/server/README.md)**: Server package specific documentation
+
+### 🌐 Multi-Language Support
+
+- **[English](./README.md)**: Main documentation (this file)
+- **[日本語 (Japanese)](./README.ja.md)**: Japanese documentation
+- **[한국어 (Korean)](./README.ko.md)**: Korean documentation
+- **[ไทย (Thai)](./README.th.md)**: Thai documentation
+- **[繁體中文 (Traditional Chinese)](./README.zh-TW.md)**: Traditional Chinese documentation
+- **[简体中文 (Simplified Chinese)](./README.zh-CN.md)**: Simplified Chinese documentation
+- **[Español (Spanish)](./README.es.md)**: Spanish documentation
 
 ---
 
