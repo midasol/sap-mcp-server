@@ -185,3 +185,4 @@ text_files/
 .serena/
 # Gemini CLI local configuration
 .gemini/
+.serena/
