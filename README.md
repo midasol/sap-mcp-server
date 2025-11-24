@@ -414,43 +414,84 @@ sap-mcp/
 ├── packages/
 │   └── server/                          ✅ Production-Ready MCP Server
 │       ├── src/sap_mcp_server/
-│       │   ├── core/                    # SAP client & auth (3 files)
+│       │   ├── core/                    # SAP client & auth (4 files)
+│       │   │   ├── __init__.py          # Module initialization
 │       │   │   ├── sap_client.py        # OData operations
 │       │   │   ├── auth.py              # Credential management
 │       │   │   └── exceptions.py        # Custom exceptions
 │       │   ├── config/                  # Configuration (4 files)
+│       │   │   ├── __init__.py          # Module initialization
 │       │   │   ├── settings.py          # Environment config
 │       │   │   ├── loader.py            # YAML loader
 │       │   │   └── schemas.py           # Pydantic models
 │       │   ├── protocol/                # MCP protocol (2 files)
+│       │   │   ├── __init__.py          # Module initialization
 │       │   │   └── schemas.py           # Request/Response schemas
-│       │   ├── tools/                   # 4 modular SAP tools
+│       │   ├── tools/                   # 4 modular SAP tools (6 files)
+│       │   │   ├── __init__.py          # Tool registry
 │       │   │   ├── base.py              # Tool base class
 │       │   │   ├── auth_tool.py         # Authentication
 │       │   │   ├── query_tool.py        # OData queries
 │       │   │   ├── entity_tool.py       # Entity retrieval
 │       │   │   └── service_tool.py      # Service discovery
-│       │   ├── transports/              # Transport layer
+│       │   ├── transports/              # Transport layer (2 files)
+│       │   │   ├── __init__.py          # Module initialization
 │       │   │   └── stdio.py             # Stdio transport ✅
-│       │   └── utils/                   # Utilities (3 files)
-│       │       ├── logger.py            # Structured logging
-│       │       └── validators.py        # Input validation
+│       │   ├── utils/                   # Utilities (3 files)
+│       │   │   ├── __init__.py          # Module initialization
+│       │   │   ├── logger.py            # Structured logging
+│       │   │   └── validators.py        # Input validation
+│       │   └── __init__.py              # Package initialization
 │       ├── config/                      # Server configuration
 │       │   ├── services.yaml            # SAP services config
 │       │   └── services.yaml.example    # Configuration template
-│       ├── tests/                       # 45 tests (56% coverage)
-│       │   ├── conftest.py              # 8 fixtures
-│       │   ├── unit/                    # Fast isolated tests
+│       ├── tests/                       # Test suite (7 files, 56% coverage)
+│       │   ├── __init__.py              # Test package initialization
+│       │   ├── conftest.py              # Pytest fixtures
+│       │   ├── unit/                    # Unit tests
+│       │   │   ├── __init__.py          # Unit test package
+│       │   │   ├── test_base.py         # Base tool tests
+│       │   │   └── test_validators.py   # Validator tests
 │       │   └── integration/             # Integration tests
-│       └── pyproject.toml               # Package config
+│       │       ├── __init__.py          # Integration test package
+│       │       └── test_tool_integration.py  # Tool integration tests
+│       ├── pyproject.toml               # Package configuration
+│       └── README.md                    # Server package documentation
 │
 ├── docs/                                # Documentation
-│   ├── guides/                          # User guides
-│   └── api/                             # API reference
+│   ├── architecture/                    # Architecture documentation
+│   │   └── server.md                    # Server architecture
+│   └── guides/                          # User guides
+│       ├── configuration.md             # Configuration guide
+│       ├── deployment.md                # Deployment guide
+│       ├── troubleshooting.md           # Troubleshooting guide
+│       ├── odata-service-creation-flight-demo.md  # OData service creation
+│       └── sfight-demo-guide.md         # SFLIGHT demo guide
+│
+├── examples/                            # Example applications
+│   ├── basic/                           # Basic examples
+│   │   └── stdio_client.py              # Stdio client example
+│   ├── chatbot/                         # Chatbot examples
+│   │   └── order_inquiry_chatbot.py     # Order inquiry chatbot
+│   └── README.md                        # Examples documentation
+│
 ├── scripts/                             # Development scripts
-├── .env.server                          # Server configuration
-├── .env.server.example                  # Configuration template
-└── README.md                            # This file
+│   ├── create_structure.sh              # Project structure creation
+│   ├── migrate_code.sh                  # Code migration script
+│   └── update_imports.py                # Import update script
+│
+├── .claude/                             # Claude Code configuration
+│   └── settings.local.json              # Local settings
+│
+├── .env.server.example                  # Environment template
+├── .gitignore                           # Git ignore rules
+├── README.md                            # Main documentation (English)
+├── README.ja.md                         # Japanese documentation
+├── README.ko.md                         # Korean documentation
+├── README.th.md                         # Thai documentation
+├── README.zh-TW.md                      # Traditional Chinese documentation
+├── README.old.md                        # Previous README version
+└── REFACTORING_SUMMARY.md               # Refactoring history
 ```
 
 ---
