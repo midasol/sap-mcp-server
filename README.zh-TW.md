@@ -1,6 +1,6 @@
-# SAP MCP - 透過 Model Context Protocol 整合 SAP Gateway
+# SAP MCP - 透過模型上下文協議 (MCP) 整合 SAP Gateway
 
-一個完整的 MCP 伺服器，用於整合 SAP Gateway，提供模組化工具讓 AI 代理執行 SAP OData 操作。
+用於 SAP Gateway 整合的完整 MCP 伺服器，為 AI 代理和 SAP OData 操作提供模組化工具。
 
 <div align="center">
 
@@ -13,81 +13,160 @@
 </div>
 
 ---
+## 📑 目錄
 
-## 🎯 專案概覽
+- [🎯 專案概述](#-專案概述)
+- [📋 準備工作](#-準備工作)
+- [📐 架構](#-架構)
+  - [系統概覽](#系統概覽)
+  - [組件詳情](#組件詳情)
+  - [資料流](#資料流-訂單查詢範例)
+  - [工具執行流](#工具執行流)
+  - [安全架構](#安全架構)
+- [📦 倉庫結構](#-倉庫結構)
+- [✨ 功能](#-功能)
+- [🎓 SAP SFLIGHT 演示場景](#-sap-sflight-演示場景)
+  - [場景概覽](#場景概覽)
+  - [OData 服務建立指南](#odata-服務建立指南)
+- [🚀 快速開始](#-快速開始)
+  - [MCP 伺服器前提條件](#mcp-伺服器前提條件)
+  - [安裝](#1-安裝)
+  - [配置](#2-配置)
+  - [執行伺服器](#3-執行伺服器)
+- [🤖 與 Gemini CLI 整合](#-與-gemini-cli-整合)
+  - [前提條件](#前提條件)
+  - [安裝 Gemini CLI](#1-安裝-gemini-cli)
+  - [Gemini CLI 認證](#2-gemini-cli-認證)
+  - [註冊 SAP MCP 伺服器](#3-註冊-sap-mcp-伺服器)
+  - [開始使用](#4-開始在-gemini-cli-中使用-sap-mcp)
+  - [進階配置](#進階配置)
+  - [故障排除](#故障排除)
+  - [可用工具](#gemini-cli-中可用的-sap-工具)
+  - [工作流範例](#工作流範例)
+- [🔧 可用工具](#-可用工具)
+  - [SAP 認證 (sap_authenticate)](#1-sap-認證-sap_authenticate)
+  - [SAP 查詢 (sap_query)](#2-sap-查詢-sap_query)
+  - [SAP 實體獲取 (sap_get_entity)](#3-sap-實體獲取-sap_get_entity)
+  - [SAP 服務列表 (sap_list_services)](#4-sap-服務列表-sap_list_services)
+  - [新增新工具](#5-新增新工具)
+- [📚 使用範例](#-使用範例)
+- [🔒 安全](#-安全)
+- [📖 文件](#-文件)
+- [📝 許可證](#-許可證)
+- [🙏 致謝](#-致謝)
 
-一個生產就緒的 Model Context Protocol (MCP) 伺服器，使 AI 代理和應用程式能夠透過乾淨、模組化的架構與 SAP Gateway 系統互動。專為可靠性、安全性和開發者體驗而建構。
+---
+
+
+## 🎯 專案概述
+
+這是一個生產就緒的模型上下文協議 (MCP) 伺服器，旨在透過清晰、模組化的架構使 AI 代理和應用程式能夠與 SAP Gateway 系統進行互動。專為可靠性、安全性和開發者體驗而構建。
 
 **當前狀態**: ✅ **生產就緒** (所有 5 個階段已完成)
 
-### 關鍵亮點
+### 主要特性
 
-- 🔐 **安全的 SAP 整合**: 企業級驗證與 SSL/TLS 支援
-- 🛠️ **4 個模組化工具**: 驗證、查詢、實體檢索、服務發現
+- 🔐 **安全的 SAP 整合**: 企業級認證和 SSL/TLS 支援
+- 🛠️ **4 個模組化工具**: 認證、查詢、實體獲取和服務發現
 - 🚀 **Stdio 傳輸**: 生產級 MCP 伺服器
 - 📊 **結構化日誌**: JSON 和控制台格式，包含效能指標
-- ✅ **驗證**: 全面的 OData 和安全驗證
-- 🧪 **經過良好測試**: 56% 覆蓋率，44/45 測試通過 (98% 成功率)
+- ✅ **驗證輸入**: 全面的 OData 和安全驗證
+- 🧪 **充分測試**: 56% 覆蓋率，44/45 測試通過 (98% 成功率)
 
 ---
+
+---
+
+## 📋 準備工作
+
+在 5 分鐘內開始使用 SAP MCP：
+
+```bash
+# 1. 複製並進入專案
+git clone <repository-url>
+cd sap-mcp
+
+# 2. 建立虛擬環境並安裝
+python3 -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+cd packages/server
+pip install -e .
+
+# 3. 配置 SAP 連線
+cd ../..
+cp .env.server.example .env.server
+# 編輯 .env.server 填入您的 SAP 憑證
+
+# 4. 配置服務
+cp packages/server/config/services.yaml.example packages/server/config/services.yaml
+# 編輯 services.yaml 配置您的 SAP 服務
+
+# 5. 執行伺服器
+sap-mcp-server-stdio
+```
+
+**下一步：**
+- 📖 詳細安裝說明，請參閱 [快速開始](#-快速開始)。
+- 🤖 連線 AI 代理，請檢視 [與 Gemini CLI 整合](#-與-gemini-cli-整合)。
+- 🔧 API 文件，請瀏覽 [可用工具](#-可用工具)。
 
 ## 📐 架構
 
 ### 系統概覽
 
 <details>
-<summary>📊 點擊查看系統概覽圖</summary>
+<summary>📊 檢視系統概覽圖（點選展開）</summary>
 
 ```mermaid
 graph TB
-    subgraph clients["🎯 客戶端應用程式"]
+    subgraph clients["🎯 客戶端應用"]
         direction TB
-        A1["AI Agent<br/><small>LLM/GenAI Integration</small>"]
-        A2["Python Client<br/><small>SDK & Libraries</small>"]
-        A3["Order Chatbot<br/><small>範例應用程式</small>"]
+        A1["AI 代理<br/><small>LLM/GenAI 整合</small>"]
+        A2["Python 客戶端<br/><small>SDK & 庫</small>"]
+        A3["訂單聊天機器人<br/><small>範例應用</small>"]
     end
 
     subgraph transport["🚀 MCP 伺服器層"]
         direction TB
-        B1["Stdio Transport<br/><small>stdin/stdout Stream</small>"]
+        B1["Stdio 傳輸<br/><small>stdin/stdout 流</small>"]
     end
 
     subgraph registry["🛠️ 工具註冊表"]
         direction LR
-        C1["sap_authenticate<br/><small>驗證</small>"]
-        C2["sap_query<br/><small>OData Queries</small>"]
-        C3["sap_get_entity<br/><small>實體檢索</small>"]
+        C1["sap_authenticate<br/><small>認證</small>"]
+        C2["sap_query<br/><small>OData 查詢</small>"]
+        C3["sap_get_entity<br/><small>實體獲取</small>"]
         C4["sap_list_services<br/><small>服務發現</small>"]
     end
 
     subgraph core["⚡ 核心層"]
         direction LR
-        D1["SAP Client<br/><small>OData Handler</small>"]
-        D2["Auth Manager<br/><small>Credentials</small>"]
-        D3["Config Loader<br/><small>YAML/ENV</small>"]
+        D1["SAP 客戶端<br/><small>OData 處理程式</small>"]
+        D2["認證管理器<br/><small>憑證</small>"]
+        D3["配置載入器<br/><small>YAML/ENV</small>"]
     end
 
-    subgraph utils["🔧 工具程式"]
+    subgraph utils["🔧 工具類"]
         direction LR
-        E1["Validators<br/><small>Input/Security</small>"]
-        E2["Logger<br/><small>Structured Logs</small>"]
-        E3["Error Handler<br/><small>Production Grade</small>"]
+        E1["驗證器<br/><small>輸入/安全</small>"]
+        E2["日誌記錄器<br/><small>結構化日誌</small>"]
+        E3["錯誤處理程式<br/><small>生產級</small>"]
     end
 
     subgraph sap["🏢 SAP Gateway"]
         direction TB
-        F1["OData Services<br/><small>v2/v4 Protocol</small>"]
-        F2["Business Data<br/><small>Orders/Sales/Inventory</small>"]
+        F1["OData 服務<br/><small>v2/v4 協議</small>"]
+        F2["業務資料<br/><small>訂單/銷售/庫存</small>"]
     end
 
-    A1 & A2 & A3 -->|Active Connection| B1
-    B1 -->|Tool Dispatch| C1 & C2 & C3 & C4
-    C1 & C2 & C3 & C4 -->|Core Services| D1
-    C1 -->|Auth Flow| D2
-    C2 & C3 & C4 -->|Config Access| D3
-    D1 & D2 & D3 -->|Validation & Logging| E1 & E2 & E3
-    D1 -->|OData Protocol| F1
-    F1 -->|Data Access| F2
+    A1 & A2 & A3 -->|活動連線| B1
+    B1 -->|工具分發| C1 & C2 & C3 & C4
+    C1 & C2 & C3 & C4 -->|核心服務| D1
+    C1 -->|認證流程| D2
+    C2 & C3 & C4 -->|配置存取| D3
+    D1 & D2 & D3 -->|驗證 & 日志| E1 & E2 & E3
+    D1 -->|OData 協議| F1
+    F1 -->|資料存取| F2
 
     classDef clientNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:20px
     classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:20px
@@ -107,10 +186,10 @@ graph TB
 
 </details>
 
-### 元件詳情
+### 組件詳情
 
 <details>
-<summary>🔧 點擊查看元件詳情圖</summary>
+<summary>🔧 檢視組件詳情圖（點選展開）</summary>
 
 ```mermaid
 graph TB
@@ -119,55 +198,55 @@ graph TB
 
         subgraph trans["🚀 transports/"]
             direction LR
-            T1["stdio.py<br/><small>CLI Entry Point</small>"]
+            T1["stdio.py<br/><small>CLI 入口點</small>"]
         end
 
         subgraph tools["🛠️ tools/"]
             direction TB
-            TO5["base.py<br/><small>Tool Base Class</small>"]
+            TO5["base.py<br/><small>工具基類</small>"]
 
-            subgraph toolImpl["Tool Implementations"]
+            subgraph toolImpl["工具實現"]
                 direction LR
-                TO1["auth_tool.py<br/><small>Authentication</small>"]
-                TO2["query_tool.py<br/><small>OData Query</small>"]
-                TO3["entity_tool.py<br/><small>Single Entity</small>"]
-                TO4["service_tool.py<br/><small>Service List</small>"]
+                TO1["auth_tool.py<br/><small>認證</small>"]
+                TO2["query_tool.py<br/><small>OData 查詢</small>"]
+                TO3["entity_tool.py<br/><small>單一實體</small>"]
+                TO4["service_tool.py<br/><small>服務列表</small>"]
             end
         end
 
         subgraph core["⚡ core/"]
             direction LR
-            C1["sap_client.py<br/><small>OData Client</small>"]
-            C2["auth.py<br/><small>Auth Manager</small>"]
-            C3["exceptions.py<br/><small>Custom Errors</small>"]
+            C1["sap_client.py<br/><small>OData 客戶端</small>"]
+            C2["auth.py<br/><small>認證管理器</small>"]
+            C3["exceptions.py<br/><small>自定義錯誤</small>"]
         end
 
         subgraph config["⚙️ config/"]
             direction LR
-            CF1["settings.py<br/><small>Env Config</small>"]
-            CF2["loader.py<br/><small>YAML Loader</small>"]
-            CF3["schemas.py<br/><small>Pydantic Models</small>"]
+            CF1["settings.py<br/><small>環境設定</small>"]
+            CF2["loader.py<br/><small>YAML 載入器</small>"]
+            CF3["schemas.py<br/><small>Pydantic 模型</small>"]
         end
 
         subgraph utils["🔧 utils/"]
             direction LR
-            U1["logger.py<br/><small>Structured Logs</small>"]
-            U2["validators.py<br/><small>Input Validation</small>"]
+            U1["logger.py<br/><small>結構化日誌</small>"]
+            U2["validators.py<br/><small>輸入驗證</small>"]
         end
 
         subgraph protocol["📡 protocol/"]
-            P1["schemas.py<br/><small>MCP Request/Response</small>"]
+            P1["schemas.py<br/><small>MCP 請求/響應</small>"]
         end
     end
 
-    T1 -->|Dispatches to| TO1 & TO2 & TO3 & TO4
-    TO1 & TO2 & TO3 & TO4 -.->|Extends| TO5
-    TO5 -->|Uses| C1 & C2
-    C1 -->|Loads| CF1 & CF2
-    C2 -->|Reads| CF1
-    C1 & C2 -->|Validates & Logs| U1 & U2
-    TO5 -.->|Implements| P1
-    C3 -.->|Error Types| C1 & C2
+    T1 -->|分發| TO1 & TO2 & TO3 & TO4
+    TO1 & TO2 & TO3 & TO4 -.->|繼承| TO5
+    TO5 -->|使用| C1 & C2
+    C1 -->|載入| CF1 & CF2
+    C2 -->|讀取| CF1
+    C1 & C2 -->|驗證 & 日志| U1 & U2
+    TO5 -.->|實現| P1
+    C3 -.->|錯誤類型| C1 & C2
 
     classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
     classDef futureNode fill:#E8E8E8,stroke:#999999,stroke-width:2px,stroke-dasharray:5 5
@@ -189,131 +268,131 @@ graph TB
 
 </details>
 
-### 資料流：訂單查詢範例
+### 資料流: 訂單查詢範例
 
 <details>
-<summary>🔄 點擊查看資料流圖</summary>
+<summary>🔄 檢視資料流圖（點選展開）</summary>
 
 ```mermaid
 sequenceDiagram
     autonumber
-    box rgba(214, 234, 248, 0.3) Client Layer
-        participant Client as 🤖<br/>AI Agent/Client
+    box rgba(214, 234, 248, 0.3) 客戶端層
+        participant Client as 🤖<br/>AI 代理/客戶端
     end
-    box rgba(213, 245, 227, 0.3) Transport Layer
-        participant Transport as 📡<br/>Stdio Transport
-        participant Registry as 📋<br/>Tool Registry
+    box rgba(213, 245, 227, 0.3) 傳輸層
+        participant Transport as 📡<br/>Stdio 傳輸
+        participant Registry as 📋<br/>工具註冊表
     end
-    box rgba(252, 243, 207, 0.3) Tool Layer
-        participant AuthTool as 🔐<br/>Auth Tool
-        participant QueryTool as 🔍<br/>Query Tool
+    box rgba(252, 243, 207, 0.3) 工具層
+        participant AuthTool as 🔐<br/>認證工具
+        participant QueryTool as 🔍<br/>查詢工具
     end
-    box rgba(250, 219, 216, 0.3) Core Layer
-        participant SAPClient as 🔧<br/>SAP Client
+    box rgba(250, 219, 216, 0.3) 核心層
+        participant SAPClient as 🔧<br/>SAP 客戶端
     end
-    box rgba(213, 245, 227, 0.3) Support Layer
-        participant Validator as ✅<br/>Validator
-        participant Logger as 📊<br/>Logger
+    box rgba(213, 245, 227, 0.3) 支援層
+        participant Validator as ✅<br/>驗證器
+        participant Logger as 📊<br/>日誌記錄器
     end
-    box rgba(235, 222, 240, 0.3) External
+    box rgba(235, 222, 240, 0.3) 外部
         participant SAP as 🏢<br/>SAP Gateway
     end
 
     rect rgba(214, 234, 248, 0.15)
-        Note over Client,Registry: ⚡ Phase 1: Session Initialization
-        Client->>+Transport: Connect via stdio stream
-        Transport->>+Registry: Initialize tool registry
-        Registry-->>-Transport: ✅ 4 tools registered
-        Transport-->>-Client: Connection established
+        Note over Client,Registry: ⚡ 階段 1: 會話初始化
+        Client->>+Transport: 透過 stdio 流連線
+        Transport->>+Registry: 初始化工具註冊表
+        Registry-->>-Transport: ✅ 4 個工具已註冊
+        Transport-->>-Client: 連線建立
     end
 
     rect rgba(213, 245, 227, 0.15)
-        Note over Client,SAP: 🔐 Phase 2: Authentication
+        Note over Client,SAP: 🔐 階段 2: 認證
         Client->>+Transport: call_tool(sap_authenticate, {})
-        Transport->>+Registry: Get tool: sap_authenticate
-        Registry->>+AuthTool: Execute authentication
-        AuthTool->>+Validator: Validate credentials
-        Validator-->>-AuthTool: ✅ Credentials valid
-        AuthTool->>+Logger: Log authentication attempt
-        Logger-->>-AuthTool: Logged
-        AuthTool->>+SAPClient: Authenticate with SAP
+        Transport->>+Registry: 獲取工具: sap_authenticate
+        Registry->>+AuthTool: 執行認證
+        AuthTool->>+Validator: 驗證憑證
+        Validator-->>-AuthTool: ✅ 憑證有效
+        AuthTool->>+Logger: 記錄認證嘗試
+        Logger-->>-AuthTool: 已記錄
+        AuthTool->>+SAPClient: 向 SAP 認證
         SAPClient->>+SAP: POST /sap/opu/odata/auth
-        SAP-->>-SAPClient: 200 OK + Session token
-        SAPClient-->>-AuthTool: ✅ Authenticated successfully
-        AuthTool-->>-Registry: Success response
-        Registry-->>-Transport: Auth token + session ID
-        Transport-->>-Client: ✅ Authentication complete
+        SAP-->>-SAPClient: 200 OK + 會話令牌
+        SAPClient-->>-AuthTool: ✅ 認證成功
+        AuthTool-->>-Registry: 成功響應
+        Registry-->>-Transport: 認證令牌 + 會話 ID
+        Transport-->>-Client: ✅ 認證完成
     end
 
     rect rgba(252, 243, 207, 0.15)
-        Note over Client,SAP: 🔍 Phase 3: Query Execution
+        Note over Client,SAP: 🔍 階段 3: 執行查詢
         Client->>+Transport: call_tool(sap_query, {filter: "OrderID eq '91000043'"})
-        Transport->>+Registry: Get tool: sap_query
-        Registry->>+QueryTool: Execute with parameters
-        QueryTool->>+Validator: Validate OData filter syntax
-        Validator-->>-QueryTool: ✅ Filter is safe
-        QueryTool->>+Logger: Log query start
-        Logger-->>-QueryTool: Logged
-        QueryTool->>+SAPClient: Execute OData query
+        Transport->>+Registry: 獲取工具: sap_query
+        Registry->>+QueryTool: 帶參數執行
+        QueryTool->>+Validator: 驗證 OData 過濾語法
+        Validator-->>-QueryTool: ✅ 過濾器安全
+        QueryTool->>+Logger: 記錄查詢開始
+        Logger-->>-QueryTool: 已記錄
+        QueryTool->>+SAPClient: 執行 OData 查詢
         SAPClient->>+SAP: GET /OrderSet?$filter=OrderID eq '91000043'
-        SAP-->>-SAPClient: 200 OK + Order data (JSON)
-        SAPClient->>SAPClient: Parse & transform response
-        SAPClient-->>-QueryTool: ✅ Parsed order data
-        QueryTool->>+Logger: Log query success + metrics
-        Logger-->>-QueryTool: Logged
-        QueryTool-->>-Registry: Order details
-        Registry-->>-Transport: Formatted response
-        Transport-->>-Client: ✅ Query complete
+        SAP-->>-SAPClient: 200 OK + 訂單資料 (JSON)
+        SAPClient->>SAPClient: 解析響應 & 轉換
+        SAPClient-->>-QueryTool: ✅ 已解析的訂單資料
+        QueryTool->>+Logger: 記錄查詢成功 + 指標
+        Logger-->>-QueryTool: 已記錄
+        QueryTool-->>-Registry: 訂單詳情
+        Registry-->>-Transport: 格式化響應
+        Transport-->>-Client: ✅ 查詢完成
     end
 
     rect rgba(213, 245, 227, 0.15)
-        Note over Logger: 📊 Phase 4: Performance Tracking
-        Logger->>Logger: Calculate execution metrics
-        Logger->>Logger: Write structured JSON log
-        Logger->>Logger: Update performance counters
+        Note over Logger: 📊 階段 4: 效能追蹤
+        Logger->>Logger: 計算執行指標
+        Logger->>Logger: 寫入結構化 JSON 日誌
+        Logger->>Logger: 更新效能計數器
     end
 ```
 
 </details>
 
-### 工具執行流程
+### 工具執行流
 
 <details>
-<summary>⚡ 點擊查看工具執行流程圖</summary>
+<summary>⚡ 檢視工具執行流圖（點選展開）</summary>
 
 ```mermaid
 flowchart TD
-    Start([🚀 Client Request<br/><small>Tool invocation</small>])
+    Start([🚀 客戶端請求<br/><small>工具呼叫</small>])
 
-    Start --> Validate{🔍 Validate Input<br/><small>Schema check</small><br/><small>Security scan</small>}
+    Start --> Validate{🔍 輸入驗證<br/><small>模式檢查</small><br/><small>安全掃描</small>}
 
-    Validate -->|❌ Invalid| Error1[🚫 Validation Error<br/><small>Return error details</small>]
-    Validate -->|✅ Valid| Auth{🔐 Authenticated?<br/><small>Session check</small>}
+    Validate -->|❌ 無效| Error1[🚫 驗證錯誤<br/><small>返回錯誤詳情</small>]
+    Validate -->|✅ 有效| Auth{🔐 已認證?<br/><small>檢查會話</small>}
 
-    Auth -->|No| DoAuth[🔑 Execute Auth<br/><small>Credential validation</small><br/><small>SAP handshake</small>]
-    DoAuth --> AuthCheck{✅ Auth Success?<br/><small>Token received</small>}
+    Auth -->|否| DoAuth[🔑 執行認證<br/><small>驗證憑證</small><br/><small>SAP 握手</small>]
+    DoAuth --> AuthCheck{✅ 認證成功?<br/><small>接收令牌</small>}
 
-    AuthCheck -->|❌ Failed| Error2[🚫 Auth Error<br/><small>Invalid credentials</small>]
-    AuthCheck -->|✅ Success| Execute
+    AuthCheck -->|❌ 失敗| Error2[🚫 認證錯誤<br/><small>憑證無效</small>]
+    AuthCheck -->|✅ 成功| Execute
 
-    Auth -->|Yes| Execute[⚡ Execute Tool<br/><small>Business logic</small><br/><small>Parameter processing</small>]
+    Auth -->|是| Execute[⚡ 執行工具<br/><small>業務邏輯</small><br/><small>處理參數</small>]
 
-    Execute --> SAPCall[🌐 SAP OData Call<br/><small>HTTP request</small><br/><small>SSL/TLS encrypted</small>]
+    Execute --> SAPCall[🌐 SAP OData 呼叫<br/><small>HTTP 請求</small><br/><small>SSL/TLS 加密</small>]
 
-    SAPCall --> SAPCheck{📡 SAP Response<br/><small>Status check</small>}
+    SAPCall --> SAPCheck{📡 SAP 響應<br/><small>檢查狀態</small>}
 
-    SAPCheck -->|❌ Error| Error3[🚫 SAP Error<br/><small>Service unavailable</small><br/><small>or data error</small>]
-    SAPCheck -->|✅ 200 OK| Parse[📊 Parse Response<br/><small>XML/JSON parsing</small><br/><small>Data extraction</small>]
+    SAPCheck -->|❌ 錯誤| Error3[🚫 SAP 錯誤<br/><small>服務不可用</small><br/><small>或資料錯誤</small>]
+    SAPCheck -->|✅ 200 OK| Parse[📊 解析響應<br/><small>XML/JSON 解析</small><br/><small>提取資料</small>]
 
-    Parse --> Transform[🔄 Transform Data<br/><small>MCP format</small><br/><small>Schema mapping</small>]
+    Parse --> Transform[🔄 轉換資料<br/><small>MCP 格式</small><br/><small>模式對映</small>]
 
-    Transform --> Log[📝 Log Metrics<br/><small>Performance data</small><br/><small>Audit trail</small>]
+    Transform --> Log[📝 記錄指標<br/><small>效能資料</small><br/><small>審計跟蹤</small>]
 
-    Log --> Success([✅ Success Response<br/><small>Return to client</small>])
+    Log --> Success([✅ 成功響應<br/><small>返回給客戶端</small>])
 
-    Error1 & Error2 & Error3 --> LogError[📝 Log Error<br/><small>Error context</small><br/><small>Stack trace</small>]
+    Error1 & Error2 & Error3 --> LogError[📝 記錄錯誤<br/><small>錯誤上下文</small><br/><small>堆疊跟蹤</small>]
 
-    LogError --> End([❌ Error Response<br/><small>Return to client</small>])
+    LogError --> End([❌ 錯誤響應<br/><small>返回給客戶端</small>])
 
     classDef startNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
     classDef decisionNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:18px
@@ -341,54 +420,54 @@ flowchart TD
 ### 安全架構
 
 <details>
-<summary>🔒 點擊查看安全架構圖</summary>
+<summary>🔒 檢視安全架構圖（點選展開）</summary>
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize':'14px', 'fontFamily':'arial'}}}%%
 graph TB
-    subgraph security["🛡️ Defense in Depth Security Architecture"]
+    subgraph security["🛡️ 縱深防禦安全架構"]
         direction TB
 
-        subgraph layer1["Layer 1: Input Validation - Entry Point Security"]
+        subgraph layer1["層 1: 輸入驗證 - 入口點安全"]
             direction LR
-            L1A["🔍 OData Filter<br/><br/>SQL injection<br/>prevention<br/><br/>Syntax validation"]
-            L1B["🔑 Entity Key<br/><br/>Format<br/>validation<br/><br/>Type checking"]
-            L1C["🧹 Sanitization<br/><br/>XSS<br/>prevention<br/><br/>Input cleaning"]
+            L1A["🔍 OData 過濾器<br/><br/>SQL 注入<br/>防護<br/><br/>語法驗證"]
+            L1B["🔑 實體鍵<br/><br/>格式<br/>驗證<br/><br/>類型檢查"]
+            L1C["🧹 清理<br/><br/>XSS<br/>防護<br/><br/>輸入清洗"]
         end
 
-        subgraph layer2["Layer 2: Authentication - Identity Verification"]
+        subgraph layer2["層 2: 認證 - 身份驗證"]
             direction LR
-            L2A["✅ Credentials<br/><br/>User<br/>validation<br/><br/>Password checks"]
-            L2B["🎫 Sessions<br/><br/>Session<br/>lifecycle<br/><br/>Timeout handling"]
-            L2C["🔐 Tokens<br/><br/>JWT/Bearer<br/>tokens<br/><br/>Token rotation"]
+            L2A["✅ 憑證<br/><br/>使用者<br/>驗證<br/><br/>密碼檢查"]
+            L2B["🎫 會話<br/><br/>會話<br/>生命週期<br/><br/>超時處理"]
+            L2C["🔐 令牌<br/><br/>JWT/Bearer<br/>令牌<br/><br/>令牌輪換"]
         end
 
-        subgraph layer3["Layer 3: Authorization - Access Control"]
+        subgraph layer3["層 3: 授權 - 存取控制"]
             direction LR
-            L3A["🚦 Service Access<br/><br/>Service-level<br/>RBAC<br/><br/>Permission matrix"]
-            L3B["📋 Entity Permissions<br/><br/>Data-level<br/>access<br/><br/>Field filtering"]
+            L3A["🚦 服務存取<br/><br/>服務級<br/>RBAC<br/><br/>權限矩陣"]
+            L3B["📋 實體權限<br/><br/>資料級<br/>存取<br/><br/>欄位過濾"]
         end
 
-        subgraph layer4["Layer 4: Transport Security - Encryption Layer"]
+        subgraph layer4["層 4: 傳輸安全 - 加密層"]
             direction LR
-            L4A["🔒 SSL/TLS<br/><br/>TLS 1.2+ only<br/><br/>Perfect forward<br/>secrecy"]
-            L4B["📜 Certificates<br/><br/>Chain<br/>validation<br/><br/>Revocation check"]
+            L4A["🔒 SSL/TLS<br/><br/>僅 TLS 1.2+<br/><br/>完全前向<br/>保密"]
+            L4B["📜 證書<br/><br/>鏈<br/>驗證<br/><br/>吊銷檢查"]
         end
 
-        subgraph layer5["Layer 5: Audit & Monitoring - Observability"]
+        subgraph layer5["層 5: 審計 & 監控 - 可觀測性"]
             direction LR
-            L5A["📊 Structured Logs<br/><br/>JSON logging<br/><br/>PII exclusion"]
-            L5B["⚡ Performance<br/><br/>Metrics<br/>tracking<br/><br/>SLA monitoring"]
-            L5C["🚨 Error Tracking<br/><br/>Exception<br/>logging<br/><br/>Alert triggers"]
+            L5A["📊 結構化日誌<br/><br/>JSON 日誌<br/><br/>PII 編輯"]
+            L5B["⚡ 效能<br/><br/>指標<br/>追蹤<br/><br/>SLA 監控"]
+            L5C["🚨 錯誤追蹤<br/><br/>異常<br/>記錄<br/><br/>警報觸發"]
         end
     end
 
-    L1A & L1B & L1C -->|Validated Input| L2A
-    L2A -->|Identity Verified| L2B
-    L2B -->|Session Active| L2C
-    L2C -->|Authenticated| L3A & L3B
-    L3A & L3B -->|Authorized| L4A & L4B
-    L4A & L4B -->|Encrypted| L5A & L5B & L5C
+    L1A & L1B & L1C -->|已驗證輸入| L2A
+    L2A -->|已驗證身份| L2B
+    L2B -->|會話活躍| L2C
+    L2C -->|已認證| L3A & L3B
+    L3A & L3B -->|已授權| L4A & L4B
+    L4A & L4B -->|已加密| L5A & L5B & L5C
 
     classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:3px,padding:25px
     classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:3px,padding:25px
@@ -407,130 +486,126 @@ graph TB
 
 ---
 
-## 📦 儲存庫結構
+## 📦 倉庫結構
 
 ```
 sap-mcp/
 ├── packages/
-│   └── server/                          ✅ Production-Ready MCP Server
+│   └── server/                          ✅ 生產就緒 MCP 伺服器
 │       ├── src/sap_mcp_server/
-│       │   ├── core/                    # SAP client & auth (4 files)
-│       │   │   ├── __init__.py          # Module initialization
-│       │   │   ├── sap_client.py        # OData operations
-│       │   │   ├── auth.py              # Credential management
-│       │   │   └── exceptions.py        # Custom exceptions
-│       │   ├── config/                  # Configuration (4 files)
-│       │   │   ├── __init__.py          # Module initialization
-│       │   │   ├── settings.py          # Environment config
-│       │   │   ├── loader.py            # YAML loader
-│       │   │   └── schemas.py           # Pydantic models
-│       │   ├── protocol/                # MCP protocol (2 files)
-│       │   │   ├── __init__.py          # Module initialization
-│       │   │   └── schemas.py           # Request/Response schemas
-│       │   ├── tools/                   # 4 modular SAP tools (6 files)
-│       │   │   ├── __init__.py          # Tool registry
-│       │   │   ├── base.py              # Tool base class
-│       │   │   ├── auth_tool.py         # Authentication
-│       │   │   ├── query_tool.py        # OData queries
-│       │   │   ├── entity_tool.py       # Entity retrieval
-│       │   │   └── service_tool.py      # Service discovery
-│       │   ├── transports/              # Transport layer (2 files)
-│       │   │   ├── __init__.py          # Module initialization
-│       │   │   └── stdio.py             # Stdio transport ✅
-│       │   ├── utils/                   # Utilities (3 files)
-│       │   │   ├── __init__.py          # Module initialization
-│       │   │   ├── logger.py            # Structured logging
-│       │   │   └── validators.py        # Input validation
-│       │   └── __init__.py              # Package initialization
-│       ├── config/                      # Server configuration
-│       │   ├── services.yaml            # SAP services config
-│       │   └── services.yaml.example    # Configuration template
-│       ├── tests/                       # Test suite (7 files, 56% coverage)
-│       │   ├── __init__.py              # Test package initialization
+│       │   ├── core/                    # SAP 客戶端 & 認證 (4 檔案)
+│       │   │   ├── __init__.py          # 模組初始化
+│       │   │   ├── sap_client.py        # OData 操作
+│       │   │   ├── auth.py              # 憑證管理
+│       │   │   └── exceptions.py        # 自定義異常
+│       │   ├── config/                  # 配置 (4 檔案)
+│       │   │   ├── __init__.py          # 模組初始化
+│       │   │   ├── settings.py          # 環境設定
+│       │   │   ├── loader.py            # YAML 載入器
+│       │   │   └── schemas.py           # Pydantic 模型
+│       │   ├── protocol/                # MCP 協議 (2 檔案)
+│       │   │   ├── __init__.py          # 模組初始化
+│       │   │   └── schemas.py           # 請求/響應模式
+│       │   ├── tools/                   # 4 個模組化 SAP 工具 (6 檔案)
+│       │   │   ├── __init__.py          # 工具註冊表
+│       │   │   ├── base.py              # 工具基類
+│       │   │   ├── auth_tool.py         # 認證
+│       │   │   ├── query_tool.py        # OData 查詢
+│       │   │   ├── entity_tool.py       # 實體獲取
+│       │   │   └── service_tool.py      # 服務發現
+│       │   ├── transports/              # 傳輸層 (2 檔案)
+│       │   │   ├── __init__.py          # 模組初始化
+│       │   │   └── stdio.py             # Stdio 傳輸 ✅
+│       │   ├── utils/                   # 工具類 (3 檔案)
+│       │   │   ├── __init__.py          # 模組初始化
+│       │   │   ├── logger.py            # 結構化日誌
+│       │   │   └── validators.py        # 輸入驗證
+│       │   └── __init__.py              # 包初始化
+│       ├── config/                      # 伺服器配置
+│       │   ├── services.yaml            # SAP 服務配置
+│       │   └── services.yaml.example    # 配置模板
+│       ├── tests/                       # 測試套件 (7 檔案, 56% 覆蓋率)
+│       │   ├── __init__.py              # 測試包初始化
 │       │   ├── conftest.py              # Pytest fixtures
-│       │   ├── unit/                    # Unit tests
-│       │   │   ├── __init__.py          # Unit test package
-│       │   │   ├── test_base.py         # Base tool tests
-│       │   │   └── test_validators.py   # Validator tests
-│       │   └── integration/             # Integration tests
-│       │       ├── __init__.py          # Integration test package
-│       │       └── test_tool_integration.py  # Tool integration tests
-│       ├── pyproject.toml               # Package configuration
-│       └── README.md                    # Server package documentation
+│       │   ├── unit/                    # 單元測試
+│       │   │   ├── __init__.py          # 單元測試包
+│       │   │   ├── test_base.py         # 基礎工具測試
+│       │   │   └── test_validators.py   # 驗證器測試
+│       │   └── integration/             # 整合測試
+│       │       ├── __init__.py          # 整合測試包
+│       │       └── test_tool_integration.py  # 工具整合測試
+│       ├── pyproject.toml               # 包配置
+│       └── README.md                    # 伺服器包文件
 │
-├── docs/                                # Documentation
-│   ├── architecture/                    # Architecture documentation
-│   │   └── server.md                    # Server architecture
-│   └── guides/                          # User guides
-│       ├── configuration.md             # Configuration guide
-│       ├── deployment.md                # Deployment guide
-│       ├── troubleshooting.md           # Troubleshooting guide
-│       ├── odata-service-creation-flight-demo.md  # OData service creation
-│       └── sfight-demo-guide.md         # SFLIGHT demo guide
+├── docs/                                # 文件
+│   ├── architecture/                    # 架構文件
+│   │   └── server.md                    # 伺服器架構
+│   └── guides/                          # 使用者指南
+│       ├── configuration.md             # 配置指南
+│       ├── deployment.md                # 部署指南
+│       ├── troubleshooting.md           # 故障排除指南
+│       ├── odata-service-creation-flight-demo.md  # OData 服務建立
+│       └── sfight-demo-guide.md         # SFLIGHT 演示指南
 │
-├── examples/                            # Example applications
-│   ├── basic/                           # Basic examples
-│   │   └── stdio_client.py              # Stdio client example
-│   ├── chatbot/                         # Chatbot examples
-│   │   └── order_inquiry_chatbot.py     # Order inquiry chatbot
-│   └── README.md                        # Examples documentation
+├── examples/                            # 範例應用
+│   ├── basic/                           # 基礎範例
+│   │   └── stdio_client.py              # Stdio 客戶端範例
+│   ├── chatbot/                         # 聊天機器人範例
+│   │   └── order_inquiry_chatbot.py     # 訂單查詢聊天機器人
+│   └── README.md                        # 範例文件
 │
-├── scripts/                             # Development scripts
-│   ├── create_structure.sh              # Project structure creation
-│   ├── migrate_code.sh                  # Code migration script
-│   └── update_imports.py                # Import update script
+├── scripts/                             # 開發指令碼
+│   ├── create_structure.sh              # 專案結構建立
+│   ├── migrate_code.sh                  # 程式碼遷移指令碼
+│   └── update_imports.py                # 匯入更新指令碼
 │
-├── .claude/                             # Claude Code configuration
-│   └── settings.local.json              # Local settings
-│
-├── .env.server.example                  # Environment template
-├── .gitignore                           # Git ignore rules
-├── README.md                            # Main documentation (English)
-├── README.ja.md                         # Japanese documentation
-├── README.ko.md                         # Korean documentation
-├── README.th.md                         # Thai documentation
-├── README.zh-TW.md                      # Traditional Chinese documentation
-└── README.zh-CN.md                      # Simplified Chinese documentation
+├── .env.server.example                  # 環境模板
+├── README.md                            # 主文件 (英語)
+├── README.ja.md                         # 日語文件
+├── README.ko.md                         # 韓語文件
+├── README.th.md                         # 泰語文件
+├── README.zh-TW.md                      # 繁體中文文件
+└── README.zh-CN.md                      # 簡體中文文件
 ```
 
 ---
 
 ## ✨ 功能
 
-### 核心能力
+### 核心功能
 
 <table>
 <tr>
 <td width="50%">
 
 #### 🛠️ 工具
-- ✅ **sap_authenticate**: 安全的 SAP 驗證
+- ✅ **sap_authenticate**: 安全的 SAP 認證
 - ✅ **sap_query**: 帶過濾器的 OData 查詢
-- ✅ **sap_get_entity**: 單一實體檢索
+- ✅ **sap_get_entity**: 單一實體獲取
 - ✅ **sap_list_services**: 服務發現
 
 </td>
 <td width="50%">
 
 #### 🚀 傳輸
-- ✅ **Stdio**: 生產級 stdin/stdout
+- ✅ **Stdio**: 生產就緒 stdin/stdout
 
 </td>
 </tr>
 <tr>
 <td>
 
-#### 📊 日誌與監控
-- ✅ **結構化日誌**: JSON + Console
-- ✅ **效能指標**: 請求時間
+#### 📊 日誌 & 監控
+- ✅ **結構化日誌**: JSON + 控制台
+- ✅ **效能指標**: 請求計時
 - ✅ **錯誤追蹤**: 完整上下文
-- ✅ **稽核軌跡**: 安全事件
+- ✅ **審計跟蹤**: 安全事件
 
 </td>
 <td>
 
-#### 🔒 安全性
-- ✅ **輸入驗證**: OData & 安全性
+#### 🔒 安全
+- ✅ **輸入驗證**: OData & 安全
 - ✅ **SSL/TLS 支援**: 安全連線
 - ✅ **憑證管理**: .env.server
 - ✅ **錯誤處理**: 生產級
@@ -542,55 +617,218 @@ sap-mcp/
 ### 開發者體驗
 
 - ✅ **模組化架構**: 每個工具一個檔案
-- ✅ **型別安全**: 完整的型別提示
+- ✅ **類型安全**: 完整的類型提示
 - ✅ **文件**: 全面的指南
-- ✅ **簡易安裝**: `pip install -e .`
-- ✅ **熱重載**: 開發模式
-- ✅ **範例應用程式**: 3 個可運行的範例
+- ✅ **輕鬆設定**: `pip install -e .`
+- ✅ **熱過載**: 開發模式
+- ✅ **範例應用**: 3 個工作範例
 
 ---
 
-## 📋 準備工作
+## 🎓 SAP SFLIGHT 演示場景
 
-### MCP 伺服器的先決條件
+### 場景概覽
 
-#### 系統需求
+為方便起見，本專案基於 SAP SFLIGHT 演示資料集。
+
+SFLIGHT 資料集是 SAP 提供的標準範例資料庫，包含航班時刻表、航空公司、機場和預訂資料。它是測試和演示資料建模及服務建立的絕佳資源。
+
+本指南假設您有一個公開此資料集的 OData 服務。目標是將 SAP MCP 伺服器連線到此服務，並使用 AI 代理或其他客戶端與其互動。
+
+**SAP 官方文件:**
+- [SAP 文件 - Flight Model](https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm)
+- [SAP Help Portal - Flight Model](https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html)
+
+---
+
+### OData 服務建立指南
+
+本指南將引導您使用 SAP Gateway Service Builder (`SEGW`) 在 SAP 系統中建立一個 OData 服務，以公開 Flight 場景資料，這些資料通常在 SAP S/4HANA Fully Activated Appliance (FAA) 版本中可用。
+
+#### 場景概覽
+
+* **目標:** 透過 OData 服務公開航班時刻表、預訂和相關主資料。
+* **場景資料要求:** 航班時刻表、日期、時間、機場詳情、航空公司詳情、乘客詳情、價格等。
+* **相關 SAP 表:** `SFLIGHT`, `SPFLI`, `SCARR`, `SAIRPORT`, `SBOOK`, `SCUSTOM`.
+
+---
+
+#### 在 SEGW 中建立 OData 服務的步驟
+
+##### 1. 存取 SAP Gateway Service Builder
+
+轉到 SAP 事務代碼 `SEGW`。
+
+##### 2. 建立新專案
+
+1. 點選 "Create Project" 按鈕。
+2. **Project Name:** 分配一個名稱 (例如 `Z_TRAVEL_RECOMMENDATIONS_SRV`)。
+3. **Description:** 輸入有意義的描述。
+4. **Package:** 分配到一個包 (例如 `$TMP` 用於本地開發或可傳輸的包)。
+
+##### 3. 從 DDIC 結構匯入資料模型
+
+此步驟根據底層 SAP 表定義 OData 實體。
+
+1. 右鍵點選專案中的 "Data Model" 資料夾。
+2. 選擇 **"Import" -> "DDIC Structure"**。
+3. 對每個所需的表重複匯入過程，指定 **Entity Type Name** 並選擇所需欄位。
+
+***所需操作:*** 確保在匯入過程中正確標記鍵欄位。
+
+| DDIC 結構 | 實體類型名稱 | 建議鍵欄位 | 相關負載欄位 (範例) |
+| :---- | :---- | :---- | :---- |
+| `SFLIGHT` | **Flight** | `CARRID`, `CONNID`, `FLDATE` | `PRICE`, `CURRENCY`, `PLANETYPE`, `SEATSMAX`, `SEATSOCC` |
+| `SPFLI` | **Connection** | `CARRID`, `CONNID` | `COUNTRYFR`, `CITYFROM`, `AIRPFROM`, `COUNTRYTO`, `CITYTO`, `AIRPTO`, `DEPTIME`, `ARRTIME`, `DISTANCE` |
+| `SCARR` | **Airline** | `CARRID` | `CARRNAME`, `CURRCODE`, `URL` |
+| `SAIRPORT` | **Airport** | `ID` | `NAME`, `CITY`, `COUNTRY` |
+| `SBOOK` | **Booking** | `CARRID`, `CONNID`, `FLDATE`, `BOOKID` | `CUSTOMID`, `CUSTTYPE`, `SMOKER`, `LUGGWEIGHT`, `WUNIT`, `INVOICE`, `CLASS`, `FORCURAM`, `ORDER_DATE` |
+| `SCUSTOM` | **Passenger** | `ID` | `NAME`, `FORM`, `STREET`, `POSTCODE`, `CITY`, `COUNTRY`, `PHONE` |
+
+##### 4. 定義關聯和導航屬性
+
+關聯基於鍵欄位連結實體。導航屬性允許客戶端應用程式輕鬆遍歷這些關係 (例如，使用 `$expand`)。
+
+**邏輯關係:**
+
+* **1:N:** 航空公司 <-> 航班, 航空公司 <-> 連線, 連線 <-> 航班, 航班 <-> 預訂, 乘客 <-> 預訂.
+* **N:1:** 連線 <-> 出發機場, 連線 <-> 到達機場.
+
+**建立關聯的步驟:**
+
+1. 右鍵點選 "Data Model" -> **"Create" -> "Association"**。
+2. 定義 **Association Name**, **Principal Entity** ('1' 端), **Dependent Entity** ('多' 端), 和 **Cardinality** (例如 1:N)。
+3. 在下一個螢幕中，透過匹配 Principal 和 Dependent 實體之間的鍵欄位來進行 **Specify Key Mapping**。
+
+**要建立的具體關聯:**
+
+| 序號 | 關聯名稱 | Principal:Dependent | 基數 | 鍵對映 |
+| :---- | :---- | :---- | :---- | :---- |
+| 1 | `Assoc_Airline_Flights` | `Airline` : `Flight` | 1:N | `Airline.CARRID` <-> `Flight.CARRID` |
+| 2 | `Assoc_Airline_Connections` | `Airline` : `Connection` | 1:N | `Airline.CARRID` <-> `Connection.CARRID` |
+| 3 | `Assoc_Connection_Flights` | `Connection` : `Flight` | 1:N | `CARRID` & `CONNID` (雙向) |
+| 4 | `Assoc_Flight_Bookings` | `Flight` : `Booking` | 1:N | `CARRID`, `CONNID`, `FLDATE` (全部 3 個) |
+| 5 | `Assoc_Passenger_Bookings` | `Passenger` : `Booking` | 1:N | `Passenger.ID` <-> `Booking.CUSTOMID` |
+| 6 | `Assoc_Connection_OriginAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPFROM` <-> `Airport.ID` |
+| 7 | `Assoc_Connection_DestAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPTO` <-> `Airport.ID` |
+
+**要建立的導航屬性:**
+
+| 實體 | 導航屬性名稱 | 目標實體 | 使用的關聯 |
+| :---- | :---- | :---- | :---- |
+| **Airline** | `ToFlights`, `ToConnections` | `Flight`, `Connection` | `Assoc_Airline_Flights`, `Assoc_Airline_Connections` |
+| **Flight** | `ToAirline`, `ToConnection`, `ToBookings` | `Airline`, `Connection`, `Booking` | `Assoc_Airline_Flights`, `Assoc_Connection_Flights`, `Assoc_Flight_Bookings` |
+| **Connection** | `ToAirline`, `ToFlights`, `ToOriginAirport`, `ToDestinationAirport` | `Airline`, `Flight`, `Airport`, `Airport` | `Assoc_Airline_Connections`, `Assoc_Connection_Flights`, `Assoc_Connection_OriginAirport`, `Assoc_Connection_DestAirport` |
+| **Booking** | `ToFlight`, `ToPassenger` | `Flight`, `Passenger` | `Assoc_Flight_Bookings`, `Assoc_Passenger_Bookings` |
+| **Passenger** | `ToBookings` | `Booking` | `Assoc_Passenger_Bookings` |
+
+##### 5. 生成執行時物件
+
+1. 點選 **"Generate Runtime Objects"** 按鈕 (魔術棒圖示)。
+2. 這將生成模型提供者類 (MPC) 和資料提供者類 (DPC)，它們是 ABAP 類。
+3. 接受預設類名或進行調整。
+
+##### 6. 實現資料提供者類 (DPC) 方法
+
+生成的 DPC 擴充套件類 (例如 `ZCL_Z_TRAVEL_RECOM_DPC_EXT`) 用於您的自定義邏輯。
+
+* 如果直接表對映足夠，基本實現可能就足夠了。
+* 對於自定義過濾、連線、計算或複雜的讀取/建立/更新/刪除 (CRUD) 操作，您需要在 DPC 擴充套件類中重新定義方法，如 `*_GET_ENTITY` (單條記錄) 和 `*_GET_ENTITYSET` (集合)。
+
+AIRLINESET_GET_ENTITYSET 方法範例:
+
+```abap
+METHOD airlineset_get_entityset.
+  DATA: lt_airlines TYPE TABLE OF scarr,
+        ls_airline TYPE scarr,
+        lv_filter_string TYPE string.
+
+  TRY.
+      lv_filter_string = io_tech_request_context->get_filter( )->get_filter_string( ).
+    CATCH cx_sy_itab_line_not_found.
+      CLEAR lv_filter_string.
+  ENDTRY.
+
+  " TODO: Apply filtering based on lv_filter_string"
+  IF lv_filter_string IS NOT INITIAL.
+    SELECT * FROM scarr INTO TABLE lt_airlines WHERE (lv_filter_string).
+  ELSE.
+    SELECT * FROM scarr INTO TABLE lt_airlines.
+  ENDIF.
+
+  LOOP AT lt_airlines INTO ls_airline.
+    APPEND ls_airline TO et_entityset.
+  ENDLOOP.
+ENDMETHOD.
+```
+
+##### 7. 註冊服務
+
+1. 轉到事務 `/IWFND/MAINT_SERVICE`。
+2. 點選 **"Add Service"**。
+3. 輸入後端系統的 **System Alias** (例如 `LOCAL`)。
+4. 搜尋 **Technical Service Name** (例如 `Z_TRAVEL_RECOMMENDATIONS_SRV`)。
+5. 選擇服務並點選 **"Add Selected Services"**。
+6. 分配包並確認。
+
+##### 8. 啟用並測試服務
+
+1. 在 `/IWFND/MAINT_SERVICE` 中，找到新註冊的服務。
+2. 確保 **ICF Node is Active** (綠燈)。如果不是，選擇服務並轉到 **"ICF Node" -> "Activate"**。
+3. 選擇服務並點選 **"SAP Gateway Client"** 按鈕。
+4. **在 Gateway Client 中測試:**
+   * 測試實體集合獲取: 點選 **"EntitySets"**，選擇一個 EntitySet (例如 `AirlineCollection`) 並點選 **"Execute"**。
+   * 測試 OData 功能: 嘗試查詢選項如 `$filter`，特別是驗證導航屬性是否工作，使用 **`$expand`** (例如 `/FlightSet(key)?$expand=ToAirline`)。
+
+##### 9. 驗證服務 URL
+
+最終的 OData 服務 URL 可以在 Gateway Client 中看到。它通常遵循以下結構:
+
+`/sap/opu/odata/sap/Z_TRAVEL_RECOMMENDATIONS_SRV/.` 這是您的客戶端應用程式 (如 Fiori 或自定義移動應用) 將用於使用 SFLIGHT 資料的 URL。
+
+---
+
+## 🚀 快速開始
+
+### MCP 伺服器前提條件
+
+#### 系統要求
 
 - **Python 3.11 或更高版本**
-- **pip** (Python 套件安裝程式)
-- **Git** (用於複製儲存庫)
+- **pip** (Python 包安裝程式)
+- **Git** (用於複製倉庫)
 - SAP Gateway 存取憑證
 - 虛擬環境支援
 
-#### Python 安裝
+#### 安裝 Python
 
 <details>
 <summary><b>🪟 Windows</b></summary>
 
-**選項 1: Microsoft Store (推薦用於 Windows 10/11)**
+**選項 1: Microsoft Store (推薦 Windows 10/11)**
 ```powershell
-# 在 Microsoft Store 搜尋 "Python 3.11" 或 "Python 3.12"
-# 或從 python.org 下載
+# 在 Microsoft Store 中搜尋 "Python 3.11" 或 "Python 3.12"
+# 或者從 python.org 下載
 ```
 
 **選項 2: Python.org 安裝程式**
 1. 從 [python.org/downloads](https://www.python.org/downloads/) 下載
 2. 執行安裝程式
 3. ✅ **勾選 "Add Python to PATH"**
-4. 點擊 "Install Now"
+4. 點選 "Install Now"
 
 **驗證安裝:**
 ```powershell
 python --version
-# 應顯示: Python 3.11.x or higher
+# 輸出: Python 3.11.x 或更高
 
 pip --version
-# 應顯示: pip 23.x.x or higher
+# 輸出: pip 23.x.x 或更高
 ```
 
 **常見問題:**
-- 如果找不到 `python` 命令，請嘗試 `python3` 或 `py`
-- 如果找不到 `pip`，請安裝: `python -m ensurepip --upgrade`
+- 如果找不到 `python` 命令，嘗試 `python3` 或 `py`
+- 如果找不到 `pip`，安裝它: `python -m ensurepip --upgrade`
 
 </details>
 
@@ -599,27 +837,27 @@ pip --version
 
 **選項 1: Homebrew (推薦)**
 ```bash
-# 如果尚未安裝 Homebrew，請安裝
+# 如果未安裝 Homebrew，請先安裝
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # 安裝 Python
 brew install python@3.11
-# 或
+# 或者
 brew install python@3.12
 ```
 
 **選項 2: Python.org 安裝程式**
 1. 從 [python.org/downloads/macos](https://www.python.org/downloads/macos/) 下載
 2. 開啟 `.pkg` 檔案
-3. 按照安裝精靈操作
+3. 按照安裝嚮導操作
 
 **驗證安裝:**
 ```bash
 python3 --version
-# 應顯示: Python 3.11.x or higher
+# 輸出: Python 3.11.x 或更高
 
 pip3 --version
-# 應顯示: pip 23.x.x or higher
+# 輸出: pip 23.x.x 或更高
 ```
 
 **注意:** macOS 可能預裝了 Python 2.7。請始終使用 `python3` 和 `pip3` 命令。
@@ -631,13 +869,13 @@ pip3 --version
 
 **Ubuntu/Debian:**
 ```bash
-# 更新套件列表
+# 更新包列表
 sudo apt update
 
 # 安裝 Python 3.11+
 sudo apt install python3.11 python3.11-venv python3-pip
 
-# 或安裝最新 Python
+# 或者對於最新的 Python
 sudo apt install python3 python3-venv python3-pip
 ```
 
@@ -646,7 +884,7 @@ sudo apt install python3 python3-venv python3-pip
 # 安裝 Python 3.11+
 sudo dnf install python3.11 python3-pip
 
-# 或
+# 或者
 sudo yum install python3 python3-pip
 ```
 
@@ -658,10 +896,10 @@ sudo pacman -S python python-pip
 **驗證安裝:**
 ```bash
 python3 --version
-# 應顯示: Python 3.11.x or higher
+# 輸出: Python 3.11.x 或更高
 
 pip3 --version
-# 應顯示: pip 23.x.x or higher
+# 輸出: pip 23.x.x 或更高
 ```
 
 </details>
@@ -670,13 +908,13 @@ pip3 --version
 
 ### 1. 安裝
 
-#### 逐步安裝
+#### 分步安裝
 
 <details open>
-<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
+<summary><b>🪟 Windows (PowerShell/命令提示符)</b></summary>
 
 ```powershell
-# 複製儲存庫
+# 複製倉庫
 git clone <repository-url>
 cd sap-mcp
 
@@ -685,16 +923,16 @@ python -m venv .venv
 
 # 啟用虛擬環境
 .venv\Scripts\activate
-# 或在 PowerShell 中:
+# 或者在 PowerShell 中:
 # .venv\Scripts\Activate.ps1
 
-# 如果在 PowerShell 中遇到執行策略錯誤:
+# 如果 PowerShell 出現執行策略錯誤:
 # Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# 驗證啟用 (你應該在提示符中看到 (.venv))
+# 驗證啟用 (提示符中應顯示 (.venv))
 # (.venv) PS C:\path\to\sap-mcp>
 
-# 安裝伺服器套件
+# 安裝伺服器包
 cd packages\server
 pip install -e .
 
@@ -705,19 +943,19 @@ pip install -e ".[dev]"
 sap-mcp-server-stdio --help
 ```
 
-**Windows 常見問題:**
+**常見 Windows 問題:**
 - **找不到 `python`**: 嘗試 `python3` 或 `py`
-- **存取被拒**: 以管理員身分執行 PowerShell
+- **權限被拒絕**: 以管理員身份執行 PowerShell
 - **執行策略**: 執行 `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
-- **長路徑支援**: 在 Windows 中啟用長路徑 (Settings > System > About > Advanced system settings)
+- **長路徑支援**: 在 Windows 中啟用長路徑 (設定 > 系統 > 關於 > 進階系統設定)
 
 </details>
 
 <details>
-<summary><b>🍎 macOS (Terminal)</b></summary>
+<summary><b>🍎 macOS (終端)</b></summary>
 
 ```bash
-# 複製儲存庫
+# 複製倉庫
 git clone <repository-url>
 cd sap-mcp
 
@@ -727,10 +965,10 @@ python3 -m venv .venv
 # 啟用虛擬環境
 source .venv/bin/activate
 
-# 驗證啟用 (你應該在提示符中看到 (.venv))
+# 驗證啟用 (提示符中應顯示 (.venv))
 # (.venv) user@macbook sap-mcp %
 
-# 安裝伺服器套件
+# 安裝伺服器包
 cd packages/server
 pip install -e .
 
@@ -740,16 +978,16 @@ pip install -e ".[dev]"
 # 驗證安裝
 sap-mcp-server-stdio --help
 
-# 檢查安裝路徑 (對 Gemini CLI 設定很有用)
+# 檢查安裝路徑 (對 Gemini CLI 配置很有用)
 which sap-mcp-server-stdio
 # 範例輸出: /Users/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
 ```
 
-**macOS 常見問題:**
-- **找不到 `python`**: 使用 `python3` 代替
-- **找不到 `pip`**: 使用 `pip3` 代替
-- **存取被拒**: 不要在虛擬環境中使用 `sudo`
-- **安裝後找不到命令**: 確保已啟用虛擬環境
+**常見 macOS 問題:**
+- **找不到 `python`**: 改用 `python3`
+- **找不到 `pip`**: 改用 `pip3`
+- **權限被拒絕**: 不要在虛擬環境中使用 `sudo`
+- **安裝後找不到命令**: 確保虛擬環境已啟用
 
 </details>
 
@@ -757,7 +995,7 @@ which sap-mcp-server-stdio
 <summary><b>🐧 Linux (Bash/Zsh)</b></summary>
 
 ```bash
-# 複製儲存庫
+# 複製倉庫
 git clone <repository-url>
 cd sap-mcp
 
@@ -767,10 +1005,10 @@ python3 -m venv .venv
 # 啟用虛擬環境
 source .venv/bin/activate
 
-# 驗證啟用 (你應該在提示符中看到 (.venv))
+# 驗證啟用 (提示符中應顯示 (.venv))
 # (.venv) user@linux:~/sap-mcp$
 
-# 安裝伺服器套件
+# 安裝伺服器包
 cd packages/server
 pip install -e .
 
@@ -780,104 +1018,104 @@ pip install -e ".[dev]"
 # 驗證安裝
 sap-mcp-server-stdio --help
 
-# 檢查安裝路徑 (對 Gemini CLI 設定很有用)
+# 檢查安裝路徑 (對 Gemini CLI 配置很有用)
 which sap-mcp-server-stdio
 # 範例輸出: /home/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
 ```
 
-**Linux 常見問題:**
-- **找不到 `python3-venv`**: 使用 `sudo apt install python3-venv` 安裝
-- **存取被拒**: 不要在虛擬環境中使用 `sudo`
+**常見 Linux 問題:**
+- **找不到 `python3-venv`**: 安裝它 `sudo apt install python3-venv`
+- **權限被拒絕**: 不要在虛擬環境中使用 `sudo`
 - **SSL 錯誤**: 安裝證書: `sudo apt install ca-certificates`
-- **缺少建置依賴**: 使用 `sudo apt install build-essential python3-dev` 安裝
+- **缺少構建依賴**: 安裝 `sudo apt install build-essential python3-dev`
 
 </details>
 
 ---
 
-### 2. 設定
+### 2. 配置
 
-SAP MCP 伺服器需要兩個設定檔：
+SAP MCP 伺服器需要兩個配置檔案：
 1. **`.env.server`**: SAP 連線憑證 (單一 SAP 系統)
-2. **`services.yaml`**: SAP Gateway 服務和驗證設定
+2. **`services.yaml`**: SAP Gateway 服務和認證配置
 
-#### 2.1. SAP 連線設定 (`.env.server`)
+#### 2.1. SAP 連線配置 (`.env.server`)
 
-> **⚠️ 重要**: 自 v0.2.0 起，`.env.server` 已整合至 **專案根目錄**。之前的 `packages/server/.env.server` 位置已不再支援。
+> **⚠️ 重要**: 從 v0.2.0 開始，`.env.server` 已整合到 **專案根目錄**。不再支援之前的 `packages/server/.env.server` 位置。
 
 **檔案位置**: `.env.server` 必須位於 **專案根目錄**。
 
 ```
 sap-mcp/
-├── .env.server              ← 設定檔 (唯一位置 - 在此建立)
-├── .env.server.example      ← 範例模板
+├── .env.server              ← 配置檔案 (唯一位置 - 在此建立)
+├── .env.server.example      ← 配置模板
 ├── packages/
 │   └── server/
 └── README.md
 ```
 
-**設定步驟**:
+**配置步驟**:
 
 <details open>
-<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
+<summary><b>🪟 Windows (PowerShell/命令提示符)</b></summary>
 
 ```powershell
-# 前往專案根目錄
+# 進入專案根目錄
 cd C:\path\to\sap-mcp
 
 # 複製環境模板
 copy .env.server.example .env.server
 
-# 使用 Notepad 編輯設定，填入你的 SAP 憑證
+# 用記事本編輯 SAP 憑證
 notepad .env.server
 
-# 或使用你喜歡的編輯器:
+# 或者使用您喜歡的編輯器:
 # code .env.server (VS Code)
 # notepad++ .env.server (Notepad++)
 
-# 注意: Windows 中的檔案權限處理方式不同
+# 注意: Windows 的檔案權限管理不同
 # 確保檔案不在公共資料夾中
-# 右鍵點擊 .env.server > Properties > Security 以限制存取
+# 右鍵點選 .env.server > 屬性 > 安全 以限制存取
 ```
 
-**Windows 特別說明:**
-- Windows 路徑使用反斜線 (`\`)
-- PowerShell 執行策略可能會阻擋腳本 (見安裝部分)
-- 將 `.env.server` 存放在有存取限制的使用者資料夾中
-- 如果防毒軟體阻擋檔案，請使用 Windows Defender 排除項目
+**Windows 特定說明:**
+- 路徑使用反斜槓 (`\`)
+- PowerShell 執行策略可能會阻止指令碼 (見安裝部分)
+- 將 `.env.server` 儲存在受限的使用者資料夾中
+- 如果防毒軟體阻止檔案，請使用 Windows Defender 排除項
 
 </details>
 
 <details>
-<summary><b>🍎 macOS (Terminal)</b></summary>
+<summary><b>🍎 macOS (終端)</b></summary>
 
 ```bash
-# 前往專案根目錄
+# 進入專案根目錄
 cd /path/to/your/sap-mcp
 
 # 複製環境模板
 cp .env.server.example .env.server
 
-# 編輯設定，填入你的 SAP 憑證
+# 編輯配置填入 SAP 憑證
 nano .env.server
-# 或使用你喜歡的編輯器:
+# 或者使用您喜歡的編輯器:
 # vim .env.server
 # code .env.server (VS Code)
 # open -a TextEdit .env.server
 
-# 設定適當的權限 (推薦用於安全性)
+# 設定適當的權限 (安全推薦)
 chmod 600 .env.server
 
 # 驗證權限
 ls -la .env.server
-# 應顯示: -rw------- (僅擁有者可讀寫)
+# 結果: -rw------- (僅所有者可讀寫)
 ```
 
-**macOS 特別說明:**
-- 檔案權限為 Unix 風格 (與 Linux 相同)
-- `chmod 600` 確保只有你的使用者可以讀寫檔案
-- macOS 可能在首次存取時會有額外的安全提示
-- 為了最大安全性，請存放在你的家目錄中
+**macOS 特定說明:**
+- 檔案權限基於 Unix (與 Linux 相同)
+- `chmod 600` 確保只有您的使用者可以讀寫該檔案
+- macOS 可能會在首次存取時提示額外的安全提示
+- 儲存在您的主目錄中以獲得最佳安全性
 
 </details>
 
@@ -885,105 +1123,105 @@ ls -la .env.server
 <summary><b>🐧 Linux (Bash/Zsh)</b></summary>
 
 ```bash
-# 前往專案根目錄
+# 進入專案根目錄
 cd /path/to/your/sap-mcp
 
 # 複製環境模板
 cp .env.server.example .env.server
 
-# 編輯設定，填入你的 SAP 憑證
+# 編輯配置填入 SAP 憑證
 nano .env.server
-# 或使用你喜歡的編輯器:
+# 或者使用您喜歡的編輯器:
 # vim .env.server
 # code .env.server (VS Code)
 # gedit .env.server (GNOME)
 
-# 設定適當的權限 (安全性必需)
+# 設定適當的權限 (安全必須)
 chmod 600 .env.server
 
 # 驗證權限
 ls -la .env.server
-# 應顯示: -rw------- (僅擁有者可讀寫)
+# 結果: -rw------- (僅所有者可讀寫)
 
-# 可選: 驗證檔案不可被所有人讀取
+# 可選: 確保檔案不可被所有人讀取
 stat .env.server
 ```
 
-**Linux 特別說明:**
-- `chmod 600` 對於安全性至關重要 (僅擁有者可存取)
-- SELinux/AppArmor 可能需要額外設定
-- 檔案必須屬於執行伺服器的使用者
-- 切勿使用 `sudo` 編輯或執行此檔案
+**Linux 特定說明:**
+- `chmod 600` 對安全性至關重要 (僅所有者可存取)
+- SELinux/AppArmor 可能需要額外配置
+- 檔案應由執行伺服器的使用者擁有
+- 編輯或執行此檔案時不要使用 `sudo`
 
 </details>
 
 ---
 
-**必要的環境變數**:
+**必需的環境變數**:
 ```bash
-# SAP System Connection (Single SAP System)
-SAP_HOST=your-sap-host.com          # SAP Gateway hostname
-SAP_PORT=443                         # HTTPS port (usually 443 or 8443)
-SAP_USERNAME=your-username           # SAP user ID
-SAP_PASSWORD=your-password           # SAP password
-SAP_CLIENT=100                       # SAP client number (e.g., 100, 800)
+# SAP 系統連線 (單一 SAP 系統)
+SAP_HOST=your-sap-host.com          # SAP Gateway 主機名
+SAP_PORT=443                         # HTTPS 埠 (通常為 443 或 8443)
+SAP_USERNAME=your-username           # SAP 使用者 ID
+SAP_PASSWORD=your-password           # SAP 密碼
+SAP_CLIENT=100                       # SAP 客戶端編號 (例如 100, 800)
 
-# Security Settings
-SAP_VERIFY_SSL=true                  # Enable SSL certificate verification (recommended)
-SAP_TIMEOUT=30                       # Request timeout in seconds
+# 安全設定
+SAP_VERIFY_SSL=false                 # 啟用 SSL 證書驗證 (推薦)
+SAP_TIMEOUT=30                       # 請求超時 (秒)
 
-# Optional: Connection Pooling
-SAP_MAX_CONNECTIONS=10               # Maximum concurrent connections (optional)
-SAP_RETRY_ATTEMPTS=3                 # Number of retry attempts on failure (optional)
+# 可選: 連線池
+SAP_MAX_CONNECTIONS=10               # 最大併發連線數 (可選)
+SAP_RETRY_ATTEMPTS=3                 # 失敗重試次數 (可選)
 ```
 
 **安全最佳實踐**:
-- ✅ 切勿將 `.env.server` 提交到版本控制 (已在 `.gitignore` 中)
-- ✅ 使用強且獨特的密碼
+- ✅ 不要將 `.env.server` 提交到版本控制 (已在 `.gitignore` 中)
+- ✅ 使用強且唯一的密碼
 - ✅ 在生產環境中啟用 SSL 驗證 (`SAP_VERIFY_SSL=true`)
 - ✅ 限制檔案權限: `chmod 600 .env.server`
 
-#### 2.2. SAP Gateway 服務設定 (`services.yaml`)
+#### 2.2. SAP Gateway 服務配置 (`services.yaml`)
 
-設定 MCP 伺服器可以存取的 SAP Gateway 服務 (OData 服務)。
+配置 MCP 伺服器可以存取哪些 SAP Gateway 服務 (OData 服務)。
 
 **位置**: `packages/server/config/services.yaml`
 
 ```bash
-# 複製範例設定
+# 複製範例配置
 cp packages/server/config/services.yaml.example packages/server/config/services.yaml
 
-# 編輯服務設定
+# 編輯服務配置
 vim packages/server/config/services.yaml
 ```
 
-**基本設定範例**:
+**基本配置範例**:
 
 ```yaml
-# Gateway URL configuration
+# Gateway URL 配置
 gateway:
-  # Base URL pattern for OData services
+  # OData 服務的基礎 URL 模式
   base_url_pattern: "https://{host}:{port}/sap/opu/odata"
 
-  # Metadata endpoint suffix
+  # 元資料端點字尾
   metadata_suffix: "/$metadata"
 
-  # Service catalog path
+  # 服務目錄路徑
   service_catalog_path: "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
 
-  # Authentication endpoint configuration
+  # 認證端點配置
   auth_endpoint:
-    # RECOMMENDED: Use catalog metadata (works without specific service)
+    # 推薦: 使用目錄元資料 (無需特定服務即可工作)
     use_catalog_metadata: true
 
-    # Optional: Use specific service for authentication (if catalog unavailable)
+    # 可選: 使用特定服務進行認證 (如果目錄不可用)
     # use_catalog_metadata: false
     # service_id: Z_TRAVEL_RECOMMENDATIONS_SRV
     # entity_name: AirlineSet
 
-# SAP OData Services
+# SAP OData 服務
 services:
-  # SFLIGHT Demo Service (Travel Recommendations)
+  # SFLIGHT 演示服務 (旅行推薦)
   - id: Z_TRAVEL_RECOMMENDATIONS_SRV
     name: "Travel Recommendations Service (SFLIGHT)"
     path: "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV"
@@ -1013,15 +1251,15 @@ services:
         key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}',BOOKID='{BOOKID}'"
         description: "Individual flight bookings"
 
-    # Optional: Custom headers for this service
+    # 可選: 此服務的自定義標頭
     custom_headers: {}
 ```
 
-#### 2.3. 驗證端點選項
+#### 2.3. 認證端點選項
 
-`auth_endpoint` 設定控制 MCP 伺服器如何與 SAP 進行驗證。
+`auth_endpoint` 設定控制 MCP 伺服器如何向 SAP 進行認證。
 
-**選項 1: Catalog Metadata (推薦)**
+**選項 1: 目錄元資料 (推薦)**
 
 ```yaml
 gateway:
@@ -1030,75 +1268,75 @@ gateway:
 ```
 
 **優點**:
-- ✅ 無需特定的 SAP Gateway 服務即可運作
-- ✅ 在不同 SAP 系統間更具彈性和可攜性
-- ✅ 獨立於服務的驗證
-- ✅ 不依賴自訂服務部署
+- ✅ 無需特定 SAP Gateway 服務即可工作
+- ✅ 跨 SAP 系統高度靈活和可移植
+- ✅ 認證不依賴於服務
+- ✅ 不依賴於自定義服務的部署
 
-**驗證流程**:
-- CSRF Token: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
-- Validation: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
+**認證流程**:
+- CSRF 令牌: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
+- 驗證: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
 ---
 
-**選項 2: 特定服務驗證**
+**選項 2: 特定服務認證**
 
 ```yaml
 gateway:
   auth_endpoint:
     use_catalog_metadata: false
-    service_id: Z_TRAVEL_RECOMMENDATIONS_SRV    # 必須符合下方的服務 ID
-    entity_name: AirlineSet                     # 必須是該服務中的實體
+    service_id: Z_TRAVEL_RECOMMENDATIONS_SRV    # 必須匹配下面的服務 ID
+    entity_name: AirlineSet                     # 必須是該服務的實體
 ```
 
 **優點**:
-- ✅ 明確的基於服務的驗證
-- ✅ 當目錄服務不可用時可運作 (罕見)
+- ✅ 明確的基於服務的認證
+- ✅ 如果目錄服務不可用 (罕見) 可以工作
 
 **缺點**:
-- ❌ 需要部署特定服務
-- ❌ 如果服務變更則彈性較低
-- ❌ 如果服務名稱變更則需要更新設定
+- ❌ 需要部署指定的服務
+- ❌ 服務更改時靈活性較低
+- ❌ 如果服務名稱更改需要更新配置
 
-**驗證流程**:
-- CSRF Token: `/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV/AirlineSet`
-- Validation: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
+**認證流程**:
+- CSRF 令牌: `/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV/AirlineSet`
+- 驗證: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
 ---
 
-**建議**: 除非你有特定理由使用特定服務進行驗證，否則請使用 **選項 1 (Catalog Metadata)**。
+**建議**: 除非有特定原因需要使用特定服務進行認證，否則請使用 **選項 1 (目錄元資料)**。
 
 ### 3. 執行伺服器
 
 <details open>
-<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
+<summary><b>🪟 Windows (PowerShell/命令提示符)</b></summary>
 
 ```powershell
 # 啟用虛擬環境
 .venv\Scripts\activate
-# 或在 PowerShell 中:
+# 或者在 PowerShell 中:
 # .venv\Scripts\Activate.ps1
 
 # 執行 stdio 伺服器 (推薦)
 sap-mcp-server-stdio
 
-# 或直接使用 Python
+# 或者直接用 python 執行
 python -m sap_mcp_server.transports.stdio
 
 # 完成後停用
 deactivate
 ```
 
-**Windows 特別說明:**
-- 路徑使用反斜線 (`\`)
-- PowerShell 可能需要變更執行策略
+**Windows 特定說明:**
+- 路徑使用反斜槓 (`\`)
+- 可能需要更改 PowerShell 執行策略
 - 伺服器在當前終端視窗中執行
 - 按 `Ctrl+C` 停止伺服器
 
 </details>
 
 <details>
-<summary><b>🍎 macOS (Terminal)</b></summary>
+<summary><b>🍎 macOS (終端)</b></summary>
 
 ```bash
 # 啟用虛擬環境
@@ -1107,18 +1345,18 @@ source .venv/bin/activate
 # 執行 stdio 伺服器 (推薦)
 sap-mcp-server-stdio
 
-# 或直接使用 Python
+# 或者直接用 python 執行
 python3 -m sap_mcp_server.transports.stdio
 
 # 完成後停用
 deactivate
 ```
 
-**macOS 特別說明:**
-- 使用 `python3` 代替 `python`
-- 伺服器在當前終端工作階段中執行
+**macOS 特定說明:**
+- 使用 `python3` 而不是 `python`
+- 伺服器在當前終端會話中執行
 - 按 `Cmd+C` 或 `Ctrl+C` 停止伺服器
-- 伺服器執行時終端機必須保持開啟
+- 伺服器執行時必須保持終端開啟
 
 </details>
 
@@ -1132,18 +1370,18 @@ source .venv/bin/activate
 # 執行 stdio 伺服器 (推薦)
 sap-mcp-server-stdio
 
-# 或直接使用 Python
+# 或者直接用 python 執行
 python3 -m sap_mcp_server.transports.stdio
 
 # 完成後停用
 deactivate
 ```
 
-**Linux 特別說明:**
-- 使用 `python3` 代替 `python`
-- 伺服器在當前終端工作階段中執行
+**Linux 特定說明:**
+- 使用 `python3` 而不是 `python`
+- 伺服器在當前終端會話中執行
 - 按 `Ctrl+C` 停止伺服器
-- 可以使用 `nohup` 或 `systemd` 服務在背景執行
+- 可以使用 `nohup` 或 `systemd` 服務在後台執行
 
 </details>
 
@@ -1151,29 +1389,29 @@ deactivate
 
 ## 🤖 與 Gemini CLI 整合
 
-> **📖 官方文件**: 更多關於 Gemini CLI 的資訊，請訪問 <a href="https://geminicli.com/" target="_blank">https://geminicli.com/</a>
+> **📖 官方文件**: 有關 Gemini CLI 的更多資訊，請存取 <a href="https://geminicli.com/" target="_blank">https://geminicli.com/</a>。
 
-### 先決條件
+### 前提條件
 
 - 已安裝 Node.js 18+ 和 npm
-- 已安裝 SAP MCP Server (見上方快速開始)
-- 用於存取 Gemini API 的 Google 帳戶
+- 已安裝 SAP MCP 伺服器 (見上文安裝部分)
+- 用於 Gemini API 存取的 Google 帳戶
 
 ### 1. 安裝 Gemini CLI
 
 ```bash
-# 全域安裝 Gemini CLI
+# 全域性安裝 Gemini CLI
 npm install -g @google/gemini-cli
 
 # 驗證安裝
 gemini --version
 ```
 
-### 2. 驗證 Gemini CLI
+### 2. Gemini CLI 認證
 
-**選項 A: 使用 Gemini API Key (推薦用於入門)**
+**選項 A: 使用 Gemini API 金鑰 (推薦用於入門)**
 
-1. 從 [Google AI Studio](https://aistudio.google.com/apikey) 獲取你的 API key
+1. 從 [Google AI Studio](https://aistudio.google.com/apikey) 獲取 API 金鑰
 2. 設定環境變數:
 
 ```bash
@@ -1186,20 +1424,20 @@ export GEMINI_API_KEY="your-api-key-here"
 # 首先安裝 Google Cloud CLI
 gcloud auth application-default login
 
-# 設定你的專案
+# 設定專案
 export GOOGLE_CLOUD_PROJECT="your-project-id"
 export GOOGLE_CLOUD_LOCATION="us-central1"
 ```
 
-### 3. 註冊 SAP MCP Server
+### 3. 註冊 SAP MCP 伺服器
 
 **方法 A: 使用絕對路徑 (推薦用於虛擬環境)**
 
-如果你在虛擬環境中安裝了伺服器，請使用可執行檔的絕對路徑：
+如果您在虛擬環境中安裝了伺服器，請使用可執行檔案的絕對路徑:
 
-1. **尋找絕對路徑**:
+1. **查詢絕對路徑**:
 ```bash
-# 前往你的 SAP MCP 目錄
+# 進入 SAP MCP 目錄
 cd /path/to/your/sap-mcp
 
 # 獲取完整路徑
@@ -1222,41 +1460,41 @@ pwd
 }
 ```
 
-**將 `/path/to/your/sap-mcp` 替換為你的實際專案路徑**
+**將 `/path/to/your/sap-mcp` 替換為您的實際專案路徑。**
 
-> **📝 注意**: `cwd` (當前工作目錄) 參數對於定位 `.env.server` 檔案 **至關重要**。你 **必須** 將其設定為你的專案根目錄 (例如 `/Users/username/projects/sap-mcp`)。如果省略或不正確，伺服器將無法載入你的憑證。
+> **📝 注意**: `cwd` (當前工作目錄) 參數對於定位 `.env.server` 檔案 **至關重要**。您 **必須** 將其設定為專案根目錄 (例如 `/Users/username/projects/sap-mcp`)。如果省略或錯誤，伺服器將無法載入憑證。
 
 3. **驗證路徑**:
 ```bash
-# 測試命令是否有效
+# 測試命令是否工作
 /path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio --help
 
-# 檢查註冊
+# 驗證註冊
 gemini mcp list
-# 預期: ✓ sap-server: ... (stdio) - Connected
+# 預期結果: ✓ sap-server: ... (stdio) - Connected
 ```
 
 ---
 
-**方法 B: 使用 CLI 命令 (如果全域安裝)**
+**方法 B: 使用 CLI 命令 (如果全域性安裝)**
 
-如果 `sap-mcp-server-stdio` 在你的系統 PATH 中：
+如果 `sap-mcp-server-stdio` 在您的系統 PATH 中:
 
 ```bash
 # 註冊伺服器
 gemini mcp add sap-server sap-mcp-server-stdio
 
-# 檢查註冊
+# 驗證註冊
 gemini mcp list
 ```
 
-**注意**: 此方法僅在你將虛擬環境新增到 PATH 或全域安裝套件時有效。
+**注意**: 僅當您已將虛擬環境新增到 PATH 或全域性安裝了包時，此方法才有效。
 
 ---
 
 **方法 C: 使用 Python 模組路徑**
 
-使用 Python 模組的替代方法：
+使用 Python 模組的替代方法:
 
 ```json
 {
@@ -1273,7 +1511,7 @@ gemini mcp list
 }
 ```
 
-### 4. 開始在 Gemini CLI 使用 SAP MCP
+### 4. 開始在 Gemini CLI 中使用 SAP MCP
 
 ```bash
 # 啟動 Gemini CLI
@@ -1282,20 +1520,20 @@ gemini
 # 檢查 MCP 伺服器狀態
 > /mcp
 
-# 查看可用的 SAP 工具
+# 列出可用 SAP 工具
 > /mcp desc
 
 # 範例: 查詢 SAP 航空公司
-> 使用 SAP 工具進行驗證並向我顯示所有航空公司
+> Use the SAP tools to authenticate and show me all airlines
 
-# 範例: 列出可用的 SAP 服務
-> 有哪些 SAP 服務可用？
+# 範例: 列出可用 SAP 服務
+> What SAP services are available?
 
 # 範例: 獲取機場詳情
-> 獲取法蘭克福機場 (FRA) 的詳情
+> Retrieve details for Frankfurt airport (FRA)
 ```
 
-### 進階設定
+### 進階配置
 
 **啟用受信任伺服器的自動批准**
 
@@ -1311,7 +1549,7 @@ gemini
 }
 ```
 
-**注意**: 設定 `"trust": true` 以跳過每次工具呼叫的批准提示。僅對受信任的伺服器啟用。
+**注意**: 設定 `"trust": true` 以跳過每個工具呼叫的批准提示。僅對受信任的伺服器啟用。
 
 ---
 
@@ -1330,14 +1568,14 @@ gemini
 }
 ```
 
-**使用案例**:
+**用例**:
 - `includeTools`: 僅允許特定工具 (白名單)
-- `excludeTools`: 封鎖特定工具 (黑名單)
-- 不能同時使用兩者
+- `excludeTools`: 阻止特定工具 (黑名單)
+- 不能同時使用
 
 ---
 
-**注入環境變數 (可選)**
+**新增環境變數 (可選)**
 
 ```json
 {
@@ -1374,24 +1612,24 @@ gemini
 ```
 
 **何時增加**:
-- 網路連線緩慢
+- 慢速網路連線
 - 大型資料查詢
 - 複雜的 SAP 操作
 - 頻繁的超時錯誤
 
 ### 故障排除
 
-**問題: 伺服器顯示 "Disconnected"**
+**問題: 伺服器顯示 "Disconnected" 狀態**
 
 ```bash
 # 檢查 MCP 伺服器狀態
 gemini mcp list
-# 如果你看到: ✗ sap-server: sap-mcp-server-stdio (stdio) - Disconnected
+# 顯示: ✗ sap-server: sap-mcp-server-stdio (stdio) - Disconnected
 ```
 
 **解決方案 1: 使用絕對路徑 (最常見)**
 
-命令可能位於虛擬環境中。更新 `~/.gemini/settings.json`:
+命令可能在虛擬環境中。更新 `~/.gemini/settings.json`:
 
 ```json
 {
@@ -1406,16 +1644,16 @@ gemini mcp list
 }
 ```
 
-**尋找你的絕對路徑**:
+**查詢絕對路徑**:
 ```bash
-# 前往 SAP MCP 目錄
+# 進入 SAP MCP 目錄
 cd /path/to/your/sap-mcp
 
 # 獲取完整路徑
 pwd
 # 範例: /path/to/your/sap-mcp
 
-# 檢查命令是否存在
+# 驗證命令存在
 ls -la .venv/bin/sap-mcp-server-stdio
 ```
 
@@ -1428,7 +1666,7 @@ ls -la .venv/bin/sap-mcp-server-stdio
 sap-mcp-server-stdio
 # 錯誤: command not found
 
-# 檢查命令是否存在
+# 檢查命令位置
 which sap-mcp-server-stdio
 # 返回: command not found
 ```
@@ -1447,13 +1685,13 @@ pip install -e .
 
 ---
 
-**問題: 驗證錯誤或找不到 `.env.server`**
+**問題: 認證錯誤或找不到 `.env.server`**
 
 ```bash
-# 檢查 .env.server 是否存在於 PROJECT ROOT (不是在 packages/server/)
+# 檢查 .env.server 是否在專案根目錄 (不是 packages/server/)
 cat .env.server
 
-# 必要欄位:
+# 必需欄位:
 # SAP_HOST=your-host
 # SAP_PORT=443
 # SAP_USERNAME=your-username
@@ -1461,18 +1699,18 @@ cat .env.server
 # SAP_CLIENT=100
 ```
 
-**解決方案 3: 檢查檔案位置和憑證**
+**解決方案 3: 驗證檔案位置和憑證**
 
 ```bash
-# 1. 檢查 .env.server 是否在專案根目錄
+# 1. 驗證 .env.server 在專案根目錄
 ls -la .env.server
-# 應存在於: /path/to/sap-mcp/.env.server
+# 應該在: /path/to/sap-mcp/.env.server
 
 # 2. 檢查 Gemini CLI settings.json 是否有 "cwd" 參數
 cat ~/.gemini/settings.json
-# 必須包含: "cwd": "/path/to/sap-mcp"
+# 應該包含: "cwd": "/path/to/sap-mcp"
 
-# 3. 手動測試驗證
+# 3. 手動測試認證
 source .venv/bin/activate
 python -c "from sap_mcp_server.config.settings import get_connection_config; print(get_connection_config())"
 ```
@@ -1480,45 +1718,45 @@ python -c "from sap_mcp_server.config.settings import get_connection_config; pri
 **常見問題**:
 
 1. **"Field required" 錯誤**: `.env.server` 未載入。檢查:
-   - 檔案存在於專案根目錄: `/path/to/your/sap-mcp/.env.server`
+   - 檔案在專案根目錄: `/path/to/your/sap-mcp/.env.server`
    - Gemini CLI `settings.json` 有正確的 `cwd` 參數
    - 檔案有適當的權限: `chmod 600 .env.server`
 
-2. **401 Unauthorized 錯誤**: 在 v0.2.1 (2025-01-22) 已修復
-   - **先前問題**: SAP Gateway 拒絕缺少 `sap-client` 參數的請求
+2. **401 Unauthorized 錯誤**: v0.2.1 (2025-01-22) 已修復
+   - **以前的問題**: SAP Gateway 拒絕沒有 `sap-client` 參數的請求
    - **當前狀態**: 自動處理 - 所有請求都包含 `sap-client` 參數
-   - **驗證**: 確保你已更新到 v0.2.1 或更新版本
-   - **手動檢查**: 使用正確的憑證驗證應成功
+   - **驗證**: 確保您已更新到 v0.2.1 或更高版本
+   - **手動檢查**: 憑證有效時認證應該成功
 
 ---
 
 **問題: 需要重新註冊伺服器**
 
 ```bash
-# 移除現有的伺服器設定
+# 刪除現有伺服器配置
 rm ~/.gemini/settings.json
 
-# 或手動編輯以移除 sap-server 項目
+# 或者手動編輯並刪除 sap-server 條目
 ```
 
-**解決方案 4: 全新註冊**
+**解決方案 4: 全新重新註冊**
 
 ```bash
 # 方法 1: 直接編輯設定
 vim ~/.gemini/settings.json
 
 # 方法 2: 使用絕對路徑 (推薦)
-# 按照上方第 3 部分的 "方法 A: 使用絕對路徑" 操作
+# 遵循上面第 3 節 "方法 A: 使用絕對路徑"
 ```
 
 ---
 
 **快速診斷步驟**
 
-1. **檢查伺服器可執行檔**:
+1. **檢查伺服器可執行檔案**:
 ```bash
 /path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio --help
-# 應顯示伺服器啟動訊息
+# 應該顯示伺服器啟動訊息
 ```
 
 2. **檢查 Gemini CLI 設定**:
@@ -1530,7 +1768,7 @@ cat ~/.gemini/settings.json | grep -A 5 "sap-server"
 3. **測試連線**:
 ```bash
 gemini mcp list
-# 應顯示: ✓ sap-server: ... - Connected
+# 顯示: ✓ sap-server: ... - Connected
 ```
 
 4. **在 Gemini CLI 中測試**:
@@ -1538,50 +1776,50 @@ gemini mcp list
 gemini
 > /mcp
 > /mcp desc
-# 應列出 SAP 工具
+# 應該列出 SAP 工具
 ```
 
 ### Gemini CLI 中可用的 SAP 工具
 
-註冊後，你可以透過自然語言使用這些 SAP 工具：
+註冊後，您可以透過自然語言使用以下 SAP 工具：
 
 | 工具 | 描述 | 範例提示 |
 |------|-------------|----------------|
-| **sap_authenticate** | 向 SAP Gateway 驗證 | "向 SAP 驗證" |
-| **sap_query** | 使用 OData 過濾器查詢 SAP 實體 | "使用旅遊推薦服務顯示所有航空公司" |
-| **sap_get_entity** | 透過鍵值獲取特定實體 | "獲取法蘭克福機場 (FRA) 的詳情" |
-| **sap_list_services** | 列出可用的 SAP 服務 | "有哪些 SAP 服務可用？" |
+| **sap_authenticate** | 在 SAP Gateway 系統中認證 | "Authenticate with SAP" |
+| **sap_query** | 使用 OData 過濾器查詢 SAP 實體 | "Use the travel recommendations service to show me all airlines" |
+| **sap_get_entity** | 透過鍵獲取特定實體 | "Retrieve details for Frankfurt airport (FRA)" |
+| **sap_list_services** | 列出可用 SAP 服務 | "What SAP services are available?" |
 
-### 範例工作流程
+### 工作流範例
 
-**1. 航班查詢工作流程**
+**1. 航班查詢工作流**
 
 ```bash
 gemini
 
-> 連線到 SAP 並尋找所有漢莎航空的航班
-# Gemini 將會:
+> Connect to SAP and find all Lufthansa flights
+# Gemini 將執行:
 # 1. 呼叫 sap_authenticate
-# 2. 在 FlightSet 上呼叫 sap_query，過濾器為 "CARRID eq 'LH'"
-# 3. 格式化並呈現結果
+# 2. 呼叫 sap_query 查詢 FlightSet，過濾器為 "CARRID eq 'LH'"
+# 3. 格式化並顯示結果
 ```
 
 **2. 機場分析**
 
 ```bash
-> 獲取法蘭克福機場的詳情並顯示可用的連接
-# Gemini 將會:
-# 1. 驗證
-# 2. 為 'FRA' 在 AirportSet 上呼叫 sap_get_entity
-# 3. 在 ConnectionSet 上呼叫 sap_query
+> Get details for Frankfurt airport and show me available connections
+# Gemini 將執行:
+# 1. 認證
+# 2. 呼叫 sap_get_entity 查詢 AirportSet，鍵為 'FRA'
+# 3. 呼叫 sap_query 查詢 ConnectionSet
 # 4. 呈現見解
 ```
 
 **3. 服務發現**
 
 ```bash
-> 系統中有哪些 SAP 服務和實體集？
-# Gemini 將會:
+> What SAP services and entity sets are available in the system?
+# Gemini 將執行:
 # 1. 呼叫 sap_list_services
 # 2. 格式化服務目錄
 ```
@@ -1590,9 +1828,9 @@ gemini
 
 ## 🔧 可用工具
 
-### 1. SAP Authenticate
+### 1. SAP 認證 (sap_authenticate)
 
-使用 `.env.server` 中的憑證向 SAP Gateway 系統進行驗證。
+使用 `.env.server` 中的憑證在 SAP Gateway 系統中進行認證。
 
 **請求**:
 ```json
@@ -1602,7 +1840,7 @@ gemini
 }
 ```
 
-**回應**:
+**響應**:
 ```json
 {
   "success": true,
@@ -1615,9 +1853,9 @@ gemini
 
 ---
 
-### 2. SAP Query
+### 2. SAP 查詢 (sap_query)
 
-使用 OData 過濾器、選擇、分頁查詢 SAP 實體。
+使用 OData 過濾器、選擇和分頁查詢 SAP 實體。
 
 **請求**:
 ```json
@@ -1634,7 +1872,7 @@ gemini
 }
 ```
 
-**回應**:
+**響應**:
 ```json
 {
   "d": {
@@ -1651,9 +1889,9 @@ gemini
 
 ---
 
-### 3. SAP Get Entity
+### 3. SAP 實體獲取 (sap_get_entity)
 
-透過鍵值檢索單一特定實體。
+透過鍵獲取特定實體。
 
 **請求**:
 ```json
@@ -1667,7 +1905,7 @@ gemini
 }
 ```
 
-**回應**:
+**響應**:
 ```json
 {
   "success": true,
@@ -1689,9 +1927,9 @@ gemini
 
 ---
 
-### 4. SAP List Services
+### 4. SAP 服務列表 (sap_list_services)
 
-列出設定中所有可用的 SAP 服務。
+列出配置中所有可用的 SAP 服務。
 
 **請求**:
 ```json
@@ -1701,7 +1939,7 @@ gemini
 }
 ```
 
-**回應**:
+**響應**:
 ```json
 {
   "success": true,
@@ -1733,7 +1971,7 @@ gemini
 
 ---
 
-### 5. 新增工具
+### 5. 新增新工具
 
 1. **建立工具檔案**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
 
@@ -1760,7 +1998,7 @@ class MyNewTool(MCPTool):
         }
 
     async def execute(self, params: dict) -> dict:
-        # 實作
+        # Implementation
         return {"result": "success"}
 ```
 
@@ -1769,7 +2007,7 @@ class MyNewTool(MCPTool):
 ```python
 from .my_tool import MyNewTool
 
-# 新增到註冊表
+# Add to registry
 tool_registry.register(MyNewTool())
 ```
 
@@ -1826,10 +2064,10 @@ async def main():
 
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
-            # 初始化工作階段
+            # 初始化會話
             await session.initialize()
 
-            # 驗證
+            # 認證
             auth_result = await session.call_tool("sap_authenticate", {})
 
             # 查詢航空公司
@@ -1849,13 +2087,13 @@ async def main():
 ```python
 from sap_mcp_server.utils.logger import setup_logging, get_logger
 
-# 生產環境 (JSON logs)
+# 生產環境 (JSON 日誌)
 setup_logging(level="INFO", json_logs=True)
 
-# 開發環境 (colored console)
+# 開發環境 (彩色控制台)
 setup_logging(level="DEBUG", json_logs=False)
 
-# 使用 logger
+# 使用日誌記錄器
 logger = get_logger(__name__)
 logger.info("Server started", port=8080, transport="stdio")
 logger.error("Query failed", error=str(e), query=params)
@@ -1872,13 +2110,13 @@ from sap_mcp_server.utils.validators import (
 
 # 驗證 OData 過濾器
 if validate_odata_filter("CARRID eq 'LH'"):
-    # 安全執行
+    # 執行安全
     pass
 
 # 清理使用者輸入
 safe_input = sanitize_input(user_data, max_length=1000)
 
-# 驗證實體鍵值
+# 驗證實體鍵
 if validate_entity_key(key):
     # 獲取實體
     pass
@@ -1886,228 +2124,71 @@ if validate_entity_key(key):
 
 ---
 
-## 🔒 安全性
+## 🔒 安全
 
 ### 縱深防禦
 
-| 層級 | 實作 | 狀態 |
+| 層 | 實現 | 狀態 |
 |-------|---------------|--------|
-| **Input Validation** | OData 語法, SQL injection 防護 | ✅ |
-| **Authentication** | 憑證驗證, 工作階段管理 | ✅ |
-| **Authorization** | 服務存取控制 | ✅ |
-| **Transport Security** | SSL/TLS, 憑證驗證 | ✅ |
-| **Audit Logging** | 結構化日誌, 排除敏感資料 | ✅ |
+| **輸入驗證** | OData 語法, SQL 注入防護 | ✅ |
+| **認證** | 憑證驗證, 會話管理 | ✅ |
+| **授權** | 服務存取控制 | ✅ |
+| **傳輸安全** | SSL/TLS, 證書驗證 | ✅ |
+| **審計日誌** | 結構化日誌, 無敏感資料 | ✅ |
 
 ### 最佳實踐
 
-1. **Credentials**: 儲存在 `.env.server`, 切勿提交到 git
+1. **憑證**: 儲存在 `.env.server` 中，不要提交到 git
 2. **SSL/TLS**: 在生產環境中始終啟用 (`SAP_VERIFY_SSL=true`)
-3. **Validation**: 在呼叫 SAP 之前驗證所有輸入
-4. **Logging**: 敏感資料從日誌中排除
-5. **Error Handling**: 為客戶端提供通用錯誤訊息
+3. **驗證**: 在 SAP 呼叫之前驗證所有輸入
+4. **日誌**: 從日誌中排除敏感資料
+5. **錯誤處理**: 向客戶端提供通用錯誤訊息
 
 ---
-
-## 🎓 SAP SFLIGHT 演示場景
-
-### 場景概覽
-
-SFLIGHT 資料集是 SAP 提供的標準範例資料庫，包含航班時刻表、航空公司、機場和預訂的資料。這是測試和演示資料建模及服務建立的絕佳資源。
-
-本指南假設你有一個公開此資料集的 OData 服務。目標是將我們的 SAP MCP 伺服器連接到此服務，並使用 AI 代理或其他客戶端與其互動。
-
-**官方 SAP 文件:**
-- [SAP Documentation - Flight Model](https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm)
-- [SAP Help Portal - Flight Model](https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html)
-
----
-
-### 先決條件
-
-1. **已安裝 SAP MCP Server**: 你需要安裝 SAP MCP 伺服器並擁有可用的 Python 環境。有關完整說明，請參閱 [快速開始部分](#-quick-start)。
-
-2. **SFLIGHT OData Service**: 必須在你的 SAP Gateway 系統上提供公開 SFLIGHT 資料集的活動 OData 服務。
-   - 如果你需要建立此服務，可以按照我們的詳細指南操作: [OData Service Creation Guide: FLIGHT Demo Scenario](./docs/guides/odata-service-creation-flight-demo.md)
-   - 對於本指南，我們將假設服務名稱為 `Z_TRAVEL_RECOMMENDATIONS_SRV`，如指南中所建立。
-
----
-
-### OData 服務建立指南
-
-本指南提供在 SAP 系統中使用 SAP Gateway Service Builder (`SEGW`) 建立 OData 服務的逐步說明，以公開 SAP S/4HANA Fully Activated Appliance (FAA) 版本中可用的 Flight 場景資料。
-
-#### 場景概覽
-
-* **目標:** 透過 OData 服務公開航班時刻表、預訂和相關主資料。
-* **場景資料需求:** 航班時刻表、日期、時間、機場詳情、航空公司詳情、乘客詳情、價格等。
-* **涉及的 SAP 資料表:** `SFLIGHT`, `SPFLI`, `SCARR`, `SAIRPORT`, `SBOOK`, `SCUSTOM`
-
----
-
-#### 在 SEGW 中建立 OData 服務的步驟
-
-##### 1. 存取 SAP Gateway Service Builder
-
-前往 SAP 交易代碼 `SEGW`。
-
-##### 2. 建立新專案
-
-1. 點擊 "Create Project" 按鈕。
-2. **Project Name:** 指定名稱 (例如 `Z_TRAVEL_RECOMMENDATIONS_SRV`)。
-3. **Description:** 提供有意義的描述。
-4. **Package:** 指派給一個套件 (例如 `$TMP` 用於本地開發或可傳輸的套件)。
-
-##### 3. 從 DDIC 結構匯入資料模型
-
-此步驟根據底層 SAP 資料表定義你的 OData 實體。
-
-1. 右鍵點擊專案中的 "Data Model" 資料夾。
-2. 選擇 **"Import" -> "DDIC Structure"**。
-3. 為每個所需的資料表重複匯入過程，指定 **Entity Type Name** 並選擇所需欄位。
-
-***必要操作:*** 確保在匯入過程中正確標記鍵值欄位。
-
-| DDIC 結構 | 實體類型名稱 | 建議鍵值欄位 | 相關 Payload 欄位 (範例) |
-| :---- | :---- | :---- | :---- |
-| `SFLIGHT` | **Flight** | `CARRID`, `CONNID`, `FLDATE` | `PRICE`, `CURRENCY`, `PLANETYPE`, `SEATSMAX`, `SEATSOCC` |
-| `SPFLI` | **Connection** | `CARRID`, `CONNID` | `COUNTRYFR`, `CITYFROM`, `AIRPFROM`, `COUNTRYTO`, `CITYTO`, `AIRPTO`, `DEPTIME`, `ARRTIME`, `DISTANCE` |
-| `SCARR` | **Airline** | `CARRID` | `CARRNAME`, `CURRCODE`, `URL` |
-| `SAIRPORT` | **Airport** | `ID` | `NAME`, `CITY`, `COUNTRY` |
-| `SBOOK` | **Booking** | `CARRID`, `CONNID`, `FLDATE`, `BOOKID` | `CUSTOMID`, `CUSTTYPE`, `SMOKER`, `LUGGWEIGHT`, `WUNIT`, `INVOICE`, `CLASS`, `FORCURAM`, `ORDER_DATE` |
-| `SCUSTOM` | **Passenger** | `ID` | `NAME`, `FORM`, `STREET`, `POSTCODE`, `CITY`, `COUNTRY`, `PHONE` |
-
-##### 4. 定義 Associations 和 Navigation Properties
-
-Associations 根據鍵值欄位連結實體。Navigation Properties 允許客戶端應用程式輕鬆遍歷這些關係 (例如使用 `$expand`)。
-
-**邏輯關係:**
-
-* **1:N:** Airline <-> Flights, Airline <-> Connections, Connection <-> Flights, Flight <-> Bookings, Passenger <-> Bookings
-* **N:1:** Connection <-> Origin Airport, Connection <-> Destination Airport
-
-**建立 Association 的步驟:**
-
-1. 右鍵點擊 "Data Model" -> **"Create" -> "Association"**。
-2. 定義 **Association Name**, **Principal Entity** ('一'端), **Dependent Entity** ('多'端), 和 **Cardinality** (例如 1:N)。
-3. 在下一個畫面中，**Specify Key Mapping**，將 Principal 和 Dependent 實體之間的鍵值欄位對應起來。
-
-**要建立的特定 Associations:**
-
-| No. | Association 名稱 | Principal:Dependent | Cardinality | Key Mapping |
-| :---- | :---- | :---- | :---- | :---- |
-| 1 | `Assoc_Airline_Flights` | `Airline` : `Flight` | 1:N | `Airline.CARRID` <-> `Flight.CARRID` |
-| 2 | `Assoc_Airline_Connections` | `Airline` : `Connection` | 1:N | `Airline.CARRID` <-> `Connection.CARRID` |
-| 3 | `Assoc_Connection_Flights` | `Connection` : `Flight` | 1:N | `CARRID` & `CONNID` (雙向) |
-| 4 | `Assoc_Flight_Bookings` | `Flight` : `Booking` | 1:N | `CARRID`, `CONNID`, `FLDATE` (三向) |
-| 5 | `Assoc_Passenger_Bookings` | `Passenger` : `Booking` | 1:N | `Passenger.ID` <-> `Booking.CUSTOMID` |
-| 6 | `Assoc_Connection_OriginAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPFROM` <-> `Airport.ID` |
-| 7 | `Assoc_Connection_DestAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPTO` <-> `Airport.ID` |
-
-**要建立的 Navigation Properties:**
-
-| 實體 | Navigation Property 名稱 | 目標實體 | 使用的 Association |
-| :---- | :---- | :---- | :---- |
-| **Airline** | `ToFlights`, `ToConnections` | `Flight`, `Connection` | `Assoc_Airline_Flights`, `Assoc_Airline_Connections` |
-| **Flight** | `ToAirline`, `ToConnection`, `ToBookings` | `Airline`, `Connection`, `Booking` | `Assoc_Airline_Flights`, `Assoc_Connection_Flights`, `Assoc_Flight_Bookings` |
-| **Connection** | `ToAirline`, `ToFlights`, `ToOriginAirport`, `ToDestinationAirport` | `Airline`, `Flight`, `Airport`, `Airport` | `Assoc_Airline_Connections`, `Assoc_Connection_Flights`, `Assoc_Connection_OriginAirport`, `Assoc_Connection_DestAirport` |
-| **Booking** | `ToFlight`, `ToPassenger` | `Flight`, `Passenger` | `Assoc_Flight_Bookings`, `Assoc_Passenger_Bookings` |
-| **Passenger** | `ToBookings` | `Booking` | `Assoc_Passenger_Bookings` |
-
-##### 5. 產生 Runtime Objects
-
-1. 點擊 **"Generate Runtime Objects"** 按鈕 (魔術棒圖示)。
-2. 這將建立 ABAP 類別: Model Provider Class (MPC) 和 Data Provider Class (DPC)。
-3. 接受或調整預設類別名稱。
-
-##### 6. 實作 Data Provider Class (DPC) 方法
-
-產生的 DPC 擴充類別 (例如 `ZCL_Z_TRAVEL_RECOM_DPC_EXT`) 用於自訂邏輯。
-
-* 如果直接資料表對應足夠，基本實作可能就足夠了。
-* 對於自訂過濾、聯接、計算或複雜的 Read/Create/Update/Delete (CRUD) 操作，你需要在 DPC 擴充類別中重新定義方法，如 `*_GET_ENTITY` (單一記錄) 和 `*_GET_ENTITYSET` (集合)。
-
-這是 AIRLINESET_GET_ENTITYSET 方法的範例：
-
-```abap
-METHOD airlineset_get_entityset.
-  DATA: lt_airlines TYPE TABLE OF scarr,
-        ls_airline TYPE scarr,
-        lv_filter_string TYPE string.
-
-  TRY.
-      lv_filter_string = io_tech_request_context->get_filter( )->get_filter_string( ).
-    CATCH cx_sy_itab_line_not_found.
-      CLEAR lv_filter_string.
-  ENDTRY.
-
-  " TODO: Apply filtering based on lv_filter_string"
-  IF lv_filter_string IS NOT INITIAL.
-    SELECT * FROM scarr INTO TABLE lt_airlines WHERE (lv_filter_string).
-  ELSE.
-    SELECT * FROM scarr INTO TABLE lt_airlines.
-  ENDIF.
-
-  LOOP AT lt_airlines INTO ls_airline.
-    APPEND ls_airline TO et_entityset.
-  ENDLOOP.
-ENDMETHOD.
-```
-
-##### 7. 註冊服務
-
-1. 前往交易 `/IWFND/MAINT_SERVICE`。
-2. 點擊 **"Add Service"**。
-3. 輸入你的後端系統的 **System Alias** (例如 `LOCAL`)。
-4. 透過 **Technical Service Name** (例如 `Z_TRAVEL_RECOMMENDATIONS_SRV`) 搜尋你的服務。
-5. 選擇服務並點擊 **"Add Selected Services"**。
-6. 指派套件並確認。
-
-##### 8. 啟用並測試服務
-
-1. 在 `/IWFND/MAINT_SERVICE` 中，找到你新註冊的服務。
-2. 確保 **ICF node is active** (綠燈)。如果沒有，選擇服務，前往 **"ICF Node" -> "Activate"**。
-3. 選擇服務並點擊 **"SAP Gateway Client"** 按鈕。
-4. **在 Gateway Client 中測試:**
-   * 測試實體集合檢索: 點擊 **"EntitySets"**，選擇 EntitySet (例如 `AirlineCollection`) 並點擊 **"Execute"**。
-   * 測試 OData 功能: 嘗試查詢選項如 `$filter`，特別是 **`$expand`** 以驗證導航屬性是否正常運作 (例如 `/FlightSet(key)?$expand=ToAirline`)。
-
-##### 9. 記下服務 URL
-
-最終的 OData 服務 URL 顯示在 Gateway Client 中。它通常遵循以下結構：
-
-`/sap/opu/odata/sap/Z_TRAVEL_RECOMMENDATIONS_SRV/.` 此 URL 是客戶端應用程式 (如 Fiori 或自訂行動應用程式) 用來使用 SFLIGHT 資料的網址。
-
----
-
-
-
-
-
-
 
 ---
 
 ## 📖 文件
 
-- **[Server Package README](./packages/server/README.md)**: 詳細的伺服器文件
-- **[Configuration Guide](./docs/guides/configuration.md)**: YAML 和環境設定
-- **[Deployment Guide](./docs/guides/deployment.md)**: 生產部署
-- **[Architecture Documentation](./docs/architecture/server.md)**: 系統架構詳情
-- **[API Reference](./docs/api/)**: 工具和協議文件
+### 📚 指南
+
+- **[配置指南](./docs/guides/configuration.md)**: YAML 和環境配置的完整指南
+- **[部署指南](./docs/guides/deployment.md)**: 生產部署最佳實踐
+- **[故障排除指南](./docs/guides/troubleshooting.md)**: 常見問題和解決方案
+- **[OData 服務建立指南](./docs/guides/odata-service-creation-flight-demo.md)**: SFLIGHT OData 服務建立分步指南
+- **[SFLIGHT 演示指南](./docs/guides/sfight-demo-guide.md)**: 使用 SFLIGHT 演示場景
+
+### 🏗️ 架構
+
+- **[伺服器架構](./docs/architecture/server.md)**: 詳細的系統架構和設計模式
+
+### 📦 包文件
+
+- **[伺服器包 README](./packages/server/README.md)**: 伺服器包特定文件
+
+### 🌐 多語言支援
+
+- **[English](./README.md)**: 主文件 (本文件)
+- **[日本語 (Japanese)](./README.ja.md)**: 日語文件
+- **[한국어 (Korean)](./README.ko.md)**: 韓語文件
+- **[ไทย (Thai)](./README.th.md)**: 泰語文件
+- **[繁體中文 (Traditional Chinese)](./README.zh-TW.md)**: 繁體中文文件
+- **[简体中文 (Simplified Chinese)](./README.zh-CN.md)**: 簡體中文文件
+- **[Español (Spanish)](./README.es.md)**: 西班牙語文件
 
 ---
 
-## 📝 授權
+## 📝 許可證
 
-MIT License - 詳情請見 [LICENSE](LICENSE) 檔案。
+MIT 許可證 - 詳情請參閱 [LICENSE](LICENSE) 檔案。
 
 ---
 
 ## 🙏 致謝
 
-- **MCP Protocol**: Anthropic's Model Context Protocol
+- **MCP 協議**: Anthropic 的模型上下文協議
 - **SAP Gateway**: OData v2/v4 整合
-- **Community**: 貢獻者和測試者
+- **社群**: 貢獻者和測試者
 
 ---
 

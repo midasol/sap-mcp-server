@@ -1,6 +1,6 @@
-# SAP MCP - Integración de SAP Gateway a través del Protocolo de Contexto de Modelo
+# SAP MCP - Integración de SAP Gateway vía Model Context Protocol
 
-Un servidor MCP completo para la integración de SAP Gateway, que proporciona herramientas modulares para que los agentes de IA ejecuten operaciones SAP OData.
+Servidor MCP completo para la integración de SAP Gateway, proporcionando herramientas modulares para agentes de IA y operaciones SAP OData.
 
 <div align="center">
 
@@ -13,81 +13,160 @@ Un servidor MCP completo para la integración de SAP Gateway, que proporciona he
 </div>
 
 ---
+## 📑 Tabla de Contenidos
 
-## 🎯 Descripción General del Proyecto
-
-Un servidor de Protocolo de Contexto de Modelo (MCP) listo para producción que permite a los agentes de IA y aplicaciones interactuar con sistemas SAP Gateway a través de una arquitectura limpia y modular. Construido para confiabilidad, seguridad y experiencia del desarrollador.
-
-**Estado Actual**: ✅ **Listo para Producción** (Las 5 fases completadas)
-
-### Puntos Destacados
-
-- 🔐 **Integración Segura con SAP**: Autenticación de nivel empresarial y soporte SSL/TLS
-- 🛠️ **4 Herramientas Modulares**: Autenticación, Consulta, Recuperación de Entidades, Descubrimiento de Servicios
-- 🚀 **Transporte Stdio**: Servidor MCP listo para producción
-- 📊 **Registro Estructurado**: Formatos JSON y consola con métricas de rendimiento
-- ✅ **Validación**: Validación integral de OData y seguridad
-- 🧪 **Bien Probado**: 56% de cobertura, 44/45 pruebas aprobadas (98% de tasa de éxito)
+- [🎯 Resumen del Proyecto](#-resumen-del-proyecto)
+- [📋 Preparación](#-preparación)
+- [📐 Arquitectura](#-arquitectura)
+  - [Visión General del Sistema](#visión-general-del-sistema)
+  - [Detalles de Componentes](#detalles-de-componentes)
+  - [Flujo de Datos](#flujo-de-datos-ejemplo-de-consulta-de-pedidos)
+  - [Flujo de Ejecución de Herramientas](#flujo-de-ejecución-de-herramientas)
+  - [Arquitectura de Seguridad](#arquitectura-de-seguridad)
+- [📦 Estructura del Repositorio](#-estructura-del-repositorio)
+- [✨ Características](#-características)
+- [🎓 Escenario de Demostración SAP SFLIGHT](#-escenario-de-demostración-sap-sflight)
+  - [Resumen del Escenario](#resumen-del-escenario)
+  - [Guía de Creación de Servicio OData](#guía-de-creación-de-servicio-odata)
+- [🚀 Inicio Rápido](#-inicio-rápido)
+  - [Requisitos Previos del Servidor MCP](#requisitos-previos-del-servidor-mcp)
+  - [Instalación](#1-instalación)
+  - [Configuración](#2-configuración)
+  - [Ejecución del Servidor](#3-ejecución-del-servidor)
+- [🤖 Integración con Gemini CLI](#-integración-con-gemini-cli)
+  - [Requisitos Previos](#requisitos-previos)
+  - [Instalación de Gemini CLI](#1-instalación-de-gemini-cli)
+  - [Autenticación de Gemini CLI](#2-autenticación-de-gemini-cli)
+  - [Registro del Servidor SAP MCP](#3-registro-del-servidor-sap-mcp)
+  - [Comenzar a Usar](#4-comenzar-a-usar-sap-mcp-en-gemini-cli)
+  - [Configuración Avanzada](#configuración-avanzada)
+  - [Solución de Problemas](#solución-de-problemas)
+  - [Herramientas Disponibles](#herramientas-sap-disponibles-en-gemini-cli)
+  - [Ejemplos de Flujo de Trabajo](#ejemplos-de-flujo-de-trabajo)
+- [🔧 Herramientas Disponibles](#-herramientas-disponibles)
+  - [Autenticación SAP (sap_authenticate)](#1-autenticación-sap-sap_authenticate)
+  - [Consulta SAP (sap_query)](#2-consulta-sap-sap_query)
+  - [Obtener Entidad SAP (sap_get_entity)](#3-obtener-entidad-sap-sap_get_entity)
+  - [Listar Servicios SAP (sap_list_services)](#4-listar-servicios-sap-sap_list_services)
+  - [Añadir Nuevas Herramientas](#5-añadir-nuevas-herramientas)
+- [📚 Ejemplos de Uso](#-ejemplos-de-uso)
+- [🔒 Seguridad](#-seguridad)
+- [📖 Documentación](#-documentación)
+- [📝 Licencia](#-licencia)
+- [🙏 Agradecimientos](#-agradecimientos)
 
 ---
 
+
+## 🎯 Resumen del Proyecto
+
+Este es un servidor Model Context Protocol (MCP) listo para producción, diseñado para permitir que los agentes de IA y las aplicaciones interactúen con los sistemas SAP Gateway a través de una arquitectura clara y modular. Construido para confiabilidad, seguridad y experiencia del desarrollador.
+
+**Estado Actual**: ✅ **Listo para Producción** (Las 5 fases completadas)
+
+### Características Clave
+
+- 🔐 **Integración Segura con SAP**: Autenticación de nivel empresarial y soporte SSL/TLS
+- 🛠️ **4 Herramientas Modulares**: Autenticación, Consulta, Obtención de Entidades y Descubrimiento de Servicios
+- 🚀 **Transporte Stdio**: Servidor MCP de grado de producción
+- 📊 **Logging Estructurado**: Formatos JSON y Consola con métricas de rendimiento
+- ✅ **Entrada Validada**: Validación integral de OData y seguridad
+- 🧪 **Totalmente Probado**: 56% de cobertura, 44/45 pruebas aprobadas (98% de tasa de éxito)
+
+---
+
+---
+
+## 📋 Preparación
+
+Comience con SAP MCP en 5 minutos:
+
+```bash
+# 1. Clonar y entrar
+git clone <repository-url>
+cd sap-mcp
+
+# 2. Crear venv e instalar
+python3 -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+cd packages/server
+pip install -e .
+
+# 3. Configurar conexión SAP
+cd ../..
+cp .env.server.example .env.server
+# Editar .env.server con sus credenciales de SAP
+
+# 4. Configurar servicios
+cp packages/server/config/services.yaml.example packages/server/config/services.yaml
+# Editar services.yaml para configurar sus servicios SAP
+
+# 5. Ejecutar servidor
+sap-mcp-server-stdio
+```
+
+**Siguientes Pasos:**
+- 📖 Para instrucciones detalladas de instalación, vea [Inicio Rápido](#-inicio-rápido).
+- 🤖 Para conectar agentes de IA, verifique [Integración con Gemini CLI](#-integración-con-gemini-cli).
+- 🔧 Para documentación de API, explore [Herramientas Disponibles](#-herramientas-disponibles).
+
 ## 📐 Arquitectura
 
-### Descripción General del Sistema
+### Visión General del Sistema
 
 <details>
-<summary>📊 Haga clic para ver el diagrama de descripción general del sistema</summary>
+<summary>📊 Ver Diagrama de Visión General del Sistema (Clic para expandir)</summary>
 
 ```mermaid
 graph TB
     subgraph clients["🎯 Aplicaciones Cliente"]
         direction TB
-        A1["AI Agent<br/><small>LLM/GenAI Integration</small>"]
-        A2["Python Client<br/><small>SDK & Libraries</small>"]
-        A3["Order Chatbot<br/><small>Aplicación de Ejemplo</small>"]
+        A1["Agente IA<br/><small>Integración LLM/GenAI</small>"]
+        A2["Cliente Python<br/><small>SDK y Librerías</small>"]
+        A3["Chatbot de Pedidos<br/><small>App de Ejemplo</small>"]
     end
 
     subgraph transport["🚀 Capa de Servidor MCP"]
         direction TB
-        B1["Stdio Transport<br/><small>stdin/stdout Stream</small>"]
+        B1["Transporte Stdio<br/><small>Flujos stdin/stdout</small>"]
     end
 
     subgraph registry["🛠️ Registro de Herramientas"]
         direction LR
         C1["sap_authenticate<br/><small>Autenticación</small>"]
-        C2["sap_query<br/><small>Consultas OData</small>"]
-        C3["sap_get_entity<br/><small>Recuperación de Entidad</small>"]
-        C4["sap_list_services<br/><small>Descubrimiento de Servicios</small>"]
+        C2["sap_query<br/><small>Consulta OData</small>"]
+        C3["sap_get_entity<br/><small>Obtener Entidad</small>"]
+        C4["sap_list_services<br/><small>Descubrimiento</small>"]
     end
 
-    subgraph core["⚡ Capa Principal"]
+    subgraph core["⚡ Capa Core"]
         direction LR
-        D1["SAP Client<br/><small>Manejador OData</small>"]
-        D2["Auth Manager<br/><small>Credenciales</small>"]
-        D3["Config Loader<br/><small>YAML/ENV</small>"]
+        D1["Cliente SAP<br/><small>Manejador OData</small>"]
+        D2["Gestor de Auth<br/><small>Credenciales</small>"]
+        D3["Cargador de Config<br/><small>YAML/ENV</small>"]
     end
 
     subgraph utils["🔧 Utilidades"]
         direction LR
-        E1["Validators<br/><small>Entrada/Seguridad</small>"]
-        E2["Logger<br/><small>Registros Estructurados</small>"]
-        E3["Error Handler<br/><small>Grado de Producción</small>"]
+        E1["Validadores<br/><small>Entrada/Seguridad</small>"]
+        E2["Logger<br/><small>Logs Estructurados</small>"]
+        E3["Manejador de Errores<br/><small>Grado Prod</small>"]
     end
 
     subgraph sap["🏢 SAP Gateway"]
         direction TB
-        F1["OData Services<br/><small>Protocolo v2/v4</small>"]
-        F2["Business Data<br/><small>Pedidos/Ventas/Inventario</small>"]
+        F1["Servicios OData<br/><small>Protocolos v2/v4</small>"]
+        F2["Datos de Negocio<br/><small>Pedidos/Ventas/Stock</small>"]
     end
 
-    A1 & A2 & A3 -->|Active Connection| B1
-    B1 -->|Tool Dispatch| C1 & C2 & C3 & C4
-    C1 & C2 & C3 & C4 -->|Core Services| D1
-    C1 -->|Auth Flow| D2
-    C2 & C3 & C4 -->|Config Access| D3
-    D1 & D2 & D3 -->|Validation & Logging| E1 & E2 & E3
-    D1 -->|OData Protocol| F1
-    F1 -->|Data Access| F2
+    A1 & A2 & A3 -->|Conexión Activa| B1
+    B1 -->|Despacho de Herramientas| C1 & C2 & C3 & C4
+    C1 & C2 & C3 & C4 -->|Servicios Core| D1
+    C1 -->|Flujo de Auth| D2
+    C2 & C3 & C4 -->|Acceso a Config| D3
+    D1 & D2 & D3 -->|Validación y Log| E1 & E2 & E3
+    D1 -->|Protocolo OData| F1
+    F1 -->|Acceso a Datos| F2
 
     classDef clientNode fill:#D6EAF8,stroke:#3498DB,stroke-width:2px,padding:20px
     classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:20px
@@ -110,7 +189,7 @@ graph TB
 ### Detalles de Componentes
 
 <details>
-<summary>🔧 Haga clic para ver el diagrama de detalles de componentes</summary>
+<summary>🔧 Ver Diagrama de Detalles de Componentes (Clic para expandir)</summary>
 
 ```mermaid
 graph TB
@@ -119,55 +198,55 @@ graph TB
 
         subgraph trans["🚀 transports/"]
             direction LR
-            T1["stdio.py<br/><small>CLI Entry Point</small>"]
+            T1["stdio.py<br/><small>Punto de Entrada CLI</small>"]
         end
 
         subgraph tools["🛠️ tools/"]
             direction TB
-            TO5["base.py<br/><small>Tool Base Class</small>"]
+            TO5["base.py<br/><small>Clase Base Herramienta</small>"]
 
-            subgraph toolImpl["Tool Implementations"]
+            subgraph toolImpl["Implementaciones"]
                 direction LR
-                TO1["auth_tool.py<br/><small>Authentication</small>"]
-                TO2["query_tool.py<br/><small>OData Query</small>"]
-                TO3["entity_tool.py<br/><small>Single Entity</small>"]
-                TO4["service_tool.py<br/><small>Service List</small>"]
+                TO1["auth_tool.py<br/><small>Autenticación</small>"]
+                TO2["query_tool.py<br/><small>Consulta OData</small>"]
+                TO3["entity_tool.py<br/><small>Entidad Única</small>"]
+                TO4["service_tool.py<br/><small>Lista Servicios</small>"]
             end
         end
 
         subgraph core["⚡ core/"]
             direction LR
-            C1["sap_client.py<br/><small>OData Client</small>"]
-            C2["auth.py<br/><small>Auth Manager</small>"]
-            C3["exceptions.py<br/><small>Custom Errors</small>"]
+            C1["sap_client.py<br/><small>Cliente OData</small>"]
+            C2["auth.py<br/><small>Gestor Auth</small>"]
+            C3["exceptions.py<br/><small>Errores Personalizados</small>"]
         end
 
         subgraph config["⚙️ config/"]
             direction LR
-            CF1["settings.py<br/><small>Env Config</small>"]
-            CF2["loader.py<br/><small>YAML Loader</small>"]
-            CF3["schemas.py<br/><small>Pydantic Models</small>"]
+            CF1["settings.py<br/><small>Ajustes Env</small>"]
+            CF2["loader.py<br/><small>Cargador YAML</small>"]
+            CF3["schemas.py<br/><small>Modelos Pydantic</small>"]
         end
 
         subgraph utils["🔧 utils/"]
             direction LR
-            U1["logger.py<br/><small>Structured Logs</small>"]
-            U2["validators.py<br/><small>Input Validation</small>"]
+            U1["logger.py<br/><small>Logging Estructurado</small>"]
+            U2["validators.py<br/><small>Validación Entrada</small>"]
         end
 
         subgraph protocol["📡 protocol/"]
-            P1["schemas.py<br/><small>MCP Request/Response</small>"]
+            P1["schemas.py<br/><small>Petición/Respuesta MCP</small>"]
         end
     end
 
-    T1 -->|Dispatches to| TO1 & TO2 & TO3 & TO4
-    TO1 & TO2 & TO3 & TO4 -.->|Extends| TO5
-    TO5 -->|Uses| C1 & C2
-    C1 -->|Loads| CF1 & CF2
-    C2 -->|Reads| CF1
-    C1 & C2 -->|Validates & Logs| U1 & U2
-    TO5 -.->|Implements| P1
-    C3 -.->|Error Types| C1 & C2
+    T1 -->|Despacho| TO1 & TO2 & TO3 & TO4
+    TO1 & TO2 & TO3 & TO4 -.->|Hereda| TO5
+    TO5 -->|Usa| C1 & C2
+    C1 -->|Carga| CF1 & CF2
+    C2 -->|Lee| CF1
+    C1 & C2 -->|Valida y Log| U1 & U2
+    TO5 -.->|Implementa| P1
+    C3 -.->|Tipos Error| C1 & C2
 
     classDef transportNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
     classDef futureNode fill:#E8E8E8,stroke:#999999,stroke-width:2px,stroke-dasharray:5 5
@@ -189,88 +268,88 @@ graph TB
 
 </details>
 
-### Flujo de Datos: Ejemplo de Consulta de Pedido
+### Flujo de Datos: Ejemplo de Consulta de Pedidos
 
 <details>
-<summary>🔄 Haga clic para ver el diagrama de flujo de datos</summary>
+<summary>🔄 Ver Diagrama de Flujo de Datos (Clic para expandir)</summary>
 
 ```mermaid
 sequenceDiagram
     autonumber
-    box rgba(214, 234, 248, 0.3) Client Layer
-        participant Client as 🤖<br/>AI Agent/Client
+    box rgba(214, 234, 248, 0.3) Capa Cliente
+        participant Client as 🤖<br/>Agente IA/Cliente
     end
-    box rgba(213, 245, 227, 0.3) Transport Layer
-        participant Transport as 📡<br/>Stdio Transport
-        participant Registry as 📋<br/>Tool Registry
+    box rgba(213, 245, 227, 0.3) Capa Transporte
+        participant Transport as 📡<br/>Transporte Stdio
+        participant Registry as 📋<br/>Registro Herramientas
     end
-    box rgba(252, 243, 207, 0.3) Tool Layer
-        participant AuthTool as 🔐<br/>Auth Tool
-        participant QueryTool as 🔍<br/>Query Tool
+    box rgba(252, 243, 207, 0.3) Capa Herramientas
+        participant AuthTool as 🔐<br/>Herr. Auth
+        participant QueryTool as 🔍<br/>Herr. Consulta
     end
-    box rgba(250, 219, 216, 0.3) Core Layer
-        participant SAPClient as 🔧<br/>SAP Client
+    box rgba(250, 219, 216, 0.3) Capa Core
+        participant SAPClient as 🔧<br/>Cliente SAP
     end
-    box rgba(213, 245, 227, 0.3) Support Layer
-        participant Validator as ✅<br/>Validator
+    box rgba(213, 245, 227, 0.3) Capa Soporte
+        participant Validator as ✅<br/>Validador
         participant Logger as 📊<br/>Logger
     end
-    box rgba(235, 222, 240, 0.3) External
+    box rgba(235, 222, 240, 0.3) Externo
         participant SAP as 🏢<br/>SAP Gateway
     end
 
     rect rgba(214, 234, 248, 0.15)
-        Note over Client,Registry: ⚡ Phase 1: Session Initialization
-        Client->>+Transport: Connect via stdio stream
-        Transport->>+Registry: Initialize tool registry
-        Registry-->>-Transport: ✅ 4 tools registered
-        Transport-->>-Client: Connection established
+        Note over Client,Registry: ⚡ Fase 1: Inicialización de Sesión
+        Client->>+Transport: Conectar vía flujo stdio
+        Transport->>+Registry: Inicializar registro de herramientas
+        Registry-->>-Transport: ✅ 4 Herramientas Registradas
+        Transport-->>-Client: Conexión Establecida
     end
 
     rect rgba(213, 245, 227, 0.15)
-        Note over Client,SAP: 🔐 Phase 2: Authentication
+        Note over Client,SAP: 🔐 Fase 2: Autenticación
         Client->>+Transport: call_tool(sap_authenticate, {})
-        Transport->>+Registry: Get tool: sap_authenticate
-        Registry->>+AuthTool: Execute authentication
-        AuthTool->>+Validator: Validate credentials
-        Validator-->>-AuthTool: ✅ Credentials valid
-        AuthTool->>+Logger: Log authentication attempt
-        Logger-->>-AuthTool: Logged
-        AuthTool->>+SAPClient: Authenticate with SAP
+        Transport->>+Registry: Obtener herramienta: sap_authenticate
+        Registry->>+AuthTool: Ejecutar autenticación
+        AuthTool->>+Validator: Validar credenciales
+        Validator-->>-AuthTool: ✅ Credenciales Válidas
+        AuthTool->>+Logger: Registrar intento de auth
+        Logger-->>-AuthTool: Registrado
+        AuthTool->>+SAPClient: Autenticar contra SAP
         SAPClient->>+SAP: POST /sap/opu/odata/auth
-        SAP-->>-SAPClient: 200 OK + Session token
-        SAPClient-->>-AuthTool: ✅ Authenticated successfully
-        AuthTool-->>-Registry: Success response
-        Registry-->>-Transport: Auth token + session ID
-        Transport-->>-Client: ✅ Authentication complete
+        SAP-->>-SAPClient: 200 OK + Token de Sesión
+        SAPClient-->>-AuthTool: ✅ Auth Exitosa
+        AuthTool-->>-Registry: Respuesta Exitosa
+        Registry-->>-Transport: Token de Auth + ID Sesión
+        Transport-->>-Client: ✅ Auth Completada
     end
 
     rect rgba(252, 243, 207, 0.15)
-        Note over Client,SAP: 🔍 Phase 3: Query Execution
+        Note over Client,SAP: 🔍 Fase 3: Ejecución de Consulta
         Client->>+Transport: call_tool(sap_query, {filter: "OrderID eq '91000043'"})
-        Transport->>+Registry: Get tool: sap_query
-        Registry->>+QueryTool: Execute with parameters
-        QueryTool->>+Validator: Validate OData filter syntax
-        Validator-->>-QueryTool: ✅ Filter is safe
-        QueryTool->>+Logger: Log query start
-        Logger-->>-QueryTool: Logged
-        QueryTool->>+SAPClient: Execute OData query
+        Transport->>+Registry: Obtener herramienta: sap_query
+        Registry->>+QueryTool: Ejecutar con params
+        QueryTool->>+Validator: Validar sintaxis filtro OData
+        Validator-->>-QueryTool: ✅ Filtro Seguro
+        QueryTool->>+Logger: Registrar inicio consulta
+        Logger-->>-QueryTool: Registrado
+        QueryTool->>+SAPClient: Ejecutar consulta OData
         SAPClient->>+SAP: GET /OrderSet?$filter=OrderID eq '91000043'
-        SAP-->>-SAPClient: 200 OK + Order data (JSON)
-        SAPClient->>SAPClient: Parse & transform response
-        SAPClient-->>-QueryTool: ✅ Parsed order data
-        QueryTool->>+Logger: Log query success + metrics
-        Logger-->>-QueryTool: Logged
-        QueryTool-->>-Registry: Order details
-        Registry-->>-Transport: Formatted response
-        Transport-->>-Client: ✅ Query complete
+        SAP-->>-SAPClient: 200 OK + Datos Pedido (JSON)
+        SAPClient->>SAPClient: Parsear respuesta y transformar
+        SAPClient-->>-QueryTool: ✅ Datos Pedido Parseados
+        QueryTool->>+Logger: Registrar éxito consulta + métricas
+        Logger-->>-QueryTool: Registrado
+        QueryTool-->>-Registry: Detalles del Pedido
+        Registry-->>-Transport: Formatear respuesta
+        Transport-->>-Client: ✅ Consulta Completada
     end
 
     rect rgba(213, 245, 227, 0.15)
-        Note over Logger: 📊 Phase 4: Performance Tracking
-        Logger->>Logger: Calculate execution metrics
-        Logger->>Logger: Write structured JSON log
-        Logger->>Logger: Update performance counters
+        Note over Logger: 📊 Fase 4: Rastreo de Rendimiento
+        Logger->>Logger: Calcular métricas de ejecución
+        Logger->>Logger: Escribir log JSON estructurado
+        Logger->>Logger: Actualizar contadores de rendimiento
     end
 ```
 
@@ -279,41 +358,41 @@ sequenceDiagram
 ### Flujo de Ejecución de Herramientas
 
 <details>
-<summary>⚡ Haga clic para ver el diagrama de flujo de ejecución de herramientas</summary>
+<summary>⚡ Ver Diagrama de Flujo de Ejecución de Herramientas (Clic para expandir)</summary>
 
 ```mermaid
 flowchart TD
-    Start([🚀 Client Request<br/><small>Tool invocation</small>])
+    Start([🚀 Petición Cliente<br/><small>Llamada a Herramienta</small>])
 
-    Start --> Validate{🔍 Validate Input<br/><small>Schema check</small><br/><small>Security scan</small>}
+    Start --> Validate{🔍 Validación Entrada<br/><small>Verificación Esquema</small><br/><small>Escaneo Seguridad</small>}
 
-    Validate -->|❌ Invalid| Error1[🚫 Validation Error<br/><small>Return error details</small>]
-    Validate -->|✅ Valid| Auth{🔐 Authenticated?<br/><small>Session check</small>}
+    Validate -->|❌ Inválido| Error1[🚫 Error Validación<br/><small>Devolver Detalles Error</small>]
+    Validate -->|✅ Válido| Auth{🔐 Autenticado?<br/><small>Verificar Sesión</small>}
 
-    Auth -->|No| DoAuth[🔑 Execute Auth<br/><small>Credential validation</small><br/><small>SAP handshake</small>]
-    DoAuth --> AuthCheck{✅ Auth Success?<br/><small>Token received</small>}
+    Auth -->|No| DoAuth[🔑 Realizar Auth<br/><small>Validar Credenciales</small><br/><small>Handshake SAP</small>]
+    DoAuth --> AuthCheck{✅ Auth Exitosa?<br/><small>Recibir Token</small>}
 
-    AuthCheck -->|❌ Failed| Error2[🚫 Auth Error<br/><small>Invalid credentials</small>]
-    AuthCheck -->|✅ Success| Execute
+    AuthCheck -->|❌ Fallo| Error2[🚫 Error Auth<br/><small>Credenciales Inválidas</small>]
+    AuthCheck -->|✅ Éxito| Execute
 
-    Auth -->|Yes| Execute[⚡ Execute Tool<br/><small>Business logic</small><br/><small>Parameter processing</small>]
+    Auth -->|Sí| Execute[⚡ Ejecutar Herramienta<br/><small>Lógica de Negocio</small><br/><small>Procesar Params</small>]
 
-    Execute --> SAPCall[🌐 SAP OData Call<br/><small>HTTP request</small><br/><small>SSL/TLS encrypted</small>]
+    Execute --> SAPCall[🌐 Llamada SAP OData<br/><small>Petición HTTP</small><br/><small>Cifrado SSL/TLS</small>]
 
-    SAPCall --> SAPCheck{📡 SAP Response<br/><small>Status check</small>}
+    SAPCall --> SAPCheck{📡 Respuesta SAP<br/><small>Verificar Estado</small>}
 
-    SAPCheck -->|❌ Error| Error3[🚫 SAP Error<br/><small>Service unavailable</small><br/><small>or data error</small>]
-    SAPCheck -->|✅ 200 OK| Parse[📊 Parse Response<br/><small>XML/JSON parsing</small><br/><small>Data extraction</small>]
+    SAPCheck -->|❌ Error| Error3[🚫 Error SAP<br/><small>Servicio No Disponible</small><br/><small>o Datos Incorrectos</small>]
+    SAPCheck -->|✅ 200 OK| Parse[📊 Parsear Respuesta<br/><small>Parseo XML/JSON</small><br/><small>Extraer Datos</small>]
 
-    Parse --> Transform[🔄 Transform Data<br/><small>MCP format</small><br/><small>Schema mapping</small>]
+    Parse --> Transform[🔄 Transformar Datos<br/><small>Formato MCP</small><br/><small>Mapeo Esquema</small>]
 
-    Transform --> Log[📝 Log Metrics<br/><small>Performance data</small><br/><small>Audit trail</small>]
+    Transform --> Log[📝 Registrar Métricas<br/><small>Datos Rendimiento</small><br/><small>Rastro Auditoría</small>]
 
-    Log --> Success([✅ Success Response<br/><small>Return to client</small>])
+    Log --> Success([✅ Respuesta Exitosa<br/><small>Devolver a Cliente</small>])
 
-    Error1 & Error2 & Error3 --> LogError[📝 Log Error<br/><small>Error context</small><br/><small>Stack trace</small>]
+    Error1 & Error2 & Error3 --> LogError[📝 Registrar Error<br/><small>Contexto Error</small><br/><small>Traza Pila</small>]
 
-    LogError --> End([❌ Error Response<br/><small>Return to client</small>])
+    LogError --> End([❌ Respuesta Error<br/><small>Devolver a Cliente</small>])
 
     classDef startNode fill:#D5F5E3,stroke:#2ECC71,stroke-width:2px,padding:18px
     classDef decisionNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:2px,padding:18px
@@ -341,54 +420,54 @@ flowchart TD
 ### Arquitectura de Seguridad
 
 <details>
-<summary>🔒 Haga clic para ver el diagrama de arquitectura de seguridad</summary>
+<summary>🔒 Ver Diagrama de Arquitectura de Seguridad (Clic para expandir)</summary>
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize':'14px', 'fontFamily':'arial'}}}%%
 graph TB
-    subgraph security["🛡️ Defense in Depth Security Architecture"]
+    subgraph security["🛡️ Arquitectura de Seguridad de Defensa en Profundidad"]
         direction TB
 
-        subgraph layer1["Layer 1: Input Validation - Entry Point Security"]
+        subgraph layer1["Capa 1: Validación de Entrada - Seguridad Punto de Entrada"]
             direction LR
-            L1A["🔍 OData Filter<br/><br/>SQL injection<br/>prevention<br/><br/>Syntax validation"]
-            L1B["🔑 Entity Key<br/><br/>Format<br/>validation<br/><br/>Type checking"]
-            L1C["🧹 Sanitization<br/><br/>XSS<br/>prevention<br/><br/>Input cleaning"]
+            L1A["🔍 Filtros OData<br/><br/>Prevención<br/>Inyección SQL<br/><br/>Validación Sintaxis"]
+            L1B["🔑 Claves Entidad<br/><br/>Validación<br/>Formato<br/><br/>Verificación Tipo"]
+            L1C["🧹 Sanitización<br/><br/>Prevención<br/>XSS<br/><br/>Limpieza Entrada"]
         end
 
-        subgraph layer2["Layer 2: Authentication - Identity Verification"]
+        subgraph layer2["Capa 2: Autenticación - Verificación de Identidad"]
             direction LR
-            L2A["✅ Credentials<br/><br/>User<br/>validation<br/><br/>Password checks"]
-            L2B["🎫 Sessions<br/><br/>Session<br/>lifecycle<br/><br/>Timeout handling"]
-            L2C["🔐 Tokens<br/><br/>JWT/Bearer<br/>tokens<br/><br/>Token rotation"]
+            L2A["✅ Credenciales<br/><br/>Verificación<br/>Usuario<br/><br/>Comprobación Pass"]
+            L2B["🎫 Sesión<br/><br/>Ciclo de Vida<br/>Sesión<br/><br/>Manejo Timeout"]
+            L2C["🔐 Tokens<br/><br/>Tokens<br/>JWT/Bearer<br/><br/>Rotación Token"]
         end
 
-        subgraph layer3["Layer 3: Authorization - Access Control"]
+        subgraph layer3["Capa 3: Autorización - Control de Acceso"]
             direction LR
-            L3A["🚦 Service Access<br/><br/>Service-level<br/>RBAC<br/><br/>Permission matrix"]
-            L3B["📋 Entity Permissions<br/><br/>Data-level<br/>access<br/><br/>Field filtering"]
+            L3A["🚦 Acceso Servicio<br/><br/>RBAC Nivel<br/>Servicio<br/><br/>Matriz Permisos"]
+            L3B["📋 Permisos Entidad<br/><br/>Acceso Nivel<br/>Datos<br/><br/>Filtrado Campos"]
         end
 
-        subgraph layer4["Layer 4: Transport Security - Encryption Layer"]
+        subgraph layer4["Capa 4: Seguridad Transporte - Capa de Cifrado"]
             direction LR
-            L4A["🔒 SSL/TLS<br/><br/>TLS 1.2+ only<br/><br/>Perfect forward<br/>secrecy"]
-            L4B["📜 Certificates<br/><br/>Chain<br/>validation<br/><br/>Revocation check"]
+            L4A["🔒 SSL/TLS<br/><br/>Solo TLS 1.2+<br/><br/>Perfect Forward<br/>Secrecy"]
+            L4B["📜 Certificados<br/><br/>Validación<br/>Cadena<br/><br/>Comprobación Revocación"]
         end
 
-        subgraph layer5["Layer 5: Audit & Monitoring - Observability"]
+        subgraph layer5["Capa 5: Auditoría y Monitoreo - Observabilidad"]
             direction LR
-            L5A["📊 Structured Logs<br/><br/>JSON logging<br/><br/>PII exclusion"]
-            L5B["⚡ Performance<br/><br/>Metrics<br/>tracking<br/><br/>SLA monitoring"]
-            L5C["🚨 Error Tracking<br/><br/>Exception<br/>logging<br/><br/>Alert triggers"]
+            L5A["📊 Logs Estructurados<br/><br/>Logging JSON<br/><br/>Redacción PII"]
+            L5B["⚡ Rendimiento<br/><br/>Rastreo<br/>Métricas<br/><br/>Monitoreo SLA"]
+            L5C["🚨 Rastreo Errores<br/><br/>Registro<br/>Excepciones<br/><br/>Disparo Alertas"]
         end
     end
 
-    L1A & L1B & L1C -->|Validated Input| L2A
-    L2A -->|Identity Verified| L2B
-    L2B -->|Session Active| L2C
-    L2C -->|Authenticated| L3A & L3B
-    L3A & L3B -->|Authorized| L4A & L4B
-    L4A & L4B -->|Encrypted| L5A & L5B & L5C
+    L1A & L1B & L1C -->|Entrada Validada| L2A
+    L2A -->|Identidad Verificada| L2B
+    L2B -->|Sesión Activa| L2C
+    L2C -->|Autenticado| L3A & L3B
+    L3A & L3B -->|Autorizado| L4A & L4B
+    L4A & L4B -->|Cifrado| L5A & L5B & L5C
 
     classDef inputNode fill:#FADBD8,stroke:#E74C3C,stroke-width:3px,padding:25px
     classDef authNode fill:#FCF3CF,stroke:#F1C40F,stroke-width:3px,padding:25px
@@ -412,86 +491,81 @@ graph TB
 ```
 sap-mcp/
 ├── packages/
-│   └── server/                          ✅ Production-Ready MCP Server
+│   └── server/                          ✅ Servidor MCP Listo para Producción
 │       ├── src/sap_mcp_server/
-│       │   ├── core/                    # SAP client & auth (4 files)
-│       │   │   ├── __init__.py          # Module initialization
-│       │   │   ├── sap_client.py        # OData operations
-│       │   │   ├── auth.py              # Credential management
-│       │   │   └── exceptions.py        # Custom exceptions
-│       │   ├── config/                  # Configuration (4 files)
-│       │   │   ├── __init__.py          # Module initialization
-│       │   │   ├── settings.py          # Environment config
-│       │   │   ├── loader.py            # YAML loader
-│       │   │   └── schemas.py           # Pydantic models
-│       │   ├── protocol/                # MCP protocol (2 files)
-│       │   │   ├── __init__.py          # Module initialization
-│       │   │   └── schemas.py           # Request/Response schemas
-│       │   ├── tools/                   # 4 modular SAP tools (6 files)
-│       │   │   ├── __init__.py          # Tool registry
-│       │   │   ├── base.py              # Tool base class
-│       │   │   ├── auth_tool.py         # Authentication
-│       │   │   ├── query_tool.py        # OData queries
-│       │   │   ├── entity_tool.py       # Entity retrieval
-│       │   │   └── service_tool.py      # Service discovery
-│       │   ├── transports/              # Transport layer (2 files)
-│       │   │   ├── __init__.py          # Module initialization
-│       │   │   └── stdio.py             # Stdio transport ✅
-│       │   ├── utils/                   # Utilities (3 files)
-│       │   │   ├── __init__.py          # Module initialization
-│       │   │   ├── logger.py            # Structured logging
-│       │   │   └── validators.py        # Input validation
-│       │   └── __init__.py              # Package initialization
-│       ├── config/                      # Server configuration
-│       │   ├── services.yaml            # SAP services config
-│       │   └── services.yaml.example    # Configuration template
-│       ├── tests/                       # Test suite (7 files, 56% coverage)
-│       │   ├── __init__.py              # Test package initialization
-│       │   ├── conftest.py              # Pytest fixtures
-│       │   ├── unit/                    # Unit tests
-│       │   │   ├── __init__.py          # Unit test package
-│       │   │   ├── test_base.py         # Base tool tests
-│       │   │   └── test_validators.py   # Validator tests
-│       │   └── integration/             # Integration tests
-│       │       ├── __init__.py          # Integration test package
-│       │       └── test_tool_integration.py  # Tool integration tests
-│       ├── pyproject.toml               # Package configuration
-│       └── README.md                    # Server package documentation
+│       │   ├── core/                    # Cliente SAP y Auth (4 archivos)
+│       │   │   ├── __init__.py          # Init Módulo
+│       │   │   ├── sap_client.py        # Operaciones OData
+│       │   │   ├── auth.py              # Gestión Credenciales
+│       │   │   └── exceptions.py        # Excepciones Personalizadas
+│       │   ├── config/                  # Configuración (4 archivos)
+│       │   │   ├── __init__.py          # Init Módulo
+│       │   │   ├── settings.py          # Ajustes Env
+│       │   │   ├── loader.py            # Cargador YAML
+│       │   │   └── schemas.py           # Modelos Pydantic
+│       │   ├── protocol/                # Protocolo MCP (2 archivos)
+│       │   │   ├── __init__.py          # Init Módulo
+│       │   │   └── schemas.py           # Esquemas Req/Res
+│       │   ├── tools/                   # 4 Herramientas SAP Modulares (6 archivos)
+│       │   │   ├── __init__.py          # Registro Herramientas
+│       │   │   ├── base.py              # Clase Base Herramienta
+│       │   │   ├── auth_tool.py         # Autenticación
+│       │   │   ├── query_tool.py        # Consulta OData
+│       │   │   ├── entity_tool.py       # Obtener Entidad
+│       │   │   └── service_tool.py      # Descubrimiento Servicios
+│       │   ├── transports/              # Capa Transporte (2 archivos)
+│       │   │   ├── __init__.py          # Init Módulo
+│       │   │   └── stdio.py             # Transporte Stdio ✅
+│       │   ├── utils/                   # Utilidades (3 archivos)
+│       │   │   ├── __init__.py          # Init Módulo
+│       │   │   ├── logger.py            # Logging Estructurado
+│       │   │   └── validators.py        # Validación Entrada
+│       │   └── __init__.py              # Init Paquete
+│       ├── config/                      # Configuración Servidor
+│       │   ├── services.yaml            # Config Servicios SAP
+│       │   └── services.yaml.example    # Plantilla Config
+│       ├── tests/                       # Suite de Pruebas (7 archivos, 56% cobertura)
+│       │   ├── __init__.py              # Init Paquete Pruebas
+│       │   ├── conftest.py              # Fixtures Pytest
+│       │   ├── unit/                    # Pruebas Unitarias
+│       │   │   ├── __init__.py          # Paquete Pruebas Unitarias
+│       │   │   ├── test_base.py         # Pruebas Herramienta Base
+│       │   │   └── test_validators.py   # Pruebas Validadores
+│       │   └── integration/             # Pruebas Integración
+│       │       ├── __init__.py          # Paquete Pruebas Integración
+│       │       └── test_tool_integration.py  # Pruebas Integración Herramientas
+│       ├── pyproject.toml               # Config Paquete
+│       └── README.md                    # Documentación Paquete Servidor
 │
-├── docs/                                # Documentation
-│   ├── architecture/                    # Architecture documentation
-│   │   └── server.md                    # Server architecture
-│   └── guides/                          # User guides
-│       ├── configuration.md             # Configuration guide
-│       ├── deployment.md                # Deployment guide
-│       ├── troubleshooting.md           # Troubleshooting guide
-│       ├── odata-service-creation-flight-demo.md  # OData service creation
-│       └── sfight-demo-guide.md         # SFLIGHT demo guide
+├── docs/                                # Documentación
+│   ├── architecture/                    # Documentos Arquitectura
+│   │   └── server.md                    # Arquitectura Servidor
+│   └── guides/                          # Guías Usuario
+│       ├── configuration.md             # Guía Configuración
+│       ├── deployment.md                # Guía Despliegue
+│       ├── troubleshooting.md           # Guía Solución Problemas
+│       ├── odata-service-creation-flight-demo.md  # Creación Servicio OData
+│       └── sfight-demo-guide.md         # Guía Demo SFLIGHT
 │
-├── examples/                            # Example applications
-│   ├── basic/                           # Basic examples
-│   │   └── stdio_client.py              # Stdio client example
-│   ├── chatbot/                         # Chatbot examples
-│   │   └── order_inquiry_chatbot.py     # Order inquiry chatbot
-│   └── README.md                        # Examples documentation
+├── examples/                            # Aplicaciones Ejemplo
+│   ├── basic/                           # Ejemplos Básicos
+│   │   └── stdio_client.py              # Ejemplo Cliente Stdio
+│   ├── chatbot/                         # Ejemplo Chatbot
+│   │   └── order_inquiry_chatbot.py     # Chatbot Consulta Pedidos
+│   └── README.md                        # Documentación Ejemplos
 │
-├── scripts/                             # Development scripts
-│   ├── create_structure.sh              # Project structure creation
-│   ├── migrate_code.sh                  # Code migration script
-│   └── update_imports.py                # Import update script
+├── scripts/                             # Scripts Desarrollo
+│   ├── create_structure.sh              # Creación Estructura Proyecto
+│   ├── migrate_code.sh                  # Script Migración Código
+│   └── update_imports.py                # Script Actualización Imports
 │
-├── .claude/                             # Claude Code configuration
-│   └── settings.local.json              # Local settings
-│
-├── .env.server.example                  # Environment template
-├── .gitignore                           # Git ignore rules
-├── README.md                            # Main documentation (English)
-├── README.ja.md                         # Japanese documentation
-├── README.ko.md                         # Korean documentation
-├── README.th.md                         # Thai documentation
-├── README.zh-TW.md                      # Traditional Chinese documentation
-├── README.zh-CN.md                      # Simplified Chinese documentation
-└── README.es.md                         # Spanish documentation
+├── .env.server.example                  # Plantilla Entorno
+├── README.md                            # Documentación Principal (Inglés)
+├── README.ja.md                         # Documentación Japonés
+├── README.ko.md                         # Documentación Coreano
+├── README.th.md                         # Documentación Tailandés
+├── README.zh-TW.md                      # Documentación Chino Tradicional
+└── README.zh-CN.md                      # Documentación Chino Simplificado
 ```
 
 ---
@@ -505,9 +579,9 @@ sap-mcp/
 <td width="50%">
 
 #### 🛠️ Herramientas
-- ✅ **sap_authenticate**: Autenticación segura de SAP
-- ✅ **sap_query**: Consultas OData con filtros
-- ✅ **sap_get_entity**: Recuperación de entidad única
+- ✅ **sap_authenticate**: Autenticación segura SAP
+- ✅ **sap_query**: Consulta OData con filtros
+- ✅ **sap_get_entity**: Obtención de entidad única
 - ✅ **sap_list_services**: Descubrimiento de servicios
 
 </td>
@@ -521,20 +595,20 @@ sap-mcp/
 <tr>
 <td>
 
-#### 📊 Registro y Monitoreo
-- ✅ **Registro Estructurado**: JSON + Consola
-- ✅ **Métricas de Rendimiento**: Tiempos de solicitud
-- ✅ **Rastreo de Errores**: Contexto completo
-- ✅ **Pista de Auditoría**: Eventos de seguridad
+#### 📊 Logging y Monitoreo
+- ✅ **Logs Estructurados**: JSON + Consola
+- ✅ **Métricas Rendimiento**: Tiempos de petición
+- ✅ **Rastreo Errores**: Contexto completo
+- ✅ **Rastro Auditoría**: Eventos de seguridad
 
 </td>
 <td>
 
 #### 🔒 Seguridad
-- ✅ **Validación de Entrada**: OData y seguridad
+- ✅ **Validación Entrada**: OData y Seguridad
 - ✅ **Soporte SSL/TLS**: Conexiones seguras
-- ✅ **Gestión de Credenciales**: .env.server
-- ✅ **Manejo de Errores**: Grado de producción
+- ✅ **Gestión Credenciales**: .env.server
+- ✅ **Manejo Errores**: Grado producción
 
 </td>
 </tr>
@@ -542,26 +616,189 @@ sap-mcp/
 
 ### Experiencia del Desarrollador
 
-- ✅ **Arquitectura Modular**: Una herramienta por archivo
-- ✅ **Seguridad de Tipos**: Sugerencias de tipo completas
+- ✅ **Arquitectura Modular**: Un archivo por herramienta
+- ✅ **Seguridad de Tipos**: Type hints completos
 - ✅ **Documentación**: Guías completas
-- ✅ **Fácil Instalación**: `pip install -e .`
-- ✅ **Recarga en Caliente**: Modo de desarrollo
-- ✅ **Aplicaciones de Ejemplo**: 3 ejemplos funcionales
+- ✅ **Configuración Fácil**: `pip install -e .`
+- ✅ **Recarga en Caliente**: Modo desarrollo
+- ✅ **Apps Ejemplo**: 3 ejemplos funcionales
 
 ---
 
-## 📋 Preparación
+## 🎓 Escenario de Demostración SAP SFLIGHT
 
-### Requisitos Previos para el Servidor MCP
+### Resumen del Escenario
+
+Para facilitar el acceso, este proyecto se basa en el conjunto de datos de demostración SAP SFLIGHT.
+
+El conjunto de datos SFLIGHT es una base de datos de ejemplo estándar proporcionada por SAP que contiene datos de horarios de vuelos, aerolíneas, aeropuertos y reservas. Es un recurso excelente para probar y demostrar el modelado de datos y la creación de servicios.
+
+Esta guía asume que tiene un servicio OData que expone este conjunto de datos. El objetivo es conectar el servidor SAP MCP a este servicio e interactuar con él utilizando un agente de IA u otro cliente.
+
+**Documentación Oficial de SAP:**
+- [SAP Documentation - Flight Model](https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm)
+- [SAP Help Portal - Flight Model](https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html)
+
+---
+
+### Guía de Creación de Servicio OData
+
+Esta guía le llevará a través de la creación de un servicio OData en su sistema SAP utilizando el SAP Gateway Service Builder (`SEGW`) para exponer los datos del escenario Flight, que típicamente está disponible en las ediciones SAP S/4HANA Fully Activated Appliance (FAA).
+
+#### Resumen del Escenario
+
+* **Objetivo:** Exponer horarios de vuelos, reservas y datos maestros relacionados a través de un servicio OData.
+* **Requisitos de Datos del Escenario:** Horarios de vuelos, fechas, horas, detalles de aeropuertos, detalles de aerolíneas, detalles de pasajeros, precios, etc.
+* **Tablas SAP Relevantes:** `SFLIGHT`, `SPFLI`, `SCARR`, `SAIRPORT`, `SBOOK`, `SCUSTOM`.
+
+---
+
+#### Pasos para Crear el Servicio OData en SEGW
+
+##### 1. Acceder a SAP Gateway Service Builder
+
+Vaya al código de transacción SAP `SEGW`.
+
+##### 2. Crear un Nuevo Proyecto
+
+1. Haga clic en el botón "Create Project".
+2. **Project Name:** Asigne un nombre (ej. `Z_TRAVEL_RECOMMENDATIONS_SRV`).
+3. **Description:** Ingrese una descripción significativa.
+4. **Package:** Asigne a un paquete (ej. `$TMP` para desarrollo local o un paquete transportable).
+
+##### 3. Importar Modelo de Datos desde Estructura DDIC
+
+Este paso define las entidades OData basadas en las tablas SAP subyacentes.
+
+1. Haga clic derecho en la carpeta "Data Model" en su proyecto.
+2. Seleccione **"Import" -> "DDIC Structure"**.
+3. Repita el proceso de importación para cada tabla requerida, especificando el **Entity Type Name** y seleccionando los campos requeridos.
+
+***Acción Requerida:*** Asegúrese de marcar correctamente los campos clave durante la importación.
+
+| Estructura DDIC | Nombre Tipo Entidad | Campos Clave Sugeridos | Campos Payload Relevantes (Ejemplo) |
+| :---- | :---- | :---- | :---- |
+| `SFLIGHT` | **Flight** | `CARRID`, `CONNID`, `FLDATE` | `PRICE`, `CURRENCY`, `PLANETYPE`, `SEATSMAX`, `SEATSOCC` |
+| `SPFLI` | **Connection** | `CARRID`, `CONNID` | `COUNTRYFR`, `CITYFROM`, `AIRPFROM`, `COUNTRYTO`, `CITYTO`, `AIRPTO`, `DEPTIME`, `ARRTIME`, `DISTANCE` |
+| `SCARR` | **Airline** | `CARRID` | `CARRNAME`, `CURRCODE`, `URL` |
+| `SAIRPORT` | **Airport** | `ID` | `NAME`, `CITY`, `COUNTRY` |
+| `SBOOK` | **Booking** | `CARRID`, `CONNID`, `FLDATE`, `BOOKID` | `CUSTOMID`, `CUSTTYPE`, `SMOKER`, `LUGGWEIGHT`, `WUNIT`, `INVOICE`, `CLASS`, `FORCURAM`, `ORDER_DATE` |
+| `SCUSTOM` | **Passenger** | `ID` | `NAME`, `FORM`, `STREET`, `POSTCODE`, `CITY`, `COUNTRY`, `PHONE` |
+
+##### 4. Definir Asociaciones y Propiedades de Navegación
+
+Las asociaciones vinculan entidades basadas en campos clave. Las propiedades de navegación permiten a las aplicaciones cliente atravesar estas relaciones fácilmente (ej. usando `$expand`).
+
+**Relaciones Lógicas:**
+
+* **1:N:** Aerolínea <-> Vuelos, Aerolínea <-> Conexiones, Conexión <-> Vuelos, Vuelo <-> Reservas, Pasajero <-> Reservas.
+* **N:1:** Conexión <-> Aeropuerto Origen, Conexión <-> Aeropuerto Destino.
+
+**Pasos para Crear Asociaciones:**
+
+1. Haga clic derecho en "Data Model" -> **"Create" -> "Association"**.
+2. Defina **Association Name**, **Principal Entity** (lado '1'), **Dependent Entity** (lado 'muchos'), y **Cardinality** (ej. 1:N).
+3. En la siguiente pantalla, haga el **Specify Key Mapping** emparejando los campos clave entre las entidades Principal y Dependiente.
+
+**Asociaciones Específicas a Crear:**
+
+| No. | Nombre Asociación | Principal:Dependiente | Cardinalidad | Mapeo Clave |
+| :---- | :---- | :---- | :---- | :---- |
+| 1 | `Assoc_Airline_Flights` | `Airline` : `Flight` | 1:N | `Airline.CARRID` <-> `Flight.CARRID` |
+| 2 | `Assoc_Airline_Connections` | `Airline` : `Connection` | 1:N | `Airline.CARRID` <-> `Connection.CARRID` |
+| 3 | `Assoc_Connection_Flights` | `Connection` : `Flight` | 1:N | `CARRID` & `CONNID` (ambos) |
+| 4 | `Assoc_Flight_Bookings` | `Flight` : `Booking` | 1:N | `CARRID`, `CONNID`, `FLDATE` (los 3) |
+| 5 | `Assoc_Passenger_Bookings` | `Passenger` : `Booking` | 1:N | `Passenger.ID` <-> `Booking.CUSTOMID` |
+| 6 | `Assoc_Connection_OriginAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPFROM` <-> `Airport.ID` |
+| 7 | `Assoc_Connection_DestAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPTO` <-> `Airport.ID` |
+
+**Propiedades de Navegación a Crear:**
+
+| Entidad | Nombre Propiedad Navegación | Entidad Destino | Asociación Usada |
+| :---- | :---- | :---- | :---- |
+| **Airline** | `ToFlights`, `ToConnections` | `Flight`, `Connection` | `Assoc_Airline_Flights`, `Assoc_Airline_Connections` |
+| **Flight** | `ToAirline`, `ToConnection`, `ToBookings` | `Airline`, `Connection`, `Booking` | `Assoc_Airline_Flights`, `Assoc_Connection_Flights`, `Assoc_Flight_Bookings` |
+| **Connection** | `ToAirline`, `ToFlights`, `ToOriginAirport`, `ToDestinationAirport` | `Airline`, `Flight`, `Airport`, `Airport` | `Assoc_Airline_Connections`, `Assoc_Connection_Flights`, `Assoc_Connection_OriginAirport`, `Assoc_Connection_DestAirport` |
+| **Booking** | `ToFlight`, `ToPassenger` | `Flight`, `Passenger` | `Assoc_Flight_Bookings`, `Assoc_Passenger_Bookings` |
+| **Passenger** | `ToBookings` | `Booking` | `Assoc_Passenger_Bookings` |
+
+##### 5. Generar Objetos de Tiempo de Ejecución
+
+1. Haga clic en el botón **"Generate Runtime Objects"** (icono de varita mágica).
+2. Esto generará la Clase Proveedor de Modelo (MPC) y la Clase Proveedor de Datos (DPC), que son clases ABAP.
+3. Acepte los nombres de clase predeterminados o ajústelos.
+
+##### 6. Implementar Métodos de Clase Proveedor de Datos (DPC)
+
+La clase de extensión DPC generada (ej. `ZCL_Z_TRAVEL_RECOM_DPC_EXT`) es donde va su lógica personalizada.
+
+* Si el mapeo directo de tablas es suficiente, la implementación base podría bastar.
+* Para filtrado personalizado, uniones, cálculos u operaciones complejas de lectura/creación/actualización/eliminación (CRUD), necesitará redefinir métodos como `*_GET_ENTITY` (registro único) y `*_GET_ENTITYSET` (colección) en la clase de extensión DPC.
+
+Ejemplo para el método AIRLINESET_GET_ENTITYSET:
+
+```abap
+METHOD airlineset_get_entityset.
+  DATA: lt_airlines TYPE TABLE OF scarr,
+        ls_airline TYPE scarr,
+        lv_filter_string TYPE string.
+
+  TRY.
+      lv_filter_string = io_tech_request_context->get_filter( )->get_filter_string( ).
+    CATCH cx_sy_itab_line_not_found.
+      CLEAR lv_filter_string.
+  ENDTRY.
+
+  " TODO: Apply filtering based on lv_filter_string"
+  IF lv_filter_string IS NOT INITIAL.
+    SELECT * FROM scarr INTO TABLE lt_airlines WHERE (lv_filter_string).
+  ELSE.
+    SELECT * FROM scarr INTO TABLE lt_airlines.
+  ENDIF.
+
+  LOOP AT lt_airlines INTO ls_airline.
+    APPEND ls_airline TO et_entityset.
+  ENDLOOP.
+ENDMETHOD.
+```
+
+##### 7. Registrar el Servicio
+
+1. Vaya a la transacción `/IWFND/MAINT_SERVICE`.
+2. Haga clic en **"Add Service"**.
+3. Ingrese el **System Alias** de su sistema backend (ej. `LOCAL`).
+4. Busque el **Technical Service Name** (ej. `Z_TRAVEL_RECOMMENDATIONS_SRV`).
+5. Seleccione el servicio y haga clic en **"Add Selected Services"**.
+6. Asigne un paquete y confirme.
+
+##### 8. Activar y Probar el Servicio
+
+1. En `/IWFND/MAINT_SERVICE`, encuentre su servicio recién registrado.
+2. Asegúrese de que el **ICF Node is Active** (luz verde). Si no, seleccione el servicio y vaya a **"ICF Node" -> "Activate"**.
+3. Seleccione el servicio y haga clic en el botón **"SAP Gateway Client"**.
+4. **Pruebe en Gateway Client:**
+   * Pruebe la obtención de colección de entidades: Haga clic en **"EntitySets"**, seleccione un EntitySet (ej. `AirlineCollection`) y haga clic en **"Execute"**.
+   * Pruebe características OData: Intente opciones de consulta como `$filter` y especialmente verifique si las propiedades de navegación funcionan usando **`$expand`** (ej. `/FlightSet(key)?$expand=ToAirline`).
+
+##### 9. Verificar URL del Servicio
+
+La URL final del servicio OData se puede ver en el Gateway Client. Típicamente sigue esta estructura:
+
+`/sap/opu/odata/sap/Z_TRAVEL_RECOMMENDATIONS_SRV/.` Esta es la URL que su aplicación cliente (como Fiori o app móvil personalizada) usará para consumir los datos SFLIGHT.
+
+---
+
+## 🚀 Inicio Rápido
+
+### Requisitos Previos del Servidor MCP
 
 #### Requisitos del Sistema
 
 - **Python 3.11 o superior**
-- **pip** (Instalador de paquetes de Python)
-- **Git** (Para clonar el repositorio)
+- **pip** (instalador de paquetes de Python)
+- **Git** (para clonar el repositorio)
 - Credenciales de acceso a SAP Gateway
-- Soporte de entorno virtual
+- Soporte para entorno virtual
 
 #### Instalación de Python
 
@@ -580,18 +817,18 @@ sap-mcp/
 3. ✅ **Marque "Add Python to PATH"**
 4. Haga clic en "Install Now"
 
-**Verificar instalación:**
+**Verificar Instalación:**
 ```powershell
 python --version
-# Debería mostrar: Python 3.11.x or higher
+# Salida: Python 3.11.x o superior
 
 pip --version
-# Debería mostrar: pip 23.x.x or higher
+# Salida: pip 23.x.x o superior
 ```
 
-**Problemas comunes:**
+**Problemas Comunes:**
 - Si no se encuentra el comando `python`, intente `python3` o `py`
-- Si falta `pip`, instálelo con: `python -m ensurepip --upgrade`
+- Si no se encuentra `pip`, instálelo: `python -m ensurepip --upgrade`
 
 </details>
 
@@ -600,7 +837,7 @@ pip --version
 
 **Opción 1: Homebrew (Recomendado)**
 ```bash
-# Instalar Homebrew si no está instalado
+# Instalar Homebrew si no está presente
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Instalar Python
@@ -614,16 +851,16 @@ brew install python@3.12
 2. Abra el archivo `.pkg`
 3. Siga el asistente de instalación
 
-**Verificar instalación:**
+**Verificar Instalación:**
 ```bash
 python3 --version
-# Debería mostrar: Python 3.11.x or higher
+# Salida: Python 3.11.x o superior
 
 pip3 --version
-# Debería mostrar: pip 23.x.x or higher
+# Salida: pip 23.x.x o superior
 ```
 
-**Nota:** macOS puede tener Python 2.7 preinstalado. Use siempre los comandos `python3` y `pip3`.
+**Nota:** macOS puede venir con Python 2.7 preinstalado. Siempre use los comandos `python3` y `pip3`.
 
 </details>
 
@@ -638,7 +875,7 @@ sudo apt update
 # Instalar Python 3.11+
 sudo apt install python3.11 python3.11-venv python3-pip
 
-# O para el Python más reciente
+# O para el último Python
 sudo apt install python3 python3-venv python3-pip
 ```
 
@@ -656,13 +893,13 @@ sudo yum install python3 python3-pip
 sudo pacman -S python python-pip
 ```
 
-**Verificar instalación:**
+**Verificar Instalación:**
 ```bash
 python3 --version
-# Debería mostrar: Python 3.11.x or higher
+# Salida: Python 3.11.x o superior
 
 pip3 --version
-# Debería mostrar: pip 23.x.x or higher
+# Salida: pip 23.x.x o superior
 ```
 
 </details>
@@ -674,7 +911,7 @@ pip3 --version
 #### Instalación Paso a Paso
 
 <details open>
-<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
+<summary><b>🪟 Windows (PowerShell/Símbolo del sistema)</b></summary>
 
 ```powershell
 # Clonar el repositorio
@@ -689,7 +926,7 @@ python -m venv .venv
 # O en PowerShell:
 # .venv\Scripts\Activate.ps1
 
-# Si obtiene un error de política de ejecución en PowerShell:
+# Si PowerShell da error de política de ejecución:
 # Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # Verificar activación (debería ver (.venv) en el prompt)
@@ -706,9 +943,9 @@ pip install -e ".[dev]"
 sap-mcp-server-stdio --help
 ```
 
-**Problemas comunes en Windows:**
-- **No se encuentra `python`**: Intente `python3` o `py`
-- **Acceso denegado**: Ejecute PowerShell como Administrador
+**Problemas Comunes en Windows:**
+- **`python` no encontrado**: Intente `python3` o `py`
+- **Permiso denegado**: Ejecute PowerShell como Administrador
 - **Política de ejecución**: Ejecute `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
 - **Soporte de rutas largas**: Habilite rutas largas en Windows (Configuración > Sistema > Acerca de > Configuración avanzada del sistema)
 
@@ -741,16 +978,16 @@ pip install -e ".[dev]"
 # Verificar instalación
 sap-mcp-server-stdio --help
 
-# Comprobar ruta de instalación (útil para configuración de Gemini CLI)
+# Comprobar ruta de instalación (útil para config de Gemini CLI)
 which sap-mcp-server-stdio
-# Salida de ejemplo: /Users/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
+# Salida ejemplo: /Users/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
 ```
 
-**Problemas comunes en macOS:**
-- **No se encuentra `python`**: Use `python3` en su lugar
-- **No se encuentra `pip`**: Use `pip3` en su lugar
-- **Acceso denegado**: No use `sudo` con entornos virtuales
-- **Comando no encontrado después de instalar**: Asegúrese de que el entorno virtual esté activado
+**Problemas Comunes en macOS:**
+- **`python` no encontrado**: Use `python3` en su lugar
+- **`pip` no encontrado**: Use `pip3` en su lugar
+- **Permiso denegado**: No use `sudo` dentro del entorno virtual
+- **Comando no encontrado tras instalar**: Asegúrese de que el entorno virtual esté activado
 
 </details>
 
@@ -781,16 +1018,16 @@ pip install -e ".[dev]"
 # Verificar instalación
 sap-mcp-server-stdio --help
 
-# Comprobar ruta de instalación (útil para configuración de Gemini CLI)
+# Comprobar ruta de instalación (útil para config de Gemini CLI)
 which sap-mcp-server-stdio
-# Salida de ejemplo: /home/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
+# Salida ejemplo: /home/username/sap-mcp/.venv/bin/sap-mcp-server-stdio
 ```
 
-**Problemas comunes en Linux:**
-- **No se encuentra `python3-venv`**: Instale con `sudo apt install python3-venv`
-- **Acceso denegado**: No use `sudo` con entornos virtuales
-- **Error SSL**: Instale certificados: `sudo apt install ca-certificates`
-- **Faltan dependencias de compilación**: Instale con `sudo apt install build-essential python3-dev`
+**Problemas Comunes en Linux:**
+- **`python3-venv` no encontrado**: Instálelo `sudo apt install python3-venv`
+- **Permiso denegado**: No use `sudo` dentro del entorno virtual
+- **Errores SSL**: Instale certificados: `sudo apt install ca-certificates`
+- **Faltan dependencias de construcción**: Instale `sudo apt install build-essential python3-dev`
 
 </details>
 
@@ -799,28 +1036,28 @@ which sap-mcp-server-stdio
 ### 2. Configuración
 
 El servidor SAP MCP requiere dos archivos de configuración:
-1. **`.env.server`**: Credenciales de conexión SAP (Sistema SAP único)
+1. **`.env.server`**: Credenciales de conexión SAP (Sistema SAP Único)
 2. **`services.yaml`**: Configuración de servicios SAP Gateway y autenticación
 
 #### 2.1. Configuración de Conexión SAP (`.env.server`)
 
-> **⚠️ IMPORTANTE**: A partir de v0.2.0, `.env.server` se ha consolidado en el **directorio raíz del proyecto SOLAMENTE**. La ubicación anterior `packages/server/.env.server` ya no es compatible.
+> **⚠️ IMPORTANTE**: Desde v0.2.0, `.env.server` se ha consolidado en la **raíz del proyecto**. La ubicación anterior `packages/server/.env.server` ya no es compatible.
 
-**Ubicación del archivo**: `.env.server` debe estar en el **directorio raíz del proyecto**.
+**Ubicación del Archivo**: `.env.server` DEBE estar en la **raíz del proyecto**.
 
 ```
 sap-mcp/
-├── .env.server              ← Archivo de configuración (Ubicación única - Crear aquí)
-├── .env.server.example      ← Plantilla de ejemplo
+├── .env.server              ← Archivo Config (ÚNICA ubicación - CREAR AQUÍ)
+├── .env.server.example      ← Plantilla Config
 ├── packages/
 │   └── server/
 └── README.md
 ```
 
-**Pasos de configuración**:
+**Pasos de Configuración**:
 
 <details open>
-<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
+<summary><b>🪟 Windows (PowerShell/Símbolo del sistema)</b></summary>
 
 ```powershell
 # Ir a la raíz del proyecto
@@ -829,23 +1066,23 @@ cd C:\path\to\sap-mcp
 # Copiar plantilla de entorno
 copy .env.server.example .env.server
 
-# Editar configuración con sus credenciales SAP usando Notepad
+# Editar credenciales SAP con Notepad
 notepad .env.server
 
-# O use su editor preferido:
+# O usar su editor preferido:
 # code .env.server (VS Code)
 # notepad++ .env.server (Notepad++)
 
-# Nota: Los permisos de archivo se manejan de manera diferente en Windows
+# Nota: La gestión de permisos de archivos en Windows es diferente
 # Asegúrese de que el archivo no esté en una carpeta pública
 # Clic derecho en .env.server > Propiedades > Seguridad para restringir acceso
 ```
 
-**Notas específicas de Windows:**
-- Use barras invertidas (`\`) para rutas en Windows
-- La política de ejecución de PowerShell puede bloquear scripts (ver sección de instalación)
-- Guarde `.env.server` en una carpeta de usuario con acceso restringido
-- Use exclusiones de Windows Defender si el antivirus bloquea el archivo
+**Notas Específicas de Windows:**
+- Use barras invertidas (`\`) para rutas
+- La política de ejecución de PowerShell podría bloquear scripts (ver sección instalación)
+- Guarde `.env.server` en una carpeta de usuario restringida
+- Si el antivirus bloquea el archivo, use exclusiones de Windows Defender
 
 </details>
 
@@ -859,26 +1096,26 @@ cd /path/to/your/sap-mcp
 # Copiar plantilla de entorno
 cp .env.server.example .env.server
 
-# Editar configuración con sus credenciales SAP
+# Editar config con credenciales SAP
 nano .env.server
-# O use su editor preferido:
+# O usar su editor preferido:
 # vim .env.server
 # code .env.server (VS Code)
 # open -a TextEdit .env.server
 
-# Establecer permisos adecuados (Recomendado por seguridad)
+# Establecer permisos apropiados (Recomendado por seguridad)
 chmod 600 .env.server
 
 # Verificar permisos
 ls -la .env.server
-# Debería mostrar: -rw------- (Solo lectura/escritura para el propietario)
+# Resultado: -rw------- (solo lectura/escritura para el propietario)
 ```
 
-**Notas específicas de macOS:**
-- Los permisos de archivo son estilo Unix (igual que Linux)
+**Notas Específicas de macOS:**
+- Permisos de archivo basados en Unix (igual que Linux)
 - `chmod 600` asegura que solo su usuario pueda leer/escribir el archivo
-- macOS puede tener avisos de seguridad adicionales para el primer acceso
-- Guarde en su directorio de inicio para máxima seguridad
+- macOS podría solicitar avisos de seguridad adicionales en el primer acceso
+- Guardar en su directorio home para mejor seguridad
 
 </details>
 
@@ -892,61 +1129,61 @@ cd /path/to/your/sap-mcp
 # Copiar plantilla de entorno
 cp .env.server.example .env.server
 
-# Editar configuración con sus credenciales SAP
+# Editar config con credenciales SAP
 nano .env.server
-# O use su editor preferido:
+# O usar su editor preferido:
 # vim .env.server
 # code .env.server (VS Code)
 # gedit .env.server (GNOME)
 
-# Establecer permisos adecuados (Requerido por seguridad)
+# Establecer permisos apropiados (Obligatorio por seguridad)
 chmod 600 .env.server
 
 # Verificar permisos
 ls -la .env.server
-# Debería mostrar: -rw------- (Solo lectura/escritura para el propietario)
+# Resultado: -rw------- (solo lectura/escritura para el propietario)
 
-# Opcional: Verificar que el archivo no sea legible por todos
+# Opcional: Asegurar que el archivo no sea legible por todos
 stat .env.server
 ```
 
-**Notas específicas de Linux:**
-- `chmod 600` es crítico para la seguridad (solo acceso del propietario)
-- SELinux/AppArmor pueden requerir configuración adicional
-- El archivo debe pertenecer al usuario que ejecuta el servidor
-- NUNCA use `sudo` para editar o ejecutar con este archivo
+**Notas Específicas de Linux:**
+- `chmod 600` es crítico para la seguridad (solo accesible por el propietario)
+- SELinux/AppArmor podrían requerir configuración adicional
+- El archivo debe ser propiedad del usuario que ejecuta el servidor
+- No use `sudo` para editar o ejecutar este archivo
 
 </details>
 
 ---
 
-**Variables de entorno requeridas**:
+**Variables de Entorno Requeridas**:
 ```bash
-# SAP System Connection (Single SAP System)
-SAP_HOST=your-sap-host.com          # SAP Gateway hostname
-SAP_PORT=443                         # HTTPS port (usually 443 or 8443)
-SAP_USERNAME=your-username           # SAP user ID
-SAP_PASSWORD=your-password           # SAP password
-SAP_CLIENT=100                       # SAP client number (e.g., 100, 800)
+# Conexión Sistema SAP (Sistema SAP Único)
+SAP_HOST=your-sap-host.com          # Nombre de host SAP Gateway
+SAP_PORT=443                         # Puerto HTTPS (típicamente 443 o 8443)
+SAP_USERNAME=your-username           # ID Usuario SAP
+SAP_PASSWORD=your-password           # Contraseña SAP
+SAP_CLIENT=100                       # Número Cliente SAP (ej. 100, 800)
 
-# Security Settings
-SAP_VERIFY_SSL=true                  # Enable SSL certificate verification (recommended)
-SAP_TIMEOUT=30                       # Request timeout in seconds
+# Ajustes de Seguridad
+SAP_VERIFY_SSL=false                 # Habilitar verificación certificado SSL (Recomendado)
+SAP_TIMEOUT=30                       # Tiempo espera petición (segundos)
 
-# Optional: Connection Pooling
-SAP_MAX_CONNECTIONS=10               # Maximum concurrent connections (optional)
-SAP_RETRY_ATTEMPTS=3                 # Number of retry attempts on failure (optional)
+# Opcional: Pooling de Conexiones
+SAP_MAX_CONNECTIONS=10               # Conexiones concurrentes máx (Opcional)
+SAP_RETRY_ATTEMPTS=3                 # Intentos reintento fallo (Opcional)
 ```
 
-**Mejores prácticas de seguridad**:
-- ✅ NUNCA confirme `.env.server` en el control de versiones (ya está en `.gitignore`)
+**Mejores Prácticas de Seguridad**:
+- ✅ NO confirme `.env.server` en control de versiones (ya en `.gitignore`)
 - ✅ Use una contraseña fuerte y única
-- ✅ Habilite la verificación SSL en producción (`SAP_VERIFY_SSL=true`)
-- ✅ Restrinja los permisos del archivo: `chmod 600 .env.server`
+- ✅ Habilite verificación SSL en producción (`SAP_VERIFY_SSL=true`)
+- ✅ Restrinja permisos de archivo: `chmod 600 .env.server`
 
 #### 2.2. Configuración de Servicios SAP Gateway (`services.yaml`)
 
-Configure los servicios SAP Gateway (servicios OData) a los que el servidor MCP puede acceder.
+Configure a qué servicios SAP Gateway (servicios OData) puede acceder el servidor MCP.
 
 **Ubicación**: `packages/server/config/services.yaml`
 
@@ -958,33 +1195,33 @@ cp packages/server/config/services.yaml.example packages/server/config/services.
 vim packages/server/config/services.yaml
 ```
 
-**Ejemplo de configuración básica**:
+**Ejemplo de Configuración Básica**:
 
 ```yaml
-# Gateway URL configuration
+# Configuración URL Gateway
 gateway:
-  # Base URL pattern for OData services
+  # Patrón URL base para servicios OData
   base_url_pattern: "https://{host}:{port}/sap/opu/odata"
 
-  # Metadata endpoint suffix
+  # Sufijo endpoint metadatos
   metadata_suffix: "/$metadata"
 
-  # Service catalog path
+  # Ruta catálogo servicios
   service_catalog_path: "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
 
-  # Authentication endpoint configuration
+  # Configuración endpoint autenticación
   auth_endpoint:
-    # RECOMMENDED: Use catalog metadata (works without specific service)
+    # Recomendado: Usar metadatos catálogo (funciona sin servicio específico)
     use_catalog_metadata: true
 
-    # Optional: Use specific service for authentication (if catalog unavailable)
+    # Opcional: Usar servicio específico para auth (si catálogo no disponible)
     # use_catalog_metadata: false
     # service_id: Z_TRAVEL_RECOMMENDATIONS_SRV
     # entity_name: AirlineSet
 
-# SAP OData Services
+# Servicios SAP OData
 services:
-  # SFLIGHT Demo Service (Travel Recommendations)
+  # Servicio Demo SFLIGHT (Recomendaciones Viaje)
   - id: Z_TRAVEL_RECOMMENDATIONS_SRV
     name: "Travel Recommendations Service (SFLIGHT)"
     path: "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV"
@@ -1014,15 +1251,15 @@ services:
         key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}',BOOKID='{BOOKID}'"
         description: "Individual flight bookings"
 
-    # Optional: Custom headers for this service
+    # Opcional: Cabeceras personalizadas para este servicio
     custom_headers: {}
 ```
 
 #### 2.3. Opciones de Endpoint de Autenticación
 
-La configuración `auth_endpoint` controla cómo el servidor MCP se autentica con SAP.
+El ajuste `auth_endpoint` controla cómo se autentica el servidor MCP contra SAP.
 
-**Opción 1: Metadatos del Catálogo (Recomendado)**
+**Opción 1: Metadatos de Catálogo (Recomendado)**
 
 ```yaml
 gateway:
@@ -1030,49 +1267,49 @@ gateway:
     use_catalog_metadata: true
 ```
 
-**Ventajas**:
-- ✅ Funciona sin servicios SAP Gateway específicos
-- ✅ Más resistente y portátil entre sistemas SAP
-- ✅ Autenticación independiente del servicio
-- ✅ Sin dependencia de despliegue de servicios personalizados
+**Pros**:
+- ✅ Funciona sin requerir un servicio SAP Gateway específico
+- ✅ Altamente flexible y portable entre sistemas SAP
+- ✅ La autenticación está desacoplada de los servicios
+- ✅ Sin dependencia en el despliegue de servicios personalizados
 
-**Flujo de autenticación**:
-- CSRF Token: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
-- Validation: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
+**Flujo de Autenticación**:
+- Token CSRF: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
+- Validación: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
 ---
 
-**Opción 2: Autenticación Específica del Servicio**
+**Opción 2: Autenticación Específica de Servicio**
 
 ```yaml
 gateway:
   auth_endpoint:
     use_catalog_metadata: false
-    service_id: Z_TRAVEL_RECOMMENDATIONS_SRV    # Debe coincidir con el ID del servicio abajo
-    entity_name: AirlineSet                     # Debe ser una entidad en ese servicio
+    service_id: Z_TRAVEL_RECOMMENDATIONS_SRV    # DEBE coincidir con un ID de servicio abajo
+    entity_name: AirlineSet                     # DEBE ser una entidad de ese servicio
 ```
 
-**Ventajas**:
+**Pros**:
 - ✅ Autenticación explícita basada en servicio
-- ✅ Funciona cuando el servicio de catálogo no está disponible (raro)
+- ✅ Funciona si el servicio de catálogo no está disponible (raro)
 
-**Desventajas**:
-- ❌ Requiere que el servicio específico esté desplegado
-- ❌ Menos flexible si el servicio cambia
-- ❌ Requiere actualización de configuración si el nombre del servicio cambia
+**Contras**:
+- ❌ Requiere que el servicio especificado esté desplegado
+- ❌ Menos flexible si los servicios cambian
+- ❌ Requiere actualización de config si el nombre del servicio cambia
 
-**Flujo de autenticación**:
-- CSRF Token: `/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV/AirlineSet`
-- Validation: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
+**Flujo de Autenticación**:
+- Token CSRF: `/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV/AirlineSet`
+- Validación: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
 ---
 
-**Recomendación**: Use **Opción 1 (Metadatos del Catálogo)** a menos que tenga una razón específica para usar un servicio particular para la autenticación.
+**Recomendación**: Use **Opción 1 (Metadatos de Catálogo)** a menos que tenga una razón específica para autenticarse contra un servicio particular.
 
-### 3. Ejecutar el Servidor
+### 3. Ejecución del Servidor
 
 <details open>
-<summary><b>🪟 Windows (PowerShell/Command Prompt)</b></summary>
+<summary><b>🪟 Windows (PowerShell/Símbolo del sistema)</b></summary>
 
 ```powershell
 # Activar entorno virtual
@@ -1083,17 +1320,17 @@ gateway:
 # Ejecutar servidor stdio (Recomendado)
 sap-mcp-server-stdio
 
-# O directamente con Python
+# O ejecutar con python directamente
 python -m sap_mcp_server.transports.stdio
 
-# Para desactivar cuando termine
+# Desactivar cuando termine
 deactivate
 ```
 
-**Notas específicas de Windows:**
+**Notas Específicas de Windows:**
 - Use barras invertidas (`\`) para rutas
-- PowerShell puede requerir cambios en la política de ejecución
-- El servidor se ejecuta en la ventana de terminal actual
+- Podría necesitar cambiar la política de ejecución de PowerShell
+- El servidor se ejecuta en la ventana actual de terminal
 - Presione `Ctrl+C` para detener el servidor
 
 </details>
@@ -1108,18 +1345,18 @@ source .venv/bin/activate
 # Ejecutar servidor stdio (Recomendado)
 sap-mcp-server-stdio
 
-# O directamente con Python
+# O ejecutar con python directamente
 python3 -m sap_mcp_server.transports.stdio
 
-# Para desactivar cuando termine
+# Desactivar cuando termine
 deactivate
 ```
 
-**Notas específicas de macOS:**
+**Notas Específicas de macOS:**
 - Use `python3` en lugar de `python`
-- El servidor se ejecuta en la sesión de terminal actual
+- El servidor se ejecuta en la sesión actual de terminal
 - Presione `Cmd+C` o `Ctrl+C` para detener el servidor
-- La terminal debe permanecer abierta mientras el servidor se ejecuta
+- Debe mantener la terminal abierta mientras el servidor se ejecuta
 
 </details>
 
@@ -1133,18 +1370,18 @@ source .venv/bin/activate
 # Ejecutar servidor stdio (Recomendado)
 sap-mcp-server-stdio
 
-# O directamente con Python
+# O ejecutar con python directamente
 python3 -m sap_mcp_server.transports.stdio
 
-# Para desactivar cuando termine
+# Desactivar cuando termine
 deactivate
 ```
 
-**Notas específicas de Linux:**
+**Notas Específicas de Linux:**
 - Use `python3` en lugar de `python`
-- El servidor se ejecuta en la sesión de terminal actual
+- El servidor se ejecuta en la sesión actual de terminal
 - Presione `Ctrl+C` para detener el servidor
-- Puede ejecutarse en segundo plano con `nohup` o servicio `systemd`
+- Puede ejecutarse en segundo plano usando `nohup` o servicio `systemd`
 
 </details>
 
@@ -1152,15 +1389,15 @@ deactivate
 
 ## 🤖 Integración con Gemini CLI
 
-> **📖 Documentación Oficial**: Para más información sobre Gemini CLI, visite <a href="https://geminicli.com/" target="_blank">https://geminicli.com/</a>
+> **📖 Documentación Oficial**: Para más información sobre Gemini CLI, visite <a href="https://geminicli.com/" target="_blank">https://geminicli.com/</a>.
 
 ### Requisitos Previos
 
 - Node.js 18+ y npm instalados
-- SAP MCP Server instalado (ver Inicio Rápido arriba)
-- Cuenta de Google para acceso a Gemini API
+- Servidor SAP MCP instalado (ver sección instalación arriba)
+- Cuenta de Google para acceso a API Gemini
 
-### 1. Instalar Gemini CLI
+### 1. Instalación de Gemini CLI
 
 ```bash
 # Instalar Gemini CLI globalmente
@@ -1170,11 +1407,11 @@ npm install -g @google/gemini-cli
 gemini --version
 ```
 
-### 2. Autenticar Gemini CLI
+### 2. Autenticación de Gemini CLI
 
-**Opción A: Usando Gemini API Key (Recomendado para empezar)**
+**Opción A: Usando Clave API Gemini (Recomendado para empezar)**
 
-1. Obtenga su clave API desde [Google AI Studio](https://aistudio.google.com/apikey)
+1. Obtenga una clave API desde [Google AI Studio](https://aistudio.google.com/apikey)
 2. Establezca la variable de entorno:
 
 ```bash
@@ -1187,25 +1424,25 @@ export GEMINI_API_KEY="your-api-key-here"
 # Instalar Google Cloud CLI primero
 gcloud auth application-default login
 
-# Configurar su proyecto
+# Establecer proyecto
 export GOOGLE_CLOUD_PROJECT="your-project-id"
 export GOOGLE_CLOUD_LOCATION="us-central1"
 ```
 
-### 3. Registrar SAP MCP Server
+### 3. Registro del Servidor SAP MCP
 
 **Método A: Usando Ruta Absoluta (Recomendado para entornos virtuales)**
 
 Si instaló el servidor en un entorno virtual, use la ruta absoluta al ejecutable:
 
-1. **Encontrar la ruta absoluta**:
+1. **Encontrar ruta absoluta**:
 ```bash
-# Ir a su directorio SAP MCP
+# Ir al directorio SAP MCP
 cd /path/to/your/sap-mcp
 
 # Obtener ruta completa
 pwd
-# Salida de ejemplo: /path/to/your/sap-mcp
+# Salida ejemplo: /path/to/your/sap-mcp
 ```
 
 2. **Editar `~/.gemini/settings.json`**:
@@ -1223,18 +1460,18 @@ pwd
 }
 ```
 
-**Reemplace `/path/to/your/sap-mcp` con su ruta de proyecto real**
+**Reemplace `/path/to/your/sap-mcp` con su ruta real del proyecto.**
 
-> **📝 Nota**: El parámetro `cwd` (directorio de trabajo actual) es **CRÍTICO** para localizar el archivo `.env.server`. **DEBE** establecerlo en la raíz de su proyecto (por ejemplo, `/Users/username/projects/sap-mcp`). Si se omite o es incorrecto, el servidor no podrá cargar sus credenciales.
+> **📝 NOTA**: El parámetro `cwd` (directorio de trabajo actual) es **CRÍTICO** para localizar el archivo `.env.server`. **DEBE** establecerlo a la raíz del proyecto (ej. `/Users/username/projects/sap-mcp`). Si se omite o es incorrecto, el servidor fallará al cargar credenciales.
 
-3. **Verificar la ruta**:
+3. **Verificar ruta**:
 ```bash
 # Probar si el comando funciona
 /path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio --help
 
-# Comprobar registro
+# Verificar registro
 gemini mcp list
-# Esperado: ✓ sap-server: ... (stdio) - Connected
+# Resultado esperado: ✓ sap-server: ... (stdio) - Connected
 ```
 
 ---
@@ -1247,17 +1484,17 @@ Si `sap-mcp-server-stdio` está en su PATH del sistema:
 # Registrar servidor
 gemini mcp add sap-server sap-mcp-server-stdio
 
-# Comprobar registro
+# Verificar registro
 gemini mcp list
 ```
 
-**Nota**: Este método solo funciona si agregó el entorno virtual al PATH o instaló el paquete globalmente.
+**Nota**: Esto solo funciona si ha añadido el entorno virtual a su PATH o instalado el paquete globalmente.
 
 ---
 
 **Método C: Usando Ruta de Módulo Python**
 
-Enfoque alternativo usando el módulo de Python:
+Alternativa usando el módulo python:
 
 ```json
 {
@@ -1274,26 +1511,26 @@ Enfoque alternativo usando el módulo de Python:
 }
 ```
 
-### 4. Comenzar a usar SAP MCP con Gemini CLI
+### 4. Comenzar a Usar SAP MCP en Gemini CLI
 
 ```bash
 # Iniciar Gemini CLI
 gemini
 
-# Comprobar estado del servidor MCP
+# Comprobar estado servidor MCP
 > /mcp
 
-# Ver herramientas SAP disponibles
+# Listar herramientas SAP disponibles
 > /mcp desc
 
 # Ejemplo: Consultar aerolíneas SAP
-> Usa herramientas SAP para autenticar y muéstrame todas las aerolíneas
+> Use the SAP tools to authenticate and show me all airlines
 
 # Ejemplo: Listar servicios SAP disponibles
-> ¿Qué servicios SAP están disponibles?
+> What SAP services are available?
 
-# Ejemplo: Obtener detalles del aeropuerto
-> Obtén detalles para el aeropuerto de Frankfurt (FRA)
+# Ejemplo: Obtener detalles aeropuerto
+> Retrieve details for Frankfurt airport (FRA)
 ```
 
 ### Configuración Avanzada
@@ -1312,7 +1549,7 @@ gemini
 }
 ```
 
-**Nota**: Establezca `"trust": true` para omitir las solicitudes de aprobación para cada llamada a herramienta. Habilite solo para servidores de confianza.
+**Nota**: Establezca `"trust": true` para omitir el aviso de aprobación para cada llamada a herramienta. Solo habilite para servidores en los que confíe.
 
 ---
 
@@ -1331,14 +1568,14 @@ gemini
 }
 ```
 
-**Casos de uso**:
-- `includeTools`: Permitir solo herramientas específicas (lista blanca)
+**Casos de Uso**:
+- `includeTools`: Solo permitir herramientas específicas (lista blanca)
 - `excludeTools`: Bloquear herramientas específicas (lista negra)
-- No se pueden usar ambos simultáneamente
+- No se pueden usar ambos juntos
 
 ---
 
-**Inyectar Variables de Entorno (Opcional)**
+**Añadir Variables de Entorno (Opcional)**
 
 ```json
 {
@@ -1356,43 +1593,43 @@ gemini
 }
 ```
 
-**Nota**: Las variables de entorno en `settings.json` anularán los valores de `.env.server`. No recomendado por razones de seguridad - prefiera el archivo `.env.server`.
+**Nota**: Las variables de entorno en `settings.json` anulan los valores en `.env.server`. No recomendado por razones de seguridad - prefiera usar el archivo `.env.server`.
 
 ---
 
-**Aumentar Tiempo de Espera para Redes Lentas**
+**Aumentar Timeout para Redes Lentas**
 
 ```json
 {
   "mcpServers": {
     "sap-server": {
       "command": "/path/to/your/sap-mcp/.venv/bin/sap-mcp-server-stdio",
-      "timeout": 60000,  // 60 segundos (predeterminado: 30000)
+      "timeout": 60000,  // 60 segundos (Por defecto: 30000)
       "trust": false
     }
   }
 }
 ```
 
-**Cuándo aumentar**:
+**Cuándo Aumentar**:
 - Conexiones de red lentas
 - Consultas de datos grandes
 - Operaciones SAP complejas
-- Errores de tiempo de espera frecuentes
+- Errores de timeout frecuentes
 
 ### Solución de Problemas
 
 **Problema: El servidor muestra estado "Disconnected"**
 
 ```bash
-# Comprobar estado del servidor MCP
+# Comprobar estado servidor MCP
 gemini mcp list
-# Si ve: ✗ sap-server: sap-mcp-server-stdio (stdio) - Disconnected
+# Muestra: ✗ sap-server: sap-mcp-server-stdio (stdio) - Disconnected
 ```
 
-**Solución 1: Usar Ruta Absoluta (Más común)**
+**Solución 1: Usar Rutas Absolutas (Más Común)**
 
-El comando puede estar dentro de un entorno virtual. Actualice `~/.gemini/settings.json`:
+El comando podría estar dentro de un entorno virtual. Actualice `~/.gemini/settings.json`:
 
 ```json
 {
@@ -1407,7 +1644,7 @@ El comando puede estar dentro de un entorno virtual. Actualice `~/.gemini/settin
 }
 ```
 
-**Encontrar su ruta absoluta**:
+**Encontrar Ruta Absoluta**:
 ```bash
 # Ir al directorio SAP MCP
 cd /path/to/your/sap-mcp
@@ -1416,7 +1653,7 @@ cd /path/to/your/sap-mcp
 pwd
 # Ejemplo: /path/to/your/sap-mcp
 
-# Comprobar si el comando existe
+# Verificar existencia comando
 ls -la .venv/bin/sap-mcp-server-stdio
 ```
 
@@ -1429,7 +1666,7 @@ ls -la .venv/bin/sap-mcp-server-stdio
 sap-mcp-server-stdio
 # Error: command not found
 
-# Comprobar si el comando existe
+# Comprobar ubicación comando
 which sap-mcp-server-stdio
 # Devuelve: command not found
 ```
@@ -1437,21 +1674,21 @@ which sap-mcp-server-stdio
 **Solución 2: Comprobar Entorno Virtual**
 
 ```bash
-# Comprobar si el entorno virtual existe
+# Comprobar si venv existe
 ls -la .venv/bin/sap-mcp-server-stdio
 
 # Si existe, use ruta absoluta en settings.json
-# Si no, reinstalar:
+# Si no existe, reinstalar:
 cd packages/server
 pip install -e .
 ```
 
 ---
 
-**Problema: Error de autenticación o `.env.server` no encontrado**
+**Problema: Error de Autenticación o `.env.server` no encontrado**
 
 ```bash
-# Comprobar si .env.server existe en PROJECT ROOT (no en packages/server/)
+# Comprobar si .env.server está en la raíz del proyecto (NO packages/server/)
 cat .env.server
 
 # Campos requeridos:
@@ -1462,16 +1699,16 @@ cat .env.server
 # SAP_CLIENT=100
 ```
 
-**Solución 3: Comprobar Ubicación de Archivo y Credenciales**
+**Solución 3: Verificar Ubicación de Archivo y Credenciales**
 
 ```bash
-# 1. Comprobar si .env.server está en la raíz del proyecto
+# 1. Verificar .env.server en raíz del proyecto
 ls -la .env.server
-# Debería existir en: /path/to/sap-mcp/.env.server
+# Debería estar en: /path/to/sap-mcp/.env.server
 
-# 2. Comprobar si Gemini CLI settings.json tiene parámetro "cwd"
+# 2. Comprobar si settings.json de Gemini CLI tiene parámetro "cwd"
 cat ~/.gemini/settings.json
-# Debe incluir: "cwd": "/path/to/sap-mcp"
+# Debería contener: "cwd": "/path/to/sap-mcp"
 
 # 3. Probar autenticación manualmente
 source .venv/bin/activate
@@ -1480,58 +1717,58 @@ python -c "from sap_mcp_server.config.settings import get_connection_config; pri
 
 **Problemas Comunes**:
 
-1. **Error "Field required"**: `.env.server` no se carga. Compruebe:
-   - El archivo existe en la raíz del proyecto: `/path/to/your/sap-mcp/.env.server`
-   - Gemini CLI `settings.json` tiene el parámetro `cwd` correcto
-   - El archivo tiene permisos adecuados: `chmod 600 .env.server`
+1. **Error "Field required"**: `.env.server` no cargado. Comprobar:
+   - Archivo en raíz del proyecto: `/path/to/your/sap-mcp/.env.server`
+   - Gemini CLI `settings.json` tiene parámetro `cwd` correcto
+   - Archivo tiene permisos apropiados: `chmod 600 .env.server`
 
 2. **Error 401 Unauthorized**: Corregido en v0.2.1 (2025-01-22)
-   - **Problema anterior**: SAP Gateway rechazaba solicitudes sin parámetro `sap-client`
-   - **Estado actual**: Manejado automáticamente - todas las solicitudes incluyen parámetro `sap-client`
-   - **Verificación**: Asegúrese de haber actualizado a v0.2.1 o posterior
-   - **Comprobación manual**: La autenticación debería tener éxito con credenciales correctas
+   - **Problema Anterior**: SAP Gateway rechazaba peticiones sin parámetro `sap-client`
+   - **Estado Actual**: Manejado automáticamente - todas las peticiones incluyen parámetro `sap-client`
+   - **Verificación**: Asegúrese de haber actualizado a v0.2.1 o superior
+   - **Comprobación Manual**: La autenticación debería tener éxito con credenciales válidas
 
 ---
 
-**Problema: Necesidad de volver a registrar el servidor**
+**Problema: Necesidad de Re-registrar Servidor**
 
 ```bash
-# Eliminar configuración de servidor existente
+# Eliminar configuración servidor existente
 rm ~/.gemini/settings.json
 
-# O editar manualmente para eliminar entrada sap-server
+# O editar manualmente y eliminar entrada sap-server
 ```
 
-**Solución 4: Registro Limpio**
+**Solución 4: Re-registro Limpio**
 
 ```bash
-# Método 1: Editar configuración directamente
+# Método 1: Editar ajustes directamente
 vim ~/.gemini/settings.json
 
 # Método 2: Usar ruta absoluta (Recomendado)
-# Seguir "Método A: Usando Ruta Absoluta" en la Sección 3 arriba
+# Siga sección 3 "Método A: Usando Ruta Absoluta" arriba
 ```
 
 ---
 
 **Pasos de Diagnóstico Rápido**
 
-1. **Comprobar ejecutable del servidor**:
+1. **Comprobar ejecutable servidor**:
 ```bash
 /path/to/sap-mcp/.venv/bin/sap-mcp-server-stdio --help
-# Debería mostrar mensaje de inicio del servidor
+# Debería mostrar mensaje inicio servidor
 ```
 
-2. **Comprobar configuración de Gemini CLI**:
+2. **Comprobar ajustes Gemini CLI**:
 ```bash
 cat ~/.gemini/settings.json | grep -A 5 "sap-server"
-# Verificar que la ruta "command" sea correcta
+# Verificar ruta "command" correcta
 ```
 
 3. **Probar conexión**:
 ```bash
 gemini mcp list
-# Debería mostrar: ✓ sap-server: ... - Connected
+# Muestra: ✓ sap-server: ... - Connected
 ```
 
 4. **Probar en Gemini CLI**:
@@ -1544,46 +1781,46 @@ gemini
 
 ### Herramientas SAP Disponibles en Gemini CLI
 
-Una vez registrado, puede usar estas herramientas SAP a través de lenguaje natural:
+Una vez registrado, puede usar las siguientes herramientas SAP a través de lenguaje natural:
 
-| Herramienta | Descripción | Ejemplo de Prompt |
+| Herramienta | Descripción | Prompt Ejemplo |
 |------|-------------|----------------|
-| **sap_authenticate** | Autenticar con SAP Gateway | "Autenticar con SAP" |
-| **sap_query** | Consultar entidades SAP con filtros OData | "Muéstrame todas las aerolíneas usando el servicio de recomendaciones de viaje" |
-| **sap_get_entity** | Obtener entidad específica por clave | "Obtén detalles para el aeropuerto de Frankfurt (FRA)" |
-| **sap_list_services** | Listar servicios SAP disponibles | "¿Qué servicios SAP están disponibles?" |
+| **sap_authenticate** | Autenticar en sistema SAP Gateway | "Authenticate with SAP" |
+| **sap_query** | Consultar entidades SAP usando filtros OData | "Use the travel recommendations service to show me all airlines" |
+| **sap_get_entity** | Obtener entidad específica por clave | "Retrieve details for Frankfurt airport (FRA)" |
+| **sap_list_services** | Listar servicios SAP disponibles | "What SAP services are available?" |
 
-### Flujos de Trabajo de Ejemplo
+### Ejemplos de Flujo de Trabajo
 
-**1. Flujo de Trabajo de Consulta de Vuelos**
+**1. Flujo de Consulta de Vuelos**
 
 ```bash
 gemini
 
-> Conecta a SAP y encuentra todos los vuelos de Lufthansa
-# Gemini hará:
-# 1. Llamar a sap_authenticate
-# 2. Llamar a sap_query en FlightSet con filtro "CARRID eq 'LH'"
-# 3. Formatear y presentar resultados
+> Connect to SAP and find all Lufthansa flights
+# Gemini ejecutará:
+# 1. Llamar sap_authenticate
+# 2. Llamar sap_query para FlightSet con filtro "CARRID eq 'LH'"
+# 3. Formatear y mostrar resultados
 ```
 
 **2. Análisis de Aeropuerto**
 
 ```bash
-> Obtén detalles para el aeropuerto de Frankfurt y muéstrame las conexiones disponibles
-# Gemini hará:
+> Get details for Frankfurt airport and show me available connections
+# Gemini ejecutará:
 # 1. Autenticar
-# 2. Llamar a sap_get_entity para 'FRA' en AirportSet
-# 3. Llamar a sap_query en ConnectionSet
-# 4. Presentar información
+# 2. Llamar sap_get_entity para AirportSet con clave 'FRA'
+# 3. Llamar sap_query para ConnectionSet
+# 4. Presentar insights
 ```
 
 **3. Descubrimiento de Servicios**
 
 ```bash
-> ¿Qué servicios SAP y conjuntos de entidades están disponibles en el sistema?
-# Gemini hará:
-# 1. Llamar a sap_list_services
+> What SAP services and entity sets are available in the system?
+# Gemini ejecutará:
+# 1. Llamar sap_list_services
 # 2. Formatear catálogo de servicios
 ```
 
@@ -1591,11 +1828,11 @@ gemini
 
 ## 🔧 Herramientas Disponibles
 
-### 1. SAP Authenticate
+### 1. Autenticación SAP (sap_authenticate)
 
-Autentica con el sistema SAP Gateway usando credenciales de `.env.server`.
+Autentica contra el sistema SAP Gateway usando credenciales de `.env.server`.
 
-**Solicitud**:
+**Petición**:
 ```json
 {
   "name": "sap_authenticate",
@@ -1616,11 +1853,11 @@ Autentica con el sistema SAP Gateway usando credenciales de `.env.server`.
 
 ---
 
-### 2. SAP Query
+### 2. Consulta SAP (sap_query)
 
-Consulta entidades SAP con filtros OData, selección, paginación.
+Consulta entidades SAP usando filtros OData, selección y paginación.
 
-**Solicitud**:
+**Petición**:
 ```json
 {
   "name": "sap_query",
@@ -1652,11 +1889,11 @@ Consulta entidades SAP con filtros OData, selección, paginación.
 
 ---
 
-### 3. SAP Get Entity
+### 3. Obtener Entidad SAP (sap_get_entity)
 
-Recupera una sola entidad específica por clave.
+Recupera una entidad específica por clave.
 
-**Solicitud**:
+**Petición**:
 ```json
 {
   "name": "sap_get_entity",
@@ -1690,11 +1927,11 @@ Recupera una sola entidad específica por clave.
 
 ---
 
-### 4. SAP List Services
+### 4. Listar Servicios SAP (sap_list_services)
 
 Lista todos los servicios SAP disponibles desde la configuración.
 
-**Solicitud**:
+**Petición**:
 ```json
 {
   "name": "sap_list_services",
@@ -1734,7 +1971,7 @@ Lista todos los servicios SAP disponibles desde la configuración.
 
 ---
 
-### 5. Agregar Nueva Herramienta
+### 5. Añadir Nuevas Herramientas
 
 1. **Crear archivo de herramienta**: `packages/server/src/sap_mcp_server/tools/my_tool.py`
 
@@ -1761,7 +1998,7 @@ class MyNewTool(MCPTool):
         }
 
     async def execute(self, params: dict) -> dict:
-        # Implementación
+        # Implementation
         return {"result": "success"}
 ```
 
@@ -1770,11 +2007,11 @@ class MyNewTool(MCPTool):
 ```python
 from .my_tool import MyNewTool
 
-# Agregar al registro
+# Add to registry
 tool_registry.register(MyNewTool())
 ```
 
-3. **Agregar pruebas**: `tests/unit/test_my_tool.py`
+3. **Añadir pruebas**: `tests/unit/test_my_tool.py`
 
 ```python
 import pytest
@@ -1811,7 +2048,7 @@ result = await tool_registry.call_tool(request)
 print(result)
 ```
 
-### Ejemplo de Cliente MCP
+### Ejemplo Cliente MCP
 
 ```python
 from mcp import StdioServerParameters
@@ -1819,7 +2056,7 @@ from mcp.client.session import ClientSession
 from mcp.client.stdio import stdio_client
 
 async def main():
-    # Conectar al servidor MCP
+    # Conectar a servidor MCP
     server_params = StdioServerParameters(
         command="python",
         args=["-m", "sap_mcp_server.transports.stdio"]
@@ -1845,15 +2082,15 @@ async def main():
             print(entity_result)
 ```
 
-### Registro Estructurado
+### Logging Estructurado
 
 ```python
 from sap_mcp_server.utils.logger import setup_logging, get_logger
 
-# Producción (JSON logs)
+# Producción (Logs JSON)
 setup_logging(level="INFO", json_logs=True)
 
-# Desarrollo (colored console)
+# Desarrollo (Consola Coloreada)
 setup_logging(level="DEBUG", json_logs=False)
 
 # Usar logger
@@ -1873,13 +2110,13 @@ from sap_mcp_server.utils.validators import (
 
 # Validar filtro OData
 if validate_odata_filter("CARRID eq 'LH'"):
-    # Seguro para ejecutar
+    # Ejecutar seguro
     pass
 
-# Sanitizar entrada de usuario
+# Sanitizar entrada usuario
 safe_input = sanitize_input(user_data, max_length=1000)
 
-# Validar clave de entidad
+# Validar clave entidad
 if validate_entity_key(key):
     # Obtener entidad
     pass
@@ -1892,223 +2129,66 @@ if validate_entity_key(key):
 ### Defensa en Profundidad
 
 | Capa | Implementación | Estado |
-|------|----------------|--------|
-| **Input Validation** | Sintaxis OData, prevención inyección SQL | ✅ |
-| **Authentication** | Validación de credenciales, gestión de sesión | ✅ |
-| **Authorization** | Control de acceso a servicios | ✅ |
-| **Transport Security** | SSL/TLS, validación de certificados | ✅ |
-| **Audit Logging** | Registros estructurados, exclusión de PII | ✅ |
+|-------|---------------|--------|
+| **Validación Entrada** | Sintaxis OData, Prevención Inyección SQL | ✅ |
+| **Autenticación** | Verificación Credenciales, Gestión Sesión | ✅ |
+| **Autorización** | Control Acceso Servicio | ✅ |
+| **Seguridad Transporte** | SSL/TLS, Verificación Certificado | ✅ |
+| **Logs Auditoría** | Logs Estructurados, Sin Datos Sensibles | ✅ |
 
 ### Mejores Prácticas
 
-1. **Credentials**: Almacenar en `.env.server`, NUNCA confirmar en git
-2. **SSL/TLS**: Habilitar siempre en producción (`SAP_VERIFY_SSL=true`)
-3. **Validation**: Validar todas las entradas antes de llamar a SAP
-4. **Logging**: Datos sensibles excluidos de los registros
-5. **Error Handling**: Mensajes de error genéricos para el cliente
+1. **Credenciales**: Almacenar en `.env.server`, nunca confirmar en git
+2. **SSL/TLS**: Siempre habilitar en producción (`SAP_VERIFY_SSL=true`)
+3. **Validación**: Validar toda entrada antes de llamadas SAP
+4. **Logging**: Excluir datos sensibles de logs
+5. **Manejo Errores**: Proporcionar mensajes de error genéricos a clientes
 
 ---
-
-## 🎓 Escenario de Demostración SAP SFLIGHT
-
-### Descripción General del Escenario
-
-El conjunto de datos SFLIGHT es una base de datos de ejemplo estándar proporcionada por SAP, que incluye datos para horarios de vuelos, aerolíneas, aeropuertos y reservas. Es un recurso excelente para probar y demostrar el modelado de datos y la creación de servicios.
-
-Esta guía asume que tiene un servicio OData que expone este conjunto de datos. El objetivo es conectar nuestro servidor SAP MCP a este servicio e interactuar con él utilizando agentes de IA u otros clientes.
-
-**Documentación Oficial de SAP:**
-- [SAP Documentation - Flight Model](https://help.sap.com/SAPhelp_nw73/helpdata/en/cf/21f304446011d189700000e8322d00/frameset.htm)
-- [SAP Help Portal - Flight Model](https://help.sap.com/docs/SAP_NETWEAVER_702/ff5206fc6c551014a1d28b076487e7df/cf21f304446011d189700000e8322d00.html)
-
----
-
-### Requisitos Previos
-
-1. **SAP MCP Server Instalado**: Necesita tener el servidor SAP MCP instalado y un entorno Python funcional. Para instrucciones completas, consulte la [Sección de Inicio Rápido](#-quick-start).
-
-2. **Servicio OData SFLIGHT**: Un servicio OData activo que exponga el conjunto de datos SFLIGHT debe estar disponible en su sistema SAP Gateway.
-   - Si necesita crear este servicio, puede seguir nuestra guía detallada: [OData Service Creation Guide: FLIGHT Demo Scenario](./docs/guides/odata-service-creation-flight-demo.md)
-   - Para esta guía, asumiremos que el servicio se llama `Z_TRAVEL_RECOMMENDATIONS_SRV`, como se crea en la guía.
-
----
-
-### Guía de Creación de Servicio OData
-
-Esta guía proporciona instrucciones paso a paso para crear un servicio OData en un sistema SAP utilizando SAP Gateway Service Builder (`SEGW`) para exponer datos del escenario Flight disponible en la versión SAP S/4HANA Fully Activated Appliance (FAA).
-
-#### Descripción General del Escenario
-
-* **Objetivo:** Exponer horarios de vuelos, reservas y datos maestros relacionados a través de un servicio OData.
-* **Necesidades de Datos del Escenario:** Horarios de vuelos, fechas, horas, detalles de aeropuertos, detalles de aerolíneas, detalles de pasajeros, precios, etc.
-* **Tablas SAP Involucradas:** `SFLIGHT`, `SPFLI`, `SCARR`, `SAIRPORT`, `SBOOK`, `SCUSTOM`
-
----
-
-#### Pasos para Crear Servicio OData en SEGW
-
-##### 1. Acceder a SAP Gateway Service Builder
-
-Vaya al código de transacción SAP `SEGW`.
-
-##### 2. Crear un Nuevo Proyecto
-
-1. Haga clic en el botón "Create Project".
-2. **Project Name:** Asigne un nombre (por ejemplo, `Z_TRAVEL_RECOMMENDATIONS_SRV`).
-3. **Description:** Proporcione una descripción significativa.
-4. **Package:** Asigne a un paquete (por ejemplo, `$TMP` para desarrollo local o un paquete transportable).
-
-##### 3. Importar Modelo de Datos desde Estructura DDIC
-
-Este paso define sus entidades OData basadas en las tablas SAP subyacentes.
-
-1. Haga clic derecho en la carpeta "Data Model" dentro de su proyecto.
-2. Seleccione **"Import" -> "DDIC Structure"**.
-3. Repita el proceso de importación para cada tabla requerida, especificando el **Entity Type Name** y seleccionando los campos necesarios.
-
-***Acción Requerida:*** Asegúrese de que los campos clave estén marcados correctamente durante el proceso de importación.
-
-| Estructura DDIC | Nombre Tipo Entidad | Campos Clave Sugeridos | Campos Payload Relevantes (Ejemplo) |
-| :---- | :---- | :---- | :---- |
-| `SFLIGHT` | **Flight** | `CARRID`, `CONNID`, `FLDATE` | `PRICE`, `CURRENCY`, `PLANETYPE`, `SEATSMAX`, `SEATSOCC` |
-| `SPFLI` | **Connection** | `CARRID`, `CONNID` | `COUNTRYFR`, `CITYFROM`, `AIRPFROM`, `COUNTRYTO`, `CITYTO`, `AIRPTO`, `DEPTIME`, `ARRTIME`, `DISTANCE` |
-| `SCARR` | **Airline** | `CARRID` | `CARRNAME`, `CURRCODE`, `URL` |
-| `SAIRPORT` | **Airport** | `ID` | `NAME`, `CITY`, `COUNTRY` |
-| `SBOOK` | **Booking** | `CARRID`, `CONNID`, `FLDATE`, `BOOKID` | `CUSTOMID`, `CUSTTYPE`, `SMOKER`, `LUGGWEIGHT`, `WUNIT`, `INVOICE`, `CLASS`, `FORCURAM`, `ORDER_DATE` |
-| `SCUSTOM` | **Passenger** | `ID` | `NAME`, `FORM`, `STREET`, `POSTCODE`, `CITY`, `COUNTRY`, `PHONE` |
-
-##### 4. Definir Asociaciones y Propiedades de Navegación
-
-Las Asociaciones vinculan entidades basadas en campos clave. Las Propiedades de Navegación permiten a las aplicaciones cliente atravesar estas relaciones fácilmente (por ejemplo, usando `$expand`).
-
-**Relaciones Lógicas:**
-
-* **1:N:** Airline <-> Flights, Airline <-> Connections, Connection <-> Flights, Flight <-> Bookings, Passenger <-> Bookings
-* **N:1:** Connection <-> Origin Airport, Connection <-> Destination Airport
-
-**Pasos para Crear Asociación:**
-
-1. Haga clic derecho en "Data Model" -> **"Create" -> "Association"**.
-2. Defina **Association Name**, **Principal Entity** (lado 'uno'), **Dependent Entity** (lado 'muchos'), y **Cardinality** (por ejemplo, 1:N).
-3. En la siguiente pantalla, **Specify Key Mapping**, mapeando los campos clave entre las entidades Principal y Dependiente.
-
-**Asociaciones Específicas a Crear:**
-
-| No. | Nombre Asociación | Principal:Dependent | Cardinalidad | Mapeo de Claves |
-| :---- | :---- | :---- | :---- | :---- |
-| 1 | `Assoc_Airline_Flights` | `Airline` : `Flight` | 1:N | `Airline.CARRID` <-> `Flight.CARRID` |
-| 2 | `Assoc_Airline_Connections` | `Airline` : `Connection` | 1:N | `Airline.CARRID` <-> `Connection.CARRID` |
-| 3 | `Assoc_Connection_Flights` | `Connection` : `Flight` | 1:N | `CARRID` & `CONNID` (ambos sentidos) |
-| 4 | `Assoc_Flight_Bookings` | `Flight` : `Booking` | 1:N | `CARRID`, `CONNID`, `FLDATE` (tres sentidos) |
-| 5 | `Assoc_Passenger_Bookings` | `Passenger` : `Booking` | 1:N | `Passenger.ID` <-> `Booking.CUSTOMID` |
-| 6 | `Assoc_Connection_OriginAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPFROM` <-> `Airport.ID` |
-| 7 | `Assoc_Connection_DestAirport` | `Connection` : `Airport` | N:1 | `Connection.AIRPTO` <-> `Airport.ID` |
-
-**Propiedades de Navegación a Crear:**
-
-| Entidad | Nombre Propiedad Navegación | Entidad Objetivo | Asociación Usada |
-| :---- | :---- | :---- | :---- |
-| **Airline** | `ToFlights`, `ToConnections` | `Flight`, `Connection` | `Assoc_Airline_Flights`, `Assoc_Airline_Connections` |
-| **Flight** | `ToAirline`, `ToConnection`, `ToBookings` | `Airline`, `Connection`, `Booking` | `Assoc_Airline_Flights`, `Assoc_Connection_Flights`, `Assoc_Flight_Bookings` |
-| **Connection** | `ToAirline`, `ToFlights`, `ToOriginAirport`, `ToDestinationAirport` | `Airline`, `Flight`, `Airport`, `Airport` | `Assoc_Airline_Connections`, `Assoc_Connection_Flights`, `Assoc_Connection_OriginAirport`, `Assoc_Connection_DestAirport` |
-| **Booking** | `ToFlight`, `ToPassenger` | `Flight`, `Passenger` | `Assoc_Flight_Bookings`, `Assoc_Passenger_Bookings` |
-| **Passenger** | `ToBookings` | `Booking` | `Assoc_Passenger_Bookings` |
-
-##### 5. Generar Objetos de Tiempo de Ejecución
-
-1. Haga clic en el botón **"Generate Runtime Objects"** (icono de varita mágica).
-2. Esto creará clases ABAP: Model Provider Class (MPC) y Data Provider Class (DPC).
-3. Acepte o ajuste los nombres de clase predeterminados.
-
-##### 6. Implementar Métodos de Data Provider Class (DPC)
-
-La clase de extensión DPC generada (por ejemplo, `ZCL_Z_TRAVEL_RECOM_DPC_EXT`) se utiliza para la lógica personalizada.
-
-* Si el mapeo directo de tablas es suficiente, la implementación básica podría bastar.
-* Para filtrado personalizado, uniones, cálculos u operaciones complejas de Read/Create/Update/Delete (CRUD), necesita redefinir métodos como `*_GET_ENTITY` (registro único) y `*_GET_ENTITYSET` (colección) en la clase de extensión DPC.
-
-Aquí hay un ejemplo del método AIRLINESET_GET_ENTITYSET:
-
-```abap
-METHOD airlineset_get_entityset.
-  DATA: lt_airlines TYPE TABLE OF scarr,
-        ls_airline TYPE scarr,
-        lv_filter_string TYPE string.
-
-  TRY.
-      lv_filter_string = io_tech_request_context->get_filter( )->get_filter_string( ).
-    CATCH cx_sy_itab_line_not_found.
-      CLEAR lv_filter_string.
-  ENDTRY.
-
-  " TODO: Apply filtering based on lv_filter_string"
-  IF lv_filter_string IS NOT INITIAL.
-    SELECT * FROM scarr INTO TABLE lt_airlines WHERE (lv_filter_string).
-  ELSE.
-    SELECT * FROM scarr INTO TABLE lt_airlines.
-  ENDIF.
-
-  LOOP AT lt_airlines INTO ls_airline.
-    APPEND ls_airline TO et_entityset.
-  ENDLOOP.
-ENDMETHOD.
-```
-
-##### 7. Registrar Servicio
-
-1. Vaya a la transacción `/IWFND/MAINT_SERVICE`.
-2. Haga clic en **"Add Service"**.
-3. Ingrese su **System Alias** para su sistema backend (por ejemplo, `LOCAL`).
-4. Busque su servicio por **Technical Service Name** (por ejemplo, `Z_TRAVEL_RECOMMENDATIONS_SRV`).
-5. Seleccione el servicio y haga clic en **"Add Selected Services"**.
-6. Asigne paquete y confirme.
-
-##### 8. Activar y Probar Servicio
-
-1. En `/IWFND/MAINT_SERVICE`, encuentre su servicio recién registrado.
-2. Asegúrese de que **ICF node is active** (luz verde). Si no, seleccione el servicio, vaya a **"ICF Node" -> "Activate"**.
-3. Seleccione el servicio y haga clic en el botón **"SAP Gateway Client"**.
-4. **Pruebas en Gateway Client:**
-   * Pruebe la recuperación de colección de entidades: Haga clic en **"EntitySets"**, seleccione EntitySet (por ejemplo, `AirlineCollection`) y haga clic en **"Execute"**.
-   * Pruebe características OData: Intente opciones de consulta como `$filter` y especialmente **`$expand`** para verificar que las propiedades de navegación funcionen (por ejemplo, `/FlightSet(key)?$expand=ToAirline`).
-
-##### 9. Anotar URL del Servicio
-
-La URL final del servicio OData se muestra en el Gateway Client. Típicamente sigue la estructura:
-
-`/sap/opu/odata/sap/Z_TRAVEL_RECOMMENDATIONS_SRV/.` Esta URL es lo que las aplicaciones cliente (como Fiori o aplicaciones móviles personalizadas) usarán para consumir los datos SFLIGHT.
-
----
-
-
-
-
-
-
 
 ---
 
 ## 📖 Documentación
 
-- **[Server Package README](./packages/server/README.md)**: Documentación detallada del servidor
-- **[Configuration Guide](./docs/guides/configuration.md)**: Configuración YAML y entorno
-- **[Deployment Guide](./docs/guides/deployment.md)**: Despliegue en producción
-- **[Architecture Documentation](./docs/architecture/server.md)**: Detalles de arquitectura del sistema
-- **[API Reference](./docs/api/)**: Documentación de herramientas y protocolo
+### 📚 Guías
+
+- **[Guía de Configuración](./docs/guides/configuration.md)**: Guía completa de configuración YAML y entorno
+- **[Guía de Despliegue](./docs/guides/deployment.md)**: Mejores prácticas para despliegue en producción
+- **[Guía de Solución de Problemas](./docs/guides/troubleshooting.md)**: Problemas comunes y soluciones
+- **[Guía de Creación de Servicio OData](./docs/guides/odata-service-creation-flight-demo.md)**: Guía paso a paso para crear servicio OData SFLIGHT
+- **[Guía de Demo SFLIGHT](./docs/guides/sfight-demo-guide.md)**: Uso del escenario de demostración SFLIGHT
+
+### 🏗️ Arquitectura
+
+- **[Arquitectura del Servidor](./docs/architecture/server.md)**: Arquitectura detallada del sistema y patrones de diseño
+
+### 📦 Documentación de Paquetes
+
+- **[README del Paquete Servidor](./packages/server/README.md)**: Documentación específica del paquete servidor
+
+### 🌐 Soporte Multilingüe
+
+- **[English](./README.md)**: Documentación Principal (Este documento)
+- **[日本語 (Japanese)](./README.ja.md)**: Documentación en Japonés
+- **[한국어 (Korean)](./README.ko.md)**: Documentación en Coreano
+- **[ไทย (Thai)](./README.th.md)**: Documentación en Tailandés
+- **[繁體中文 (Traditional Chinese)](./README.zh-TW.md)**: Documentación en Chino Tradicional
+- **[简体中文 (Simplified Chinese)](./README.zh-CN.md)**: Documentación en Chino Simplificado
+- **[Español (Spanish)](./README.es.md)**: Documentación en Español
 
 ---
 
 ## 📝 Licencia
 
-Licencia MIT - Ver archivo [LICENSE](LICENSE) para detalles.
+Licencia MIT - vea el archivo [LICENSE](LICENSE) para más detalles.
 
 ---
 
 ## 🙏 Agradecimientos
 
-- **MCP Protocol**: Anthropic's Model Context Protocol
+- **Protocolo MCP**: Model Context Protocol de Anthropic
 - **SAP Gateway**: Integración OData v2/v4
-- **Community**: Colaboradores y probadores
+- **Comunidad**: Contribuidores y testers
 
 ---
 

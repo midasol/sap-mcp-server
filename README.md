@@ -1167,7 +1167,7 @@ SAP_PASSWORD=your-password           # SAP password
 SAP_CLIENT=100                       # SAP client number (e.g., 100, 800)
 
 # Security Settings
-SAP_VERIFY_SSL=true                  # Enable SSL certificate verification (recommended)
+SAP_VERIFY_SSL=false                 # Enable SSL certificate verification (recommended)
 SAP_TIMEOUT=30                       # Request timeout in seconds
 
 # Optional: Connection Pooling
