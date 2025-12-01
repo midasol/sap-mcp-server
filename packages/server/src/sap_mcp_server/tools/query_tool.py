@@ -1,7 +1,7 @@
 """SAP OData Query Tool"""
 
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from sap_mcp_server.config.loader import get_services_config
 from sap_mcp_server.config.settings import get_config
@@ -48,9 +48,66 @@ class SAPQueryTool(MCPTool):
                     "type": "integer",
                     "description": "Number of records to skip (optional)",
                 },
+                "format": {
+                    "type": "string",
+                    "enum": ["json", "json_compact"],
+                    "description": "Output format: 'json' returns raw OData response, 'json_compact' removes __metadata and __deferred navigation links for token efficiency (default: json_compact)",
+                    "default": "json_compact",
+                },
             },
             "required": ["service", "entity_set"],
         }
+
+    def _transform_response(
+        self, data: Dict[str, Any], output_format: str
+    ) -> Dict[str, Any]:
+        """Transform OData response based on requested format.
+
+        Args:
+            data: Raw OData response
+            output_format: 'json' for raw response, 'json_compact' for cleaned response
+
+        Returns:
+            Transformed response with reduced token usage for json_compact format
+        """
+        if output_format == "json":
+            return data
+
+        # json_compact: Remove __metadata and __deferred navigation links
+        results = data.get("d", {}).get("results", [])
+
+        if not results:
+            # Handle single entity response (no results array)
+            if "d" in data and isinstance(data["d"], dict):
+                entity = data["d"]
+                clean_entity = {}
+                for key, value in entity.items():
+                    # Skip metadata
+                    if key == "__metadata":
+                        continue
+                    # Skip deferred navigation links
+                    if isinstance(value, dict) and "__deferred" in value:
+                        continue
+                    clean_entity[key] = value
+                return {"result": clean_entity}
+            return data
+
+        # Process results array
+        clean_results: List[Dict[str, Any]] = []
+        for item in results:
+            clean_item: Dict[str, Any] = {}
+            for key, value in item.items():
+                # Skip metadata
+                if key == "__metadata":
+                    continue
+                # Skip deferred navigation links
+                if isinstance(value, dict) and "__deferred" in value:
+                    continue
+                # Keep expanded navigation properties (they have actual data)
+                clean_item[key] = value
+            clean_results.append(clean_item)
+
+        return {"results": clean_results, "count": len(clean_results)}
 
     async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Execute OData query"""
@@ -71,6 +128,7 @@ class SAPQueryTool(MCPTool):
             select_fields = params["select"].split(",") if "select" in params else None
             top = params.get("top")
             skip = params.get("skip")
+            output_format = params.get("format", "json_compact")
 
             # Execute query using SAPClient
             async with SAPClient(config=sap_config) as client:
@@ -82,7 +140,9 @@ class SAPQueryTool(MCPTool):
                     top=top,
                     skip=skip,
                 )
-            return result
+
+            # Transform response based on format
+            return self._transform_response(result, output_format)
 
         except Exception as e:
             logger.error(f"Query failed: {e}")

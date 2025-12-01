@@ -1867,25 +1867,66 @@ OData 필터, 선택, 페이지네이션으로 SAP 엔티티를 조회합니다.
     "filter": "CARRID eq 'LH'",
     "select": "CARRID,CARRNAME,CURRCODE",
     "top": 10,
-    "skip": 0
+    "skip": 0,
+    "format": "json_compact"
   }
 }
 ```
 
-**응답**:
+**매개변수**:
+| 매개변수 | 타입 | 필수 | 설명 |
+|----------|------|------|------|
+| `service` | string | ✅ | OData 서비스 이름 |
+| `entity_set` | string | ✅ | 조회할 엔티티 세트 이름 |
+| `filter` | string | ❌ | OData 필터 표현식 |
+| `select` | string | ❌ | 쉼표로 구분된 필드 목록 |
+| `top` | integer | ❌ | 반환할 최대 레코드 수 |
+| `skip` | integer | ❌ | 건너뛸 레코드 수 |
+| `format` | string | ❌ | 출력 형식: `json` 또는 `json_compact` (기본값: `json_compact`) |
+
+**출력 형식 옵션**:
+
+| 형식 | 설명 | 토큰 효율성 |
+|------|------|-------------|
+| `json` | 원본 SAP OData 응답 (메타데이터 포함) | 낮음 |
+| `json_compact` | 메타데이터 및 deferred 링크 제거 | **~83% 절감** ✅ |
+
+**응답** (`format: "json_compact"` - 기본값):
+```json
+{
+  "results": [
+    {
+      "CARRID": "LH",
+      "CARRNAME": "Lufthansa",
+      "CURRCODE": "EUR"
+    }
+  ],
+  "count": 1
+}
+```
+
+**응답** (`format: "json"` - 원본):
 ```json
 {
   "d": {
     "results": [
       {
+        "__metadata": {
+          "id": "...",
+          "uri": "...",
+          "type": "Z_TRAVEL_RECO_SRV.Airline"
+        },
         "CARRID": "LH",
         "CARRNAME": "Lufthansa",
-        "CURRCODE": "EUR"
+        "CURRCODE": "EUR",
+        "ToFlight": { "__deferred": { "uri": "..." } }
       }
     ]
   }
 }
 ```
+
+> **💡 권장사항**: AI 에이전트 통합 시 `json_compact` 형식(기본값)을 사용하면 토큰 사용량을 크게 줄일 수 있습니다.
 
 ---
 

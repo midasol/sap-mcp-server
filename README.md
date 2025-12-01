@@ -1867,25 +1867,66 @@ Query SAP entities with OData filters, selection, pagination.
     "filter": "CARRID eq 'LH'",
     "select": "CARRID,CARRNAME,CURRCODE",
     "top": 10,
-    "skip": 0
+    "skip": 0,
+    "format": "json_compact"
   }
 }
 ```
 
-**Response**:
+**Parameters**:
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `service` | string | ✅ | OData service name |
+| `entity_set` | string | ✅ | Entity set name to query |
+| `filter` | string | ❌ | OData filter expression |
+| `select` | string | ❌ | Comma-separated list of fields to select |
+| `top` | integer | ❌ | Maximum number of records to return |
+| `skip` | integer | ❌ | Number of records to skip |
+| `format` | string | ❌ | Output format: `json` or `json_compact` (default: `json_compact`) |
+
+**Output Format Options**:
+
+| Format | Description | Token Efficiency |
+|--------|-------------|------------------|
+| `json` | Raw SAP OData response (includes metadata) | Low |
+| `json_compact` | Removes `__metadata` and `__deferred` navigation links | **~83% reduction** ✅ |
+
+**Response** (`format: "json_compact"` - default):
+```json
+{
+  "results": [
+    {
+      "CARRID": "LH",
+      "CARRNAME": "Lufthansa",
+      "CURRCODE": "EUR"
+    }
+  ],
+  "count": 1
+}
+```
+
+**Response** (`format: "json"` - raw):
 ```json
 {
   "d": {
     "results": [
       {
+        "__metadata": {
+          "id": "...",
+          "uri": "...",
+          "type": "Z_TRAVEL_RECO_SRV.Airline"
+        },
         "CARRID": "LH",
         "CARRNAME": "Lufthansa",
-        "CURRCODE": "EUR"
+        "CURRCODE": "EUR",
+        "ToFlight": { "__deferred": { "uri": "..." } }
       }
     ]
   }
 }
 ```
+
+> **💡 Recommendation**: When integrating with AI agents, use the `json_compact` format (default) to significantly reduce token usage.
 
 ---
 
