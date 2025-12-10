@@ -1277,6 +1277,8 @@ gateway:
 - โทเค็น CSRF: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
 - การตรวจสอบ: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
+> **หมายเหตุ**: `/sap/opu/odata/IWFND/CATALOGSERVICE` ควรเปิดใช้งานใน Tcode SICF
+
 ---
 
 **ตัวเลือก 2: การตรวจสอบสิทธิ์เฉพาะบริการ**

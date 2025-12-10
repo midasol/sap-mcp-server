@@ -1277,6 +1277,8 @@ gateway:
 - CSRFトークン: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
 - 検証: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
+> **注意**: `/sap/opu/odata/IWFND/CATALOGSERVICE` はTcode SICFで有効化する必要があります
+
 ---
 
 **オプション2: サービス固有の認証**

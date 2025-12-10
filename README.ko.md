@@ -1277,6 +1277,8 @@ gateway:
 - CSRF 토큰: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
 - 검증: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
+> **참고**: `/sap/opu/odata/IWFND/CATALOGSERVICE`는 Tcode SICF에서 활성화되어야 합니다
+
 ---
 
 **옵션 2: 서비스별 인증**

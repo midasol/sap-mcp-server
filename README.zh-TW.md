@@ -1277,6 +1277,8 @@ gateway:
 - CSRF 令牌: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
 - 驗證: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
+> **注意**: `/sap/opu/odata/IWFND/CATALOGSERVICE` 應在 Tcode SICF 中啟用
+
 ---
 
 **選項 2: 特定服務認證**

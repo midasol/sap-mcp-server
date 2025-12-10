@@ -1277,6 +1277,8 @@ gateway:
 - Token CSRF: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection`
 - Validación: `/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/$metadata`
 
+> **Nota**: `/sap/opu/odata/IWFND/CATALOGSERVICE` debe estar activado en Tcode SICF
+
 ---
 
 **Opción 2: Autenticación Específica de Servicio**
