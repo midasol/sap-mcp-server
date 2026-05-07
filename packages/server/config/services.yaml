@@ -1,0 +1,160 @@
+# SAP Gateway Services Configuration - Extended Examples
+# Copy this file to services.yaml and customize for your SAP environment
+
+# Gateway URL configuration
+gateway:
+  # Base URL pattern for OData services
+  # Standard SAP Gateway pattern: https://{host}:{port}/sap/opu/odata
+  # For different SAP systems, adjust the pattern accordingly
+  base_url_pattern: "https://{host}:{port}/sap/opu/odata"
+
+  # Metadata endpoint suffix (standard OData)
+  metadata_suffix: "/$metadata"
+
+  # Service catalog path for listing available services
+  service_catalog_path: "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
+
+  # Authentication endpoint configuration
+  # Controls which endpoint is used for CSRF token retrieval and authentication validation
+  auth_endpoint:
+    # Option 1 (RECOMMENDED): Use generic catalog metadata
+    # - Works without requiring specific services to be available
+    # - More flexible and portable across different SAP systems
+    # - Does not depend on any custom service being deployed
+    use_catalog_metadata: true
+
+    # Option 2: Use specific service for authentication
+    # - Uncomment the lines below if catalog service is not available
+    # - Or if you need to authenticate against a specific service
+    # use_catalog_metadata: false
+    # service_id: Z_SALES_ORDER_GENAI_SRV  # Must match a service ID defined below
+    # entity_name: zsd004Set                # Must be an entity in the specified service
+
+# SAP OData Services
+# Each service defines:
+# - id: Unique identifier used in MCP tool calls
+# - name: Human-readable service name
+# - path: Service path relative to base_url_pattern
+# - version: OData version (v2 or v4)
+# - entities: List of entity sets available in this service
+# - custom_headers: Optional HTTP headers for this service
+services:
+# Example 6: Flight Service
+  - id: Z_TRAVEL_RECO_SRV
+    name: "Flight Recommendation Service"
+    path: "/SAP/Z_TRAVEL_RECO_SRV"
+    version: v2
+    description: "Flight Recommendation Service"
+    entities:
+      - name: AirlineSet
+        key_field: Carrid
+        description: "Airline Details"
+        navigations:
+          - ToConnection
+          - ToFlight
+        default_select:
+          - Carrid          # Airline ID
+          - Carrname        # Airline Name
+          - Currcode        # Airline Currency
+      - name: AirportSet
+        key_field: Id
+        description: "Airport Details"
+        navigations:
+          - ToConnection
+        default_select:
+          - Id              # Airport Code
+          - Name            # Airport Name
+          - Time_zone       # Airport Timezone
+      - name: BookingSet
+        key_field: Bookid
+        description: "Booking Details"
+        navigations:
+          - ToPassenger
+          - ToFlight
+        default_select:
+          - Carrid        # Airline ID
+          - Connid        # Flight Number
+          - Fldate        # Flight Date
+          - Bookid        # Booking Number
+          - Customid      # Customer Number
+          - Class         # Seat Class
+          - Passname      # Passenger Name
+          - Smoker        # Passenger Smoker
+      - name: FlightSet
+        key_field: Connid
+        description: "Flight Details"
+        navigations:
+          - ToAirline
+          - ToBooking
+          - ToConnection
+        default_select:
+          - Carrid        # Airline ID
+          - Connid        # Flight Number
+          - Fldate        # Flight Date
+          - Price         # Airfare
+          - Currency      # Airline Currency
+          - Planetype     # Play Type
+          - Seatsmax      # Max. Capacity Economy Class
+          - Seatsocc      # Occupied Economy Class
+          - Seatsmax_b    # Max. Capacity Business Class
+          - Seatsocc_b    # Occupied Business Class
+          - Seatsmax_f    # Max. Capacity First Class
+          - Seatsocc_f    # Occupied First Class
+      - name: ConnectionSet
+        key_field: Connid
+        description: "Flight Schedule Details"
+        navigations:
+          - ToAirline
+          - ToFlight
+          - ToOriginAirport
+          - ToDestinationAirport
+        default_select:
+          - Carrid        # Airline ID
+          - Connid        # Flight Number
+          - Countryfr     # Origin Country
+          - Countryto     # Destination Country
+          - Fltime        # Flight Time
+          - Airpfrom      # Origin Airport
+          - Airpto        # Destination Airport
+          - Cityfrom      # Origin City
+          - Cityto        # Destination City
+          - Deptime       # Departure Time
+          - Arrtime       # Arrival Time
+          - Distance      # Flight Distance
+      - name: PassengerSet
+        key_field: Id
+        description: "Passenger Details"
+        navigations:
+          - ToBooking
+        default_select:
+          - Id            # Passenger ID
+          - Name          # Passenger Name
+          - City          # Passenger City
+          - Country       # Passenger Country
+    custom_headers: {}
+
+# Configuration Tips:
+#
+# 1. Service Discovery:
+#    - Use transaction SE80 or /IWFND/MAINT_SERVICE to find service names
+#    - Service path format is usually /SAP/<SERVICE_NAME> or /<NAMESPACE>/<SERVICE_NAME>
+#
+# 2. Entity Sets:
+#    - View service metadata at: {base_url}{service_path}/$metadata
+#    - Find EntitySet names and their key fields in the metadata XML
+#
+# 3. Key Fields:
+#    - Single key: Just specify the field name (e.g., "Vbeln")
+#    - Composite key: For now, specify primary key field (enhancement needed for multi-key)
+#
+# 4. Navigations:
+#    - List navigation properties for documentation
+#    - Future enhancement: Use for automatic expansion
+#
+# 5. Custom Headers:
+#    - Add service-specific headers like sap-client, language, etc.
+#    - These are merged with authentication headers
+#
+# 6. Default Select:
+#    - Specify commonly used fields to optimize queries
+#    - Reduces payload size and improves performance

@@ -1,0 +1,72 @@
+# SAP Gateway Services Configuration Example
+#
+# INSTRUCTIONS:
+# 1. Copy this file to 'services.yaml' in the same directory:
+#    cp packages/server/config/services.yaml.example packages/server/config/services.yaml
+# 2. Customize the configuration below for your SAP environment.
+# 3. Ensure your .env.server file in the project root has the correct credentials.
+
+# Gateway URL configuration
+gateway:
+  # Base URL pattern for OData services
+  # Standard SAP Gateway pattern: https://{host}:{port}/sap/opu/odata
+  base_url_pattern: "https://{host}:{port}/sap/opu/odata"
+
+  # Metadata endpoint suffix (standard OData)
+  metadata_suffix: "/$metadata"
+
+  # Service catalog path for listing available services
+  service_catalog_path: "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/ServiceCollection"
+
+  # Authentication endpoint configuration
+  auth_endpoint:
+    # RECOMMENDED: Use generic catalog metadata
+    # - Works without requiring specific services to be available
+    # - More flexible and portable across different SAP systems
+    use_catalog_metadata: true
+
+    # Option 2: Use specific service for authentication (if catalog unavailable)
+    # use_catalog_metadata: false
+    # service_id: Z_TRAVEL_RECOMMENDATIONS_SRV
+    # entity_name: AirlineSet
+
+# SAP OData Services
+services:
+  # SFLIGHT Demo Service (Travel Recommendations)
+  - id: Z_TRAVEL_RECOMMENDATIONS_SRV
+    name: "Travel Recommendations Service (SFLIGHT)"
+    path: "/SAP/Z_TRAVEL_RECOMMENDATIONS_SRV"
+    version: v2
+    description: "OData service for the SFLIGHT demo dataset."
+    entities:
+      - name: AirlineSet
+        key_field: CARRID
+        description: "Airlines (e.g., LH, AA)"
+        default_select:
+          - CARRID
+          - CARRNAME
+          - CURRCODE
+          - URL
+      - name: AirportSet
+        key_field: ID
+        description: "Airports (e.g., FRA, JFK)"
+        default_select:
+          - ID
+          - NAME
+          - CITY
+          - COUNTRY
+      - name: FlightSet
+        key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}'"
+        description: "Specific flights on a given date"
+      - name: BookingSet
+        key_field: "CARRID='{CARRID}',CONNID='{CONNID}',FLDATE=datetime'{FLDATE}',BOOKID='{BOOKID}'"
+        description: "Individual flight bookings"
+      - name: ConnectionSet
+        key_field: "CARRID='{CARRID}',CONNID='{CONNID}'"
+        description: "Flight connections and schedules"
+      - name: PassengerSet
+        key_field: ID
+        description: "Passenger information"
+
+    # Optional: Custom headers for this service
+    custom_headers: {}
